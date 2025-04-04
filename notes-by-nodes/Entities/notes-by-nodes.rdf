@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
-<rdf:RDF xmlns="http://node-note.org/ontologies/2025//"
-     xml:base="http://node-note.org/ontologies/2025//"
+<rdf:RDF xmlns="http://notes-by-nodes/ontologies/2025//"
+     xml:base="http://notes-by-nodes/ontologies/2025//"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:ontologies="http://node-note.org/ontologies/2025/">
-    <owl:Ontology rdf:about="http://node-note.org/ontologies/2025/">
-        <owl:versionIRI rdf:resource="http://node-note.org/ontologies/2025/1.0"/>
+     xmlns:ontologies="http://node-note.org/ontologies/2025/"
+     xmlns:ontologies1="http://notes-by-nodes/ontologies/2025/">
+    <owl:Ontology rdf:about="http://notes-by-nodes/ontologies/2025/">
+        <owl:versionIRI rdf:resource="http://notes-by-nodes/ontologies/2025//1.0"/>
         <rdfs:comment>Онтология описывабщая бизнес-логику приложения управления заметками</rdfs:comment>
     </owl:Ontology>
     
@@ -25,24 +26,70 @@
     
 
 
-    <!-- http://node-note.org/ontologies/2025/hasOwner -->
+    <!-- http://notes-by-nodes/ontologies/2025/hasChildNodes -->
 
-    <owl:ObjectProperty rdf:about="http://node-note.org/ontologies/2025/hasOwner">
-        <owl:inverseOf rdf:resource="http://node-note.org/ontologies/2025/isOwnerOf"/>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://node-note.org/ontologies/2025/Bucket"/>
-        <rdfs:range rdf:resource="http://node-note.org/ontologies/2025/User"/>
+    <owl:ObjectProperty rdf:about="http://notes-by-nodes/ontologies/2025/hasChildNodes">
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+        <rdfs:range rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://node-note.org/ontologies/2025/isOwnerOf -->
+    <!-- http://notes-by-nodes/ontologies/2025/hasContent -->
 
-    <owl:ObjectProperty rdf:about="http://node-note.org/ontologies/2025/isOwnerOf">
+    <owl:ObjectProperty rdf:about="http://notes-by-nodes/ontologies/2025/hasContent">
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Note"/>
+        <rdfs:range rdf:resource="http://notes-by-nodes/ontologies/2025/Content"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/hasOwner -->
+
+    <owl:ObjectProperty rdf:about="http://notes-by-nodes/ontologies/2025/hasOwner">
+        <owl:inverseOf rdf:resource="http://notes-by-nodes/ontologies/2025/isOwnerOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://node-note.org/ontologies/2025/User"/>
-        <rdfs:range rdf:resource="http://node-note.org/ontologies/2025/Bucket"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+        <rdfs:range rdf:resource="http://notes-by-nodes/ontologies/2025/User"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/hasParentNode -->
+
+    <owl:ObjectProperty rdf:about="http://notes-by-nodes/ontologies/2025/hasParentNode">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+        <rdfs:range rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/hasReference -->
+
+    <owl:ObjectProperty rdf:about="http://notes-by-nodes/ontologies/2025/hasReference">
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Note"/>
+        <rdfs:range rdf:resource="http://notes-by-nodes/ontologies/2025/Note"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/isOwnerOf -->
+
+    <owl:ObjectProperty rdf:about="http://notes-by-nodes/ontologies/2025/isOwnerOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/User"/>
+        <rdfs:range rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/isRefernced -->
+
+    <owl:ObjectProperty rdf:about="http://notes-by-nodes/ontologies/2025/isRefernced">
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Note"/>
+        <rdfs:range rdf:resource="http://notes-by-nodes/ontologies/2025/Note"/>
     </owl:ObjectProperty>
     
 
@@ -58,26 +105,55 @@
     
 
 
-    <!-- http://node-note.org/ontologies/2025/Name -->
+    <!-- http://notes-by-nodes/ontologies/2025/Description -->
 
-    <owl:DatatypeProperty rdf:about="http://node-note.org/ontologies/2025/Name">
-        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    <owl:DatatypeProperty rdf:about="http://notes-by-nodes/ontologies/2025/Description">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://node-note.org/ontologies/2025/Bucket"/>
-        <rdfs:domain rdf:resource="http://node-note.org/ontologies/2025/User"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Content"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/Name -->
+
+    <owl:DatatypeProperty rdf:about="http://notes-by-nodes/ontologies/2025/Name">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Content"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <rdfs:comment>Comment  Comment</rdfs:comment>
     </owl:DatatypeProperty>
     
 
 
-    <!-- http://node-note.org/ontologies/2025/Uid -->
+    <!-- http://notes-by-nodes/ontologies/2025/Text -->
 
-    <owl:DatatypeProperty rdf:about="http://node-note.org/ontologies/2025/Uid">
-        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    <owl:DatatypeProperty rdf:about="http://notes-by-nodes/ontologies/2025/Text">
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/Type -->
+
+    <owl:DatatypeProperty rdf:about="http://notes-by-nodes/ontologies/2025/Type">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://node-note.org/ontologies/2025/Bucket"/>
-        <rdfs:domain rdf:resource="http://node-note.org/ontologies/2025/User"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Content"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/Uid -->
+
+    <owl:DatatypeProperty rdf:about="http://notes-by-nodes/ontologies/2025/Uid">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Content"/>
+        <rdfs:domain rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
@@ -94,23 +170,47 @@
     
 
 
-    <!-- http://node-note.org/ontologies/2025/Bucket -->
+    <!-- http://notes-by-nodes/ontologies/2025/Box -->
 
-    <owl:Class rdf:about="http://node-note.org/ontologies/2025/Bucket"/>
-    
-
-
-    <!-- http://node-note.org/ontologies/2025/BucketInBucket -->
-
-    <owl:Class rdf:about="http://node-note.org/ontologies/2025/BucketInBucket">
-        <rdfs:subClassOf rdf:resource="http://node-note.org/ontologies/2025/Bucket"/>
+    <owl:Class rdf:about="http://notes-by-nodes/ontologies/2025/Box">
+        <rdfs:subClassOf rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
     </owl:Class>
     
 
 
-    <!-- http://node-note.org/ontologies/2025/User -->
+    <!-- http://notes-by-nodes/ontologies/2025/Content -->
 
-    <owl:Class rdf:about="http://node-note.org/ontologies/2025/User"/>
+    <owl:Class rdf:about="http://notes-by-nodes/ontologies/2025/Content"/>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/File -->
+
+    <owl:Class rdf:about="http://notes-by-nodes/ontologies/2025/File">
+        <rdfs:subClassOf rdf:resource="http://notes-by-nodes/ontologies/2025/Content"/>
+    </owl:Class>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/Node -->
+
+    <owl:Class rdf:about="http://notes-by-nodes/ontologies/2025/Node"/>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/Note -->
+
+    <owl:Class rdf:about="http://notes-by-nodes/ontologies/2025/Note">
+        <rdfs:subClassOf rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+    </owl:Class>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/User -->
+
+    <owl:Class rdf:about="http://notes-by-nodes/ontologies/2025/User">
+        <rdfs:subClassOf rdf:resource="http://notes-by-nodes/ontologies/2025/Node"/>
+    </owl:Class>
     
 
 
@@ -125,35 +225,46 @@
     
 
 
-    <!-- http://node-note.org/ontologies/2025/Anton -->
+    <!-- http://notes-by-nodes/ontologies/2025/Anton -->
 
-    <owl:NamedIndividual rdf:about="http://node-note.org/ontologies/2025/Anton">
-        <rdf:type rdf:resource="http://node-note.org/ontologies/2025/User"/>
+    <owl:NamedIndividual rdf:about="http://notes-by-nodes/ontologies/2025/Anton">
+        <rdf:type rdf:resource="http://notes-by-nodes/ontologies/2025/User"/>
+        <ontologies1:isOwnerOf rdf:resource="http://notes-by-nodes/ontologies/2025/BoxA"/>
     </owl:NamedIndividual>
     
 
 
-    <!-- http://node-note.org/ontologies/2025/FolderA -->
+    <!-- http://notes-by-nodes/ontologies/2025/BoxA -->
 
-    <owl:NamedIndividual rdf:about="http://node-note.org/ontologies/2025/FolderA">
-        <rdf:type rdf:resource="http://node-note.org/ontologies/2025/Bucket"/>
+    <owl:NamedIndividual rdf:about="http://notes-by-nodes/ontologies/2025/BoxA">
+        <rdf:type rdf:resource="http://notes-by-nodes/ontologies/2025/Box"/>
+        <ontologies1:hasChildNodes rdf:resource="http://notes-by-nodes/ontologies/2025/NoteAbouNewProject"/>
+        <ontologies1:hasChildNodes rdf:resource="http://notes-by-nodes/ontologies/2025/NoteToDoLIST"/>
     </owl:NamedIndividual>
     
 
 
-    <!-- http://node-note.org/ontologies/2025/FolderB -->
+    <!-- http://notes-by-nodes/ontologies/2025/FileZIP -->
 
-    <owl:NamedIndividual rdf:about="http://node-note.org/ontologies/2025/FolderB">
-        <rdf:type rdf:resource="http://node-note.org/ontologies/2025/Bucket"/>
+    <owl:NamedIndividual rdf:about="http://notes-by-nodes/ontologies/2025/FileZIP">
+        <rdf:type rdf:resource="http://notes-by-nodes/ontologies/2025/File"/>
     </owl:NamedIndividual>
     
 
 
-    <!-- http://node-note.org/ontologies/2025/Tom -->
+    <!-- http://notes-by-nodes/ontologies/2025/NoteAbouNewProject -->
 
-    <owl:NamedIndividual rdf:about="http://node-note.org/ontologies/2025/Tom">
-        <rdf:type rdf:resource="http://node-note.org/ontologies/2025/User"/>
-        <ontologies:isOwnerOf rdf:resource="http://node-note.org/ontologies/2025/FolderA"/>
+    <owl:NamedIndividual rdf:about="http://notes-by-nodes/ontologies/2025/NoteAbouNewProject">
+        <rdf:type rdf:resource="http://notes-by-nodes/ontologies/2025/Note"/>
+        <ontologies1:hasReference rdf:resource="http://notes-by-nodes/ontologies/2025/NoteToDoLIST"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://notes-by-nodes/ontologies/2025/NoteToDoLIST -->
+
+    <owl:NamedIndividual rdf:about="http://notes-by-nodes/ontologies/2025/NoteToDoLIST">
+        <rdf:type rdf:resource="http://notes-by-nodes/ontologies/2025/Note"/>
     </owl:NamedIndividual>
 </rdf:RDF>
 

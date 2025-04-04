@@ -9,13 +9,21 @@ using VDS.RDF.Parsing;
 
 namespace OwlToT4templatesTool
 {
-    internal class Ontology
+    internal class OntologyToT4tool
     {
-        public static void RunSample()
+        public static void DeleteFiles(string templatesDirectory)
         {
-            string ontoDirectory = "c:\\Users\\tocha\\source\\notes-by-nodes\\notes-by-nodes\\bl\\notes-by-nodes.rdf";
-            string templatesDirectory = $"{Directory.GetCurrentDirectory()}\\..\\..\\..\\BL";
-            string nameSpace = "SampleNameSpace.BL";
+            
+            var files = Directory.GetFiles(templatesDirectory);
+            foreach (var item in files)
+            {
+                File.Delete(item);
+            }
+            
+        }
+        public static void ReadOntology(string ontoDirectory, string templatesDirectory, string nameSpace)
+        {
+            
             CreateT4Templates(ontoDirectory, templatesDirectory, nameSpace, true);
         }
         public static void CreateT4Templates(string ontoDirectory, string templatesDirectory, string nameSpace, bool replaceExistedFiles = false)

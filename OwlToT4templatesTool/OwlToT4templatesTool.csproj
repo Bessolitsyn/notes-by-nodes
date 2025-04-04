@@ -11,4 +11,83 @@
     <PackageReference Include="dotNetRdf" Version="3.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="CommandLine">
+      <HintPath>ArgumentParser\CommandLine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Node.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Ontology\Box.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Box.cs</LastGenOutput>
+    </None>
+    <None Update="Ontology\Content.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Content.cs</LastGenOutput>
+    </None>
+    <None Update="Ontology\File.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>File.cs</LastGenOutput>
+    </None>
+    <None Update="Ontology\Node.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Node.cs</LastGenOutput>
+    </None>
+    <None Update="Ontology\Note.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Note.cs</LastGenOutput>
+    </None>
+    <None Update="Ontology\User.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>User.cs</LastGenOutput>
+    </None>
+    <None Update="template.tt_">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="User.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Ontology\Box.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Box.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Ontology\Content.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Content.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Ontology\File.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>File.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Ontology\Node.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Node.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Ontology\Note.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Note.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Ontology\User.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>User.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
