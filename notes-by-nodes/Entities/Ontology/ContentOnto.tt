@@ -5,10 +5,10 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<# string namespaceDef = "OwlToT4templatesTool.Ontology";
-	string classDef = "public abstract partial class Node";
-	var properties = File.ReadLines(this.Host.ResolvePath("Node.prp"));	
-	var methods = File.ReadLines(this.Host.ResolvePath("Node.mth"));
+<# string namespaceDef = "notes_by_nodes.Entities.Ontology";
+	string classDef = "public abstract partial class ContentOnto";
+	var properties = File.ReadLines(this.Host.ResolvePath("ContentOnto.prp"));	
+	var methods = File.ReadLines(this.Host.ResolvePath("ContentOnto.mth"));
 #>
 
 using System;

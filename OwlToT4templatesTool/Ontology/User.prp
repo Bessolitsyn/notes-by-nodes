@@ -1,1 +1,0 @@
-public IEnumerable<Node> IsOwnerOf { get; private set; }

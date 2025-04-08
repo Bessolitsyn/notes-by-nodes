@@ -4,6 +4,6 @@ public string Name { get; set; }
 public string Text { get; set; }
 public string Type { get; set; }
 public string Uid { get; set; }
-public IEnumerable<Node> HasChildNodes { get; private set; }
-public User HasOwner { get; private set; }
-public Node HasParentNode { get; private set; }
+public IEnumerable<NodeOnto> HasChildNodes { get; private set; }
+public UserOnto HasOwner { get; private set; }
+public NodeOnto HasParentNode { get; private set; }

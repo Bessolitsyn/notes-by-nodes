@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OwlToT4templatesTool.Ontology
+namespace notes_by_nodes.Entities.Ontology
 {
-	public abstract partial class Content
+	public abstract partial class ContentOnto
 	{	
 		
 		public DateTime CreationDate { get; set; }

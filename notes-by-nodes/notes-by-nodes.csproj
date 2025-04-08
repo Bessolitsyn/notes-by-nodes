@@ -7,4 +7,74 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Entities\Ontology\**" />
+    <EmbeddedResource Remove="Entities\Ontology\**" />
+    <None Remove="Entities\Ontology\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Entities\Ontology\BoxOnto.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BoxOnto.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Ontology\ContentOnto.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContentOnto.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Ontology\FileOnto.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FileOnto.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Ontology\NodeOnto.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NodeOnto.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Ontology\NoteOnto.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NoteOnto.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Ontology\UserOnto.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UserOnto.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Entities\Ontology\BoxOnto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BoxOnto.cs</LastGenOutput>
+    </None>
+    <None Include="Entities\Ontology\ContentOnto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContentOnto.cs</LastGenOutput>
+    </None>
+    <None Include="Entities\Ontology\FileOnto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FileOnto.cs</LastGenOutput>
+    </None>
+    <None Include="Entities\Ontology\NodeOnto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NodeOnto.cs</LastGenOutput>
+    </None>
+    <None Include="Entities\Ontology\NoteOnto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NoteOnto.cs</LastGenOutput>
+    </None>
+    <None Include="Entities\Ontology\UserOnto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UserOnto.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
 </Project>

@@ -11,29 +11,25 @@ namespace OwlToT4templatesTool
 {
     internal class OntologyToT4tool
     {
-        public static void DeleteFiles(string templatesDirectory)
-        {
-            
-            var files = Directory.GetFiles(templatesDirectory);
-            foreach (var item in files)
-            {
-                File.Delete(item);
-            }
-            
-        }
-        public static void ReadOntology(string ontoDirectory, string templatesDirectory, string nameSpace)
-        {
-            
-            CreateT4Templates(ontoDirectory, templatesDirectory, nameSpace, true);
-        }
-        public static void CreateT4Templates(string ontoDirectory, string templatesDirectory, string nameSpace, bool replaceExistedFiles = false)
+        public static void CreateAllT4Templates(string ontoDirectory, string templatesDirectory, string nameSpace, bool replaceExistedFiles = false)
         {
             OntologyGraph onto = new();
             FileLoader.Load(onto, ontoDirectory);
 
-            foreach (var ontoClass in onto.AllClasses)
+            foreach (var owlClass in onto.AllClasses)
             {
-                var ontoClassStru = OntologyStructuresFactory.NewOntologyClassStru(ontoClass);
+                var ontoClassStru = OntologyStructuresFactory.NewOntologyClassStru(owlClass);
+                CreateT4template(nameSpace, ontoClassStru, templatesDirectory, replaceExistedFiles);
+            }
+        }
+        public static void CreateClassT4Templates(string ontoClass, string ontoDirectory, string templatesDirectory, string nameSpace, bool replaceExistedFiles = false)
+        {
+            OntologyGraph onto = new();
+            FileLoader.Load(onto, ontoDirectory);
+
+            foreach (var owlClass in onto.AllClasses.Where(owlc=> owlc.ToString() == ontoClass))
+            {
+                var ontoClassStru = OntologyStructuresFactory.NewOntologyClassStru(owlClass);
                 CreateT4template(nameSpace, ontoClassStru, templatesDirectory, replaceExistedFiles);
             }
         }
@@ -61,10 +57,11 @@ namespace OwlToT4templatesTool
         }
         static class OntologyStructuresFactory
         {
+            private static string classPostfix = "Onto";
             public static string GetOntologyClassName(OntologyClass ontoClass)
             {
                 UriNode inode = (UriNode)ontoClass.Resource;
-                return inode.Uri.Segments.Last();
+                return inode.Uri.Segments.Last() + classPostfix;
             }
             public static string GetOntologyPropertyName(OntologyProperty property)
             {
@@ -109,12 +106,12 @@ namespace OwlToT4templatesTool
                 return propStru;
             }
 
-            public static OntologyClassStru NewOntologyClassStru(OntologyClass ontoClass)
+            public static OntologyClassStru NewOntologyClassStru(OntologyClass owlClass)
             {
-                string classname = GetOntologyClassName(ontoClass);
-                var classStru = new OntologyClassStru(classname, ontoClass);
-                var properties = ontoClass.IsDomainOf;
-                classStru.ParentClassName = GetParentClassName(ontoClass);
+                string classname = GetOntologyClassName(owlClass);
+                var classStru = new OntologyClassStru(classname, owlClass);
+                var properties = owlClass.IsDomainOf;
+                classStru.ParentClassName = GetParentClassName(owlClass);
                 foreach (var prop in properties)
                 {
                     var propStru = NewOntologyPropertyStru(prop);

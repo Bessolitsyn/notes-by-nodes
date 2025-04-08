@@ -1,6 +1,0 @@
-public abstract void AddIntoContent(Content item);
-public abstract void RemoveFromContent(Content item);
-public abstract void AddIntoReference(Note item);
-public abstract void RemoveFromReference(Note item);
-public abstract void AddIntoRefernced(Note item);
-public abstract void RemoveFromRefernced(Note item);
