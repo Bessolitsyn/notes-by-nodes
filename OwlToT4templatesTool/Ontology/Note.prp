@@ -1,3 +1,3 @@
-public abstract IEnumerable<Content> hasContent { get; set; }
-public abstract IEnumerable<Note> hasReference { get; set; }
-public abstract IEnumerable<Note> isRefernced { get; set; }
+public IEnumerable<Content> HasContent { get; private set; }
+public IEnumerable<Note> HasReference { get; private set; }
+public IEnumerable<Note> IsRefernced { get; private set; }

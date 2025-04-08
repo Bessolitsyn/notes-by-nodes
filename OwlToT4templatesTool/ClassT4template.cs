@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static OwlToT4templatesTool.OntologyToT4tool;
 
 namespace OwlToT4templatesTool
 {
@@ -47,7 +48,7 @@ namespace OwlToT4templatesTool
                 _templateContent[i] = _templateContent[i].Replace("@@className", _className);
             }
         }
-        public void AddProperty(string name, string type, string getterAndSetter = "{ get; set; }", bool isPublic = true, bool isAbstract = true)
+        public void AddProperty(string name, string type, string getterAndSetter = "{ get; set; }", bool isPublic = true, bool isAbstract = false)
         {
             string property = type + " " + name + " " + getterAndSetter;
             //property = AddAbstractExp(method);
@@ -56,14 +57,49 @@ namespace OwlToT4templatesTool
             _properties.Add(property);
         }
 
-        public void AddMethod(string name, bool isPublic = true, string returnType = "void")
+        public void AddPropertyAndMethodsToEdit(OntologyPropertyStru propertyStru)
         {
-            string method = returnType + " " + name + ";";
+            string getterAndSetter = "{ get; private set; }";
+            bool isPublic = true;
+            bool isAbstract = false;
+            string type = propertyStru.IsFunctional ? propertyStru.Type : $"IEnumerable<{propertyStru.Type}>";
+            
+            string property = type + " " + propertyStru.Name + " " + getterAndSetter;
+            //property = AddAbstractExp(method);
+            if (isAbstract) property = AddAbstractExp(property);
+            if (isPublic) property = AddPublicExp(property);
+            _properties.Add(property);
+
+            string noun = propertyStru.Name.Replace("Is", "").Replace("Of", "").Replace("Has", "");
+            if (!propertyStru.IsFunctional)
+            {
+                string methodName = "AddInto" + noun;
+                string args = propertyStru.Type + " item";
+                AddMethod(methodName, args);
+                methodName = "RemoveFrom" + noun;
+                AddMethod(methodName, args);
+            }
+            else
+            {
+                string methodName = "Set" + noun;
+                string args = propertyStru.Type + " item";
+                AddMethod(methodName, args);
+            }
+
+
+
+
+        }
+
+        public void AddMethod(string name, string args="", bool isPublic = true, string returnType = "void")
+        {   
+            string method = returnType + " " + name+"("+args + ");";
             method = AddAbstractExp(method);
             if (isPublic) method = AddPublicExp(method);
             _methods.Add(method);
 
         }
+
         public void SaveTemplateFiles(string path = "", bool replaceExistedFiles = false)
         {
 

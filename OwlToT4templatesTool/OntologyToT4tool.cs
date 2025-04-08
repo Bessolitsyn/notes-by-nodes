@@ -46,8 +46,7 @@ namespace OwlToT4templatesTool
                 template.SetNamespace(nameSpace);
                 template.SetClassName(ontologyClassStru.Name, ontologyClassStru.ParentClassName);
                 ontologyClassStru.OwlDataProperties.ForEach(prop => template.AddProperty(prop.Name, prop.Type));
-                ontologyClassStru.OwlObjectProperties.ForEach(prop => template.AddProperty(prop.Name, prop.Type));
-                //template.AddMethod("AddReference()");
+                ontologyClassStru.OwlObjectProperties.ForEach(prop => template.AddPropertyAndMethodsToEdit(prop));
                 template.SaveTemplateFiles(sourceDirectory, replaceExistedFiles);
                 return template;
             }
@@ -103,12 +102,10 @@ namespace OwlToT4templatesTool
                     {
                         type = GetOntologyClassName(ontoClass);
                         isDataProperty = false;
-                    }
-                    if (!property.IsOwlFunctionalProperty())
-                        type = $"IEnumerable<{type}>";
+                    }                   
                 }
 
-                OntologyPropertyStru propStru = new(name, type, isDataProperty, property);
+                OntologyPropertyStru propStru = new(name, type, isDataProperty, property.IsOwlFunctionalProperty(), property);
                 return propStru;
             }
 
@@ -129,24 +126,25 @@ namespace OwlToT4templatesTool
                 return classStru;
 
             }
-        }
+        }        
+    }
 
-        struct OntologyClassStru(string name, OntologyClass baseNode)
-        {
-            public string Name = name;
-            public string ParentClassName = "";
-            public OntologyClass BaseNode = baseNode;
-            public List<OntologyPropertyStru> OwlDataProperties = [];
-            public List<OntologyPropertyStru> OwlObjectProperties = [];
+    public struct OntologyClassStru(string name, OntologyClass baseNode)
+    {
+        public string Name = name;
+        public string ParentClassName = "";
+        public OntologyClass BaseNode = baseNode;
+        public List<OntologyPropertyStru> OwlDataProperties = [];
+        public List<OntologyPropertyStru> OwlObjectProperties = [];
 
-        }
-        struct OntologyPropertyStru(string name, string type, bool isDataPropertie, OntologyProperty baseNode)
-        {
-            public string Name = name;
-            public string Type = type;
-            public bool IsDataProperty = isDataPropertie;
-            public bool IsObjectProperty = !isDataPropertie;
-            public OntologyProperty BaseNode = baseNode;
-        }
+    }
+    public struct OntologyPropertyStru(string name, string type, bool isDataPropertie, bool isFunctional, OntologyProperty baseNode)
+    {
+        public string Name = name;
+        public string Type = type;
+        public bool IsFunctional = isFunctional;
+        public bool IsDataProperty = isDataPropertie;
+        public bool IsObjectProperty = !isDataPropertie;
+        public OntologyProperty BaseNode = baseNode;
     }
 }

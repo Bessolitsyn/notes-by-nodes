@@ -1,0 +1,4 @@
+public abstract void AddIntoChildNodes(Node item);
+public abstract void RemoveFromChildNodes(Node item);
+public abstract void SetOwner(User item);
+public abstract void SetParentNode(Node item);

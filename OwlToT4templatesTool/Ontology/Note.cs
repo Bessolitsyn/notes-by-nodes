@@ -10,12 +10,24 @@ namespace OwlToT4templatesTool.Ontology
 	public abstract partial class Note : Node
 	{	
 		
-		public abstract IEnumerable<Content> hasContent { get; set; }
+		public IEnumerable<Content> HasContent { get; private set; }
 		
-		public abstract IEnumerable<Note> hasReference { get; set; }
+		public IEnumerable<Note> HasReference { get; private set; }
 		
-		public abstract IEnumerable<Note> isRefernced { get; set; }
+		public IEnumerable<Note> IsRefernced { get; private set; }
 	
+		
+		public abstract void AddIntoContent(Content item);
+		
+		public abstract void RemoveFromContent(Content item);
+		
+		public abstract void AddIntoReference(Note item);
+		
+		public abstract void RemoveFromReference(Note item);
+		
+		public abstract void AddIntoRefernced(Note item);
+		
+		public abstract void RemoveFromRefernced(Note item);
 	
 	}
 }

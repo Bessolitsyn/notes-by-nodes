@@ -10,8 +10,12 @@ namespace OwlToT4templatesTool.Ontology
 	public abstract partial class User : Node
 	{	
 		
-		public abstract IEnumerable<Node> isOwnerOf { get; set; }
+		public IEnumerable<Node> IsOwnerOf { get; private set; }
 	
+		
+		public abstract void AddIntoOwner(Node item);
+		
+		public abstract void RemoveFromOwner(Node item);
 	
 	}
 }

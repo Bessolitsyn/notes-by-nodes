@@ -10,13 +10,15 @@ namespace OwlToT4templatesTool.Ontology
 	public abstract partial class Content
 	{	
 		
-		public abstract string Description { get; set; }
+		public DateTime CreationDate { get; set; }
 		
-		public abstract string Name { get; set; }
+		public string Description { get; set; }
 		
-		public abstract string Type { get; set; }
+		public string Name { get; set; }
 		
-		public abstract string Uid { get; set; }
+		public string Type { get; set; }
+		
+		public string Uid { get; set; }
 	
 	
 	}

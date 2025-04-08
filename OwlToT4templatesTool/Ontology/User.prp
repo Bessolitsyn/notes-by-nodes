@@ -1,1 +1,1 @@
-public abstract IEnumerable<Node> isOwnerOf { get; set; }
+public IEnumerable<Node> IsOwnerOf { get; private set; }
