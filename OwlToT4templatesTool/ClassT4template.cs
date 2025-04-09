@@ -62,11 +62,11 @@ namespace OwlToT4templatesTool
 
         public void AddPropertyAndMethodsToEdit(OntologyPropertyStru propertyStru, bool addProtectedFieldForProperty = true)
         {
-            string type = propertyStru.IsFunctional ? propertyStru.Type : $"IEnumerable<{propertyStru.Type}>";
-            AddPublicAbstractProperty(propertyStru, type);
+            
+            AddPublicAbstractProperty(propertyStru);
             if (addProtectedFieldForProperty)
             {
-                AddProtectedFieldForProperty(propertyStru, type);
+                AddProtectedFieldForProperty(propertyStru);
             }
             if (!propertyStru.IsFunctional)
             {
@@ -78,16 +78,18 @@ namespace OwlToT4templatesTool
             }
         }
 
-        void AddPublicAbstractProperty(OntologyPropertyStru propertyStru, string type)
+        void AddPublicAbstractProperty(OntologyPropertyStru propertyStru)
         {
+            string type = propertyStru.IsFunctional ? propertyStru.Type : $"IEnumerable<{propertyStru.Type}>";
             string abstract_property = type + " " + propertyStru.Name + " " + "{ get; }";
             abstract_property = AddAbstractExp(abstract_property);
             abstract_property = AddPublicExp(abstract_property);
             _properties.Add(abstract_property);
         }
 
-        void AddProtectedFieldForProperty(OntologyPropertyStru propertyStru, string type)
+        void AddProtectedFieldForProperty(OntologyPropertyStru propertyStru)
         {
+            string type = propertyStru.IsFunctional ? propertyStru.Type : $"List<{propertyStru.Type}>";
             string name = propertyStru.Name.Replace("Is", "is").Replace("Has", "has");
             string init = !propertyStru.IsFunctional ? " = []" : "";
             string protected_field = type + " " + name + init +";";
