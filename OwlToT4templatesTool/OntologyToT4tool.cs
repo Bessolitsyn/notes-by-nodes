@@ -55,7 +55,7 @@ namespace OwlToT4templatesTool
         }
         static class OntologyStructuresFactory
         {
-            private static string classPostfix = "Onto";
+            private static string classPostfix = "";
             public static string GetOntologyClassName(OntologyClass ontoClass)
             {
                 UriNode inode = (UriNode)ontoClass.Resource;

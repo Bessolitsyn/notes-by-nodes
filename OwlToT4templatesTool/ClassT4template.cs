@@ -20,12 +20,12 @@ namespace OwlToT4templatesTool
         List<string> _properties = [];
         List<string> _methods = [];
 
-        public ClassT4template(string nspace) 
+        public ClassT4template(string nspace)
         {
             _templateContent = System.IO.File.ReadAllLines(BASE_TEMPLATE);
             _namespace = nspace;
             SetNamespace();
-            
+
         }
 
         void SetNamespace()
@@ -60,43 +60,61 @@ namespace OwlToT4templatesTool
             _properties.Add(property);
         }
 
-        public void AddPropertyAndMethodsToEdit(OntologyPropertyStru propertyStru)
+        public void AddPropertyAndMethodsToEdit(OntologyPropertyStru propertyStru, bool addProtectedFieldForProperty = true)
         {
-            string getterAndSetter = "{ get; }";
-            bool isPublic = true;
-            bool isAbstract = true;
             string type = propertyStru.IsFunctional ? propertyStru.Type : $"IEnumerable<{propertyStru.Type}>";
-            
-            string property = type + " " + propertyStru.Name + " " + getterAndSetter;
-            //property = AddAbstractExp(method);
-            if (isAbstract) property = AddAbstractExp(property);
-            if (isPublic) property = AddPublicExp(property);
-            _properties.Add(property);
-
-            string noun = propertyStru.Name.Replace("Is", "").Replace("Of", "").Replace("Has", "");
+            AddPublicAbstractProperty(propertyStru, type);
+            if (addProtectedFieldForProperty)
+            {
+                AddProtectedFieldForProperty(propertyStru, type);
+            }
             if (!propertyStru.IsFunctional)
             {
-                string methodName = "AddInto" + noun;
-                string args = propertyStru.Type + " item";
-                AddMethod(methodName, args);
-                methodName = "RemoveFrom" + noun;
-                AddMethod(methodName, args);
+                AddMethodsForNotFunctionalDataProperty(propertyStru);
             }
             else
             {
-                string methodName = "Set" + noun;
-                string args = propertyStru.Type + " item";
-                AddMethod(methodName, args);
+                AddMethodsForFunctionalDataProperty(propertyStru);
             }
-
-
-
-
         }
 
-        public void AddMethod(string name, string args="", bool isPublic = true, bool isAbstract = true, string returnType = "void")
-        {   
-            string method = returnType + " " + name+"("+args + ");";
+        void AddPublicAbstractProperty(OntologyPropertyStru propertyStru, string type)
+        {
+            string abstract_property = type + " " + propertyStru.Name + " " + "{ get; }";
+            abstract_property = AddAbstractExp(abstract_property);
+            abstract_property = AddPublicExp(abstract_property);
+            _properties.Add(abstract_property);
+        }
+
+        void AddProtectedFieldForProperty(OntologyPropertyStru propertyStru, string type)
+        {
+            string name = propertyStru.Name.Replace("Is", "is").Replace("Has", "has");
+            string init = !propertyStru.IsFunctional ? " = []" : "";
+            string protected_field = type + " " + name + init +";";
+            protected_field = AddProtectedExp(protected_field);
+            _properties.Add(protected_field);
+
+        }
+        void AddMethodsForNotFunctionalDataProperty(OntologyPropertyStru propertyStru)
+        {
+            string noun = propertyStru.Name.Replace("Is", "").Replace("Of", "").Replace("Has", "");
+            string methodName = "AddInto" + noun;
+            string args = propertyStru.Type + " item";
+            AddMethod(methodName, args);
+            methodName = "RemoveFrom" + noun;
+            AddMethod(methodName, args);
+        }
+        void AddMethodsForFunctionalDataProperty(OntologyPropertyStru propertyStru)
+        {
+            string noun = propertyStru.Name.Replace("Is", "").Replace("Of", "").Replace("Has", "");
+            string methodName = "Set" + noun;
+            string args = propertyStru.Type + " item";
+            AddMethod(methodName, args);
+        }
+
+        public void AddMethod(string name, string args = "", bool isPublic = true, bool isAbstract = true, string returnType = "void")
+        {
+            string method = returnType + " " + name + "(" + args + ");";
             if (isAbstract) method = AddAbstractExp(method);
             if (isPublic) method = AddPublicExp(method);
             _methods.Add(method);
@@ -125,6 +143,11 @@ namespace OwlToT4templatesTool
         static string AddPublicExp(string str)
         {
             return "public " + str;
+        }
+
+        static string AddProtectedExp(string str)
+        {
+            return "protected " + str;
         }
 
         static string AddPartialExp(string str)
