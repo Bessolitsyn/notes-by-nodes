@@ -59,9 +59,9 @@ namespace OwlToT4templatesTool
 
         public void AddPropertyAndMethodsToEdit(OntologyPropertyStru propertyStru)
         {
-            string getterAndSetter = "{ get; private set; }";
+            string getterAndSetter = "{ get; }";
             bool isPublic = true;
-            bool isAbstract = false;
+            bool isAbstract = true;
             string type = propertyStru.IsFunctional ? propertyStru.Type : $"IEnumerable<{propertyStru.Type}>";
             
             string property = type + " " + propertyStru.Name + " " + getterAndSetter;
@@ -91,10 +91,10 @@ namespace OwlToT4templatesTool
 
         }
 
-        public void AddMethod(string name, string args="", bool isPublic = true, string returnType = "void")
+        public void AddMethod(string name, string args="", bool isPublic = true, bool isAbstract = true, string returnType = "void")
         {   
             string method = returnType + " " + name+"("+args + ");";
-            method = AddAbstractExp(method);
+            if (isAbstract) method = AddAbstractExp(method);
             if (isPublic) method = AddPublicExp(method);
             _methods.Add(method);
 

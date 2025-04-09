@@ -48,7 +48,6 @@ namespace OwlToT4templatesTool
             }
             catch (Exception)
             {
-
                 throw;
             }
 
@@ -74,7 +73,6 @@ namespace OwlToT4templatesTool
                 if (ontoClass.SuperClasses.Any())
                     name = GetOntologyClassName(ontoClass.SuperClasses.First());
                 return name;
-
             }
 
             public static OntologyPropertyStru NewOntologyPropertyStru(OntologyProperty property)
