@@ -9,33 +9,36 @@ namespace OwlToT4templatesTool
 {
     internal class ClassT4template
     {
-        const string BASE_TEMPLATE = "template.tt_";
+#if DEBUG
+        readonly string BASE_TEMPLATE = $"{Directory.GetCurrentDirectory()}\\..\\..\\..\\..\\OwlToT4templatesTool\\template.tt_";
+#else
+        readonly string BASE_TEMPLATE = "template.tt_";
+#endif
         string[] _templateContent;
         string _className = "";
         string _namespace = "";
         List<string> _properties = [];
         List<string> _methods = [];
 
-        public ClassT4template()
+        public ClassT4template(string nspace) 
         {
             _templateContent = System.IO.File.ReadAllLines(BASE_TEMPLATE);
+            _namespace = nspace;
+            SetNamespace();
+            
         }
 
-        public void SetNamespace(string nspace)
+        void SetNamespace()
         {
-            _namespace = nspace;
             for (int i = 0; i < _templateContent.Length; i++)
             {
-                _templateContent[i] = _templateContent[i].Replace("@@namespaceDef", nspace);
+                _templateContent[i] = _templateContent[i].Replace("@@namespaceDef", _namespace);
             }
-
         }
         public void SetClassName(string className, string parentClassName = "", bool isAbstract = true, bool isPartial = true)
         {
-
             _className = className;
-
-            var classDefenition = "class " + className;
+            var classDefenition = "class " + _className;
             if (!String.IsNullOrEmpty(parentClassName))
                 classDefenition = classDefenition + " : " + parentClassName;
             if (isPartial) classDefenition = AddPartialExp(classDefenition);

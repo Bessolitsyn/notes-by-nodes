@@ -38,8 +38,7 @@ namespace OwlToT4templatesTool
         {
             try
             {
-                ClassT4template template = new();
-                template.SetNamespace(nameSpace);
+                ClassT4template template = new(nameSpace);
                 template.SetClassName(ontologyClassStru.Name, ontologyClassStru.ParentClassName);
                 ontologyClassStru.OwlDataProperties.ForEach(prop => template.AddProperty(prop.Name, prop.Type));
                 ontologyClassStru.OwlObjectProperties.ForEach(prop => template.AddPropertyAndMethodsToEdit(prop));
