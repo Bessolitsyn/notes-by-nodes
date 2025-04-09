@@ -9,20 +9,9 @@ namespace TestProject
             string ontoDirectory1 = "c:\\Users\\tocha\\source\\notes-by-nodes\\notes-by-nodes\\Entities\\notes-by-nodes.rdf";
             string templatesDirectory1 = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\Ontology";
             string nameSpace1 = "OWLtoT4templates.Ontology";
-            try
-            {
-                OntologyToT4toolExecuter.ReadOntologyForOneClass("http://notes-by-nodes/ontologies/2025/Box", ontoDirectory1, templatesDirectory1, nameSpace1);
-            }
-            catch (Exception)
-            {
-                Assert.True(false);
-            }
-            finally
-            {
-                OntologyToT4toolExecuter.DeleteFiles(templatesDirectory1);
-            }
-
+            OntologyToT4toolExecuter.ReadOntologyForOneClass("http://notes-by-nodes/ontologies/2025/Node", ontoDirectory1, templatesDirectory1, nameSpace1);
             Assert.True(true);
+            //OntologyToT4toolExecuter.DeleteFiles(templatesDirectory1);           
         }
     }
 }
