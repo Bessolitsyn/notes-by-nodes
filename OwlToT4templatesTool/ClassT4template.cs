@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static OwlToT4templatesTool.OntologyToT4tool;
 
 namespace OwlToT4templatesTool
@@ -11,19 +12,27 @@ namespace OwlToT4templatesTool
     {
 #if DEBUG
         readonly string BASE_TEMPLATE = $"{Directory.GetCurrentDirectory()}\\..\\..\\..\\..\\OwlToT4templatesTool\\template.tt_";
+        readonly string BASE_TEMPLATE2 = $"{Directory.GetCurrentDirectory()}\\..\\..\\..\\..\\OwlToT4templatesTool\\template_r.tt_";
 #else
         readonly string BASE_TEMPLATE = "template.tt_";
+        readonly string BASE_TEMPLATE2 = "template_r.tt_";
 #endif
         string[] _templateContent;
+        string[] _template2Content;
         string _className = "";
-        string _namespace = "";
+        string _parentClassName = "";
+        string _classnamespace = "";
+        string _recordName = "";
+        string _recordnamespace = "";
+        string _recordnamePostfix= "Dataset";
         List<string> _properties = [];
+        //List<string> _argumentsForRecords= [];
         List<string> _methods = [];
 
         public ClassT4template(string nspace)
         {
             _templateContent = System.IO.File.ReadAllLines(BASE_TEMPLATE);
-            _namespace = nspace;
+            _classnamespace = nspace;
             SetNamespace();
 
         }
@@ -32,15 +41,16 @@ namespace OwlToT4templatesTool
         {
             for (int i = 0; i < _templateContent.Length; i++)
             {
-                _templateContent[i] = _templateContent[i].Replace("@@namespaceDef", _namespace);
+                _templateContent[i] = _templateContent[i].Replace("@@namespaceDef", _classnamespace);
             }
         }
         public void SetClassName(string className, string parentClassName = "", bool isAbstract = true, bool isPartial = true)
         {
             _className = className;
             var classDefenition = "class " + _className;
-            if (!String.IsNullOrEmpty(parentClassName))
-                classDefenition = classDefenition + " : " + parentClassName;
+            _parentClassName = parentClassName;
+            if (!String.IsNullOrEmpty(_parentClassName))
+                classDefenition = classDefenition + " : " + _parentClassName;
             if (isPartial) classDefenition = AddPartialExp(classDefenition);
             if (isAbstract) classDefenition = AddAbstractExp(classDefenition);
             classDefenition = AddPublicExp(classDefenition);
@@ -58,11 +68,12 @@ namespace OwlToT4templatesTool
             if (isAbstract) property = AddAbstractExp(property);
             if (isPublic) property = AddPublicExp(property);
             _properties.Add(property);
+            RecodArguments.AddRecordArgumentToDicionary(_className,type + " " + name);
         }
 
         public void AddPropertyAndMethodsToEdit(OntologyPropertyStru propertyStru, bool addProtectedFieldForProperty = true)
         {
-            
+
             AddPublicAbstractProperty(propertyStru);
             if (addProtectedFieldForProperty)
             {
@@ -85,6 +96,7 @@ namespace OwlToT4templatesTool
             abstract_property = AddAbstractExp(abstract_property);
             abstract_property = AddPublicExp(abstract_property);
             _properties.Add(abstract_property);
+            RecodArguments.AddRecordArgumentToDicionary(_className, (propertyStru.IsFunctional ? "string " : $"string[] ") + propertyStru.Name);
         }
 
         void AddProtectedFieldForProperty(OntologyPropertyStru propertyStru)
@@ -92,7 +104,7 @@ namespace OwlToT4templatesTool
             string type = propertyStru.IsFunctional ? propertyStru.Type : $"List<{propertyStru.Type}>";
             string name = propertyStru.Name.Replace("Is", "is").Replace("Has", "has");
             string init = !propertyStru.IsFunctional ? " = []" : "";
-            string protected_field = type + " " + name + init +";";
+            string protected_field = type + " " + name + init + ";";
             protected_field = AddProtectedExp(protected_field);
             _properties.Add(protected_field);
 
@@ -137,6 +149,62 @@ namespace OwlToT4templatesTool
             }
         }
 
+        public void SaveRecordTemplateFiles(string path = "", bool replaceExistedFiles = false)
+        {
+            string pathTempl = path + $"\\{_recordName}.tt";
+            string pathArg = path + $"\\{_recordName}.arg";
+            List<string> args = [];            
+            
+            if (!string.IsNullOrEmpty(_parentClassName))
+                args.AddRange(RecodArguments.GetRecordArguments(_parentClassName).Select(a=>a+","));
+            
+            args.AddRange(RecodArguments.GetRecordArguments(_className).Select(a => a + ","));
+            args[args.Count - 1] = args[args.Count - 1].Replace(",", "");
+
+            if (!File.Exists(pathArg) || (File.Exists(pathArg) && replaceExistedFiles))
+            {
+                System.IO.File.WriteAllLines(pathTempl, _template2Content);
+                System.IO.File.WriteAllLines(pathArg, args);
+            }
+        }
+
+        public void CreateRecordTemplate(string namespase, bool isAbstract = false, bool isPartial = true)
+        {
+            _recordnamespace = namespase.Trim();
+            _template2Content = System.IO.File.ReadAllLines(BASE_TEMPLATE2);
+            SetRecordNamespace();
+            SetRecordName(_className, _parentClassName, isAbstract, isPartial);
+
+
+            void SetRecordNamespace()
+            {
+                for (int i = 0; i < _template2Content.Length; i++)
+                {
+                    _template2Content[i] = _template2Content[i].Replace("@@namespaceDef", _classnamespace);
+                }
+            }
+
+            void SetRecordName(string recordName, string parentRecordName = "", bool isAbstract = false, bool isPartial = true)
+            {
+                
+                _recordName = recordName + _recordnamePostfix;
+                var classDefinition = "record " + _recordName;
+                var parentDefinition = "";
+                if (!String.IsNullOrEmpty(parentRecordName))
+                    parentDefinition = " : " + RecodArguments.GetBaseRecordConstructor(_parentClassName, _recordnamePostfix);
+                if (isPartial) classDefinition = AddPartialExp(classDefinition);
+                if (isAbstract) classDefinition = AddAbstractExp(classDefinition);
+                classDefinition = AddPublicExp(classDefinition);
+
+                for (int i = 0; i < _template2Content.Length; i++)
+                {
+                    _template2Content[i] = _template2Content[i].Replace("@@classDef", classDefinition);
+                    _template2Content[i] = _template2Content[i].Replace("@@className", _recordName);
+                    _template2Content[i] = _template2Content[i].Replace("@@parentclassName", parentDefinition);
+                }
+            }
+        }
+
         static string AddAbstractExp(string str)
         {
             return "abstract " + str;
@@ -156,5 +224,7 @@ namespace OwlToT4templatesTool
         {
             return "partial " + str;
         }
+
+
     }
 }

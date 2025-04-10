@@ -11,30 +11,40 @@ namespace OwlToT4templatesTool
 {
     internal class OntologyToT4tool
     {
-        public static void CreateAllT4Templates(string ontoDirectory, string templatesDirectory, string nameSpace, bool replaceExistedFiles = false)
+        
+        public static void CreateAllT4Templates(string ontoDirectory, bool addRecord = false, bool replaceExistedFiles = false)
+        {
+            RecodArguments.Clean();
+            OntologyGraph onto = new();
+            FileLoader.Load(onto, ontoDirectory);
+            CreateT4Templates(onto.AllClasses, addRecord, replaceExistedFiles);            
+        }
+        public static void CreateClassT4Templates(string ontoClass, string ontoDirectory, bool addRecord = false, bool replaceExistedFiles = false)
         {
             OntologyGraph onto = new();
             FileLoader.Load(onto, ontoDirectory);
+            CreateT4Templates(onto.AllClasses.Where(owlc => owlc.ToString() == ontoClass), addRecord, replaceExistedFiles);
 
-            foreach (var owlClass in onto.AllClasses)
-            {
-                var ontoClassStru = OntologyStructuresFactory.NewOntologyClassStru(owlClass);
-                CreateT4template(nameSpace, ontoClassStru, templatesDirectory, replaceExistedFiles);
-            }
+
         }
-        public static void CreateClassT4Templates(string ontoClass, string ontoDirectory, string templatesDirectory, string nameSpace, bool replaceExistedFiles = false)
+
+        static void CreateT4Templates(IEnumerable<OntologyClass> clasess, bool addRecord = false, bool replaceExistedFiles = false)
         {
-            OntologyGraph onto = new();
-            FileLoader.Load(onto, ontoDirectory);
-
-            foreach (var owlClass in onto.AllClasses.Where(owlc=> owlc.ToString() == ontoClass))
+            List<ClassT4template> templates = [];
+            foreach (var owlClass in clasess)
             {
                 var ontoClassStru = OntologyStructuresFactory.NewOntologyClassStru(owlClass);
-                CreateT4template(nameSpace, ontoClassStru, templatesDirectory, replaceExistedFiles);
+                templates.Add(CreateClassT4template(OntologyToT4toolExecuter.NameSpace, ontoClassStru, OntologyToT4toolExecuter.TemplatesDirectory, replaceExistedFiles));
+                
             }
+            if (addRecord)
+                foreach (var tmpl in templates)
+                {
+                    CreateRecordT4template(tmpl, OntologyToT4toolExecuter.NameSpaceForRecords, OntologyToT4toolExecuter.TemplatesDirectoryForRecords, replaceExistedFiles);
+                }
         }
 
-        static ClassT4template CreateT4template(string nameSpace, OntologyClassStru ontologyClassStru, string sourceDirectory, bool replaceExistedFiles = false)
+        static ClassT4template CreateClassT4template(string nameSpace, OntologyClassStru ontologyClassStru, string sourceDirectory, bool replaceExistedFiles = false)
         {
             try
             {
@@ -49,10 +59,22 @@ namespace OwlToT4templatesTool
             {
                 throw;
             }
-
-
-
         }
+
+        static ClassT4template CreateRecordT4template(ClassT4template template, string nameSpace, string sourceDirectory, bool replaceExistedFiles = false)
+        {
+            try
+            {
+                template.CreateRecordTemplate(nameSpace);                
+                template.SaveRecordTemplateFiles(sourceDirectory, replaceExistedFiles);
+                return template;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         static class OntologyStructuresFactory
         {
             private static string classPostfix = "";
