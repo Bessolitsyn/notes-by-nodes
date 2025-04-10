@@ -1,3 +1,0 @@
-public IEnumerable<ContentOnto> HasContent { get; private set; }
-public IEnumerable<NoteOnto> HasReference { get; private set; }
-public IEnumerable<NoteOnto> IsRefernced { get; private set; }

@@ -8,73 +8,121 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\Ontology\**" />
-    <EmbeddedResource Remove="Entities\Ontology\**" />
-    <None Remove="Entities\Ontology\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Entities\Ontology\BoxOnto.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>BoxOnto.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Ontology\ContentOnto.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ContentOnto.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Ontology\FileOnto.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>FileOnto.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Ontology\NodeOnto.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>NodeOnto.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Ontology\NoteOnto.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>NoteOnto.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Ontology\UserOnto.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>UserOnto.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Entities\Ontology\BoxOnto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BoxOnto.cs</LastGenOutput>
-    </None>
-    <None Include="Entities\Ontology\ContentOnto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ContentOnto.cs</LastGenOutput>
-    </None>
-    <None Include="Entities\Ontology\FileOnto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>FileOnto.cs</LastGenOutput>
-    </None>
-    <None Include="Entities\Ontology\NodeOnto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>NodeOnto.cs</LastGenOutput>
-    </None>
-    <None Include="Entities\Ontology\NoteOnto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>NoteOnto.cs</LastGenOutput>
-    </None>
-    <None Include="Entities\Ontology\UserOnto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>UserOnto.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Entities\Box.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Box.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\Content.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Content.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\File.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>File.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\Node.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Node.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\Note.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Note.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\User.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>User.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Storage\Dataset\BoxDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BoxDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Storage\Dataset\ContentDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContentDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Storage\Dataset\FileDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FileDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Storage\Dataset\NodeDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NodeDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Storage\Dataset\NoteDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NoteDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Storage\Dataset\UserDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UserDataset.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Entities\Box.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Box.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\Content.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Content.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\File.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>File.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\Node.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Node.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\Note.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Note.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\User.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>User.cs</LastGenOutput>
+    </None>
+    <None Update="Storage\Dataset\BoxDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BoxDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Storage\Dataset\ContentDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContentDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Storage\Dataset\FileDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FileDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Storage\Dataset\NodeDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NodeDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Storage\Dataset\NoteDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NoteDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Storage\Dataset\UserDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UserDataset.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>
