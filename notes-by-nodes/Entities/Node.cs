@@ -14,11 +14,11 @@ namespace notes_by_nodes.Entities
 		
 		public string Description { get; set; }
 		
-		public string Name { get; set; }
+		public virtual string Name { get; set; }
 		
 		public string Text { get; set; }
 		
-		//public string Type { get; set; }
+		public string Type { get; set; }
 		
 		public string Uid { get; set; }
 		

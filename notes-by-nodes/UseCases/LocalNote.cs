@@ -1,16 +1,26 @@
 ﻿using notes_by_nodes.Entities;
 using notes_by_nodes.Factories;
+using notes_by_nodes.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace notes_by_nodes.Entities
+namespace notes_by_nodes.UseCases
 {
-    public class LocalNote : Note
+    internal class LocalNote : Note
     {
-        public string Type { get; init; }
+        private INoteStorage Storage { get; init; }
+                
+        public LocalNote(INoteStorage storage, Node parentNode):base(parentNode)
+        {
+            Storage = storage;
+            Type = "LocalNote";
+
+            
+
+        }
 
         public override IEnumerable<Content> HasContent => throw new NotImplementedException();
 
@@ -18,7 +28,7 @@ namespace notes_by_nodes.Entities
 
         private IEnumerable<Note> getReference()
         {
-            hasReference.AddRange(InsideInteractor.GetReferencedNotes(this));
+            hasReference.AddRange(Storage.GetReferencedNotes(this));
             return hasReference;
         }
 
@@ -27,7 +37,7 @@ namespace notes_by_nodes.Entities
 
         private IEnumerable<Note> getReferenced()
         {
-            isRefernced.AddRange(InsideInteractor.GetNotesHasReferenceToIt(this));
+            isRefernced.AddRange(Storage.GetNotesHasReferenceToIt(this));
             return isRefernced;
         }
 
@@ -35,7 +45,7 @@ namespace notes_by_nodes.Entities
 
         private IEnumerable<Node> getChildNodes()
         {
-            hasChildNodes.AddRange(InsideInteractor.GetChildNodes(this));
+            hasChildNodes.AddRange(Storage.GetChildNodes(this));
             return hasChildNodes;
         }
 
@@ -94,13 +104,6 @@ namespace notes_by_nodes.Entities
         {
             throw new NotImplementedException();
         }
-        protected INoteInsideInteractor InsideInteractor { get; init; }
-
-        public LocalNote(INoteInsideInteractor insideInteractor)
-        {
-            InsideInteractor = insideInteractor;
-            Type = "LocalNote";
-
-        }
+        
     }
 }
