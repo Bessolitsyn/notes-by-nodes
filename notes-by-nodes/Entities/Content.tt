@@ -6,7 +6,8 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <# string namespaceDef = "notes_by_nodes.Entities";
-	string classDef = "public abstract partial class Content";
+	string classDef = "public abstract partial class Content : IContent";
+	string interfaceDef = "public interface IContent";
 	var properties = File.ReadLines(this.Host.ResolvePath("Content.prp"));	
 	var methods = File.ReadLines(this.Host.ResolvePath("Content.mth"));
 #>
@@ -24,7 +25,10 @@ namespace <#=namespaceDef#>
 	<# foreach (string property in properties)  { 	#>	
 		<#= property #>
 	<# } #>
+	}
 
+	<#=interfaceDef#>
+	{
 	<# foreach (string method in methods)  { 	#>	
 		<#= method #>
 	<# } #>

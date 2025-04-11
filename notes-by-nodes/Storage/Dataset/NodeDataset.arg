@@ -3,7 +3,7 @@ string Description,
 string Name,
 string Text,
 string Type,
-string Uid,
+int Uid,
 string[] HasChildNodes,
 string HasOwner,
 string HasParentNode

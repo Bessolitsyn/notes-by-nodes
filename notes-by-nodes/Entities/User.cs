@@ -1,4 +1,4 @@
-		
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +7,20 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Entities
 {
-	public abstract partial class User : Node
+	public abstract partial class User : Node, IUser
 	{	
 		
 		public abstract IEnumerable<Node> IsOwnerOf { get; }
 		
 		protected List<Node> isOwnerOf = [];
-	
+		}
+
+	public interface IUser
+	{
 		
-		public abstract void AddIntoOwner(Node item);
+		void AddIntoOwner(Node item);
 		
-		public abstract void RemoveFromOwner(Node item);
+		void RemoveFromOwner(Node item);
 	
 	}
 }

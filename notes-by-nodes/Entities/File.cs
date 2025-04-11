@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Entities
 {
-	public abstract partial class File : Content
+	public abstract partial class File : Content, IFile
 	{	
-	
+		}
+
+	public interface IFile
+	{
 	
 	}
 }

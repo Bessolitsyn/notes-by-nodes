@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Entities
 {
-	public abstract partial class Note : Node
+	public abstract partial class Note : Node, INote
 	{	
 		
 		public abstract IEnumerable<Content> HasContent { get; }
@@ -21,19 +21,22 @@ namespace notes_by_nodes.Entities
 		public abstract IEnumerable<Note> IsRefernced { get; }
 		
 		protected List<Note> isRefernced = [];
-	
+		}
+
+	public interface INote
+	{
 		
-		public abstract void AddIntoContent(Content item);
+		void AddIntoContent(Content item);
 		
-		public abstract void RemoveFromContent(Content item);
+		void RemoveFromContent(Content item);
 		
-		public abstract void AddIntoReference(Note item);
+		void AddIntoReference(Note item);
 		
-		public abstract void RemoveFromReference(Note item);
+		void RemoveFromReference(Note item);
 		
-		public abstract void AddIntoRefernced(Note item);
+		void AddIntoRefernced(Note item);
 		
-		public abstract void RemoveFromRefernced(Note item);
+		void RemoveFromRefernced(Note item);
 	
 	}
 }

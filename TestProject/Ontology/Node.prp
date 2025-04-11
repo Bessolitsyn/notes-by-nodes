@@ -1,0 +1,12 @@
+public DateTime CreationDate { get; init; }
+public string Description { get; init; }
+public string Name { get; init; }
+public string Text { get; init; }
+public string Type { get; init; }
+public string Uid { get; init; }
+public abstract IEnumerable<Node> HasChildNodes { get; }
+protected List<Node> hasChildNodes = [];
+public abstract User HasOwner { get; }
+protected User hasOwner;
+public abstract Node HasParentNode { get; }
+protected Node hasParentNode;

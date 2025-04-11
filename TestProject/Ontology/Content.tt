@@ -1,0 +1,37 @@
+<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# string namespaceDef = "OWLtoT4templates.TOntology";
+	string classDef = "public abstract partial class Content : IContent";
+	string interfaceDef = "public interface IContent";
+	var properties = File.ReadLines(this.Host.ResolvePath("Content.prp"));	
+	var methods = File.ReadLines(this.Host.ResolvePath("Content.mth"));
+#>
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace <#=namespaceDef#>
+{
+	<#=classDef#>
+	{	
+	<# foreach (string property in properties)  { 	#>	
+		<#= property #>
+	<# } #>
+	}
+
+	<#=interfaceDef#>
+	{
+	<# foreach (string method in methods)  { 	#>	
+		<#= method #>
+	<# } #>
+
+	}
+}

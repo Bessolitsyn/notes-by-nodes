@@ -3,7 +3,7 @@ public string Description { get; set; }
 public string Name { get; set; }
 public string Text { get; set; }
 public string Type { get; set; }
-public string Uid { get; set; }
+public int Uid { get; set; }
 public abstract IEnumerable<Node> HasChildNodes { get; }
 protected List<Node> hasChildNodes = [];
 public abstract User HasOwner { get; }

@@ -19,7 +19,7 @@ namespace notes_by_nodes.Entities
 		
 		string Type,
 		
-		string Uid,
+		int Uid,
 		
 		string[] HasChildNodes,
 		

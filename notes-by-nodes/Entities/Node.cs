@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Entities
 {
-	public abstract partial class Node
+	public abstract partial class Node : INode
 	{	
 		
 		public DateTime CreationDate { get; set; }
 		
 		public string Description { get; set; }
 		
-		public virtual string Name { get; set; }
+		public string Name { get; set; }
 		
 		public string Text { get; set; }
 		
 		public string Type { get; set; }
 		
-		public string Uid { get; set; }
+		public int Uid { get; set; }
 		
 		public abstract IEnumerable<Node> HasChildNodes { get; }
 		
@@ -33,15 +33,18 @@ namespace notes_by_nodes.Entities
 		public abstract Node HasParentNode { get; }
 		
 		protected Node hasParentNode;
-	
+		}
+
+	public interface INode
+	{
 		
-		public abstract void AddIntoChildNodes(Node item);
+		void AddIntoChildNodes(Node item);
 		
-		public abstract void RemoveFromChildNodes(Node item);
+		void RemoveFromChildNodes(Node item);
 		
-		public abstract void SetOwner(User item);
+		void SetOwner(User item);
 		
-		public abstract void SetParentNode(Node item);
+		void SetParentNode(Node item);
 	
 	}
 }

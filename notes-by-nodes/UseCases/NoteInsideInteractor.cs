@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.UseCases
 {
-    internal class NoteInsideInteractor: NodeInsideInteractor, INoteInsideInteractor
+    internal class NoteInsideInteractor: NodeInsideInteractor
     {
         private INoteStorage Storage { get; init; }
         public NoteInsideInteractor(INoteStorage storage):base(storage) 
@@ -27,7 +27,7 @@ namespace notes_by_nodes.UseCases
         }
     }
 
-    internal abstract class NodeInsideInteractor : INodeInsideInteractor
+    internal abstract class NodeInsideInteractor
     {
         private INodeStorage Storage { get; init; }
         public NodeInsideInteractor(INodeStorage storage)

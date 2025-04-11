@@ -7,14 +7,11 @@ using notes_by_nodes.Entities;
 
 namespace notes_by_nodes.Storage
 {
-    internal interface INodeStorage
+    internal class NodeStorageAdapter : INodeStorage
     {
-        IEnumerable<Node> GetChildNodes(Node parentNode);
-    }
-
-    internal interface INoteStorage : INodeStorage
-    {
-        IEnumerable<Note> GetNotesHasReferenceToIt(Note note);
-        IEnumerable<Note> GetReferencedNotes(Note note);
+        public IEnumerable<Node> GetChildNodes(Node parentNode)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

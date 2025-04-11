@@ -44,7 +44,6 @@ namespace TestProject
             OntologyToT4toolExecuter.TemplatesDirectoryForRecords = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\Ontology";
             OntologyToT4toolExecuter.NameSpace = "OWLtoT4templates.TOntology";
             OntologyToT4toolExecuter.NameSpaceForRecords = "OWLtoT4templates.TRecords";
-            //string ontoDirectory1 = "c:\\Users\\tocha\\source\\notes-by-nodes\\notes-by-nodes\\Ontology\\notes-by-nodes.rdf";
             OntologyToT4toolExecuter.ReadOntology(ontoDirectory1, true);
             Assert.True(true);
 

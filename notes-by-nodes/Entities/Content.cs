@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Entities
 {
-	public abstract partial class Content
+	public abstract partial class Content : IContent
 	{	
 		
 		public DateTime CreationDate { get; set; }
@@ -18,8 +18,11 @@ namespace notes_by_nodes.Entities
 		
 		public string Type { get; set; }
 		
-		public string Uid { get; set; }
-	
+		public int Uid { get; set; }
+		}
+
+	public interface IContent
+	{
 	
 	}
 }

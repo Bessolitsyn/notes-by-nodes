@@ -47,17 +47,27 @@ namespace OwlToT4templatesTool
         public void SetClassName(string className, string parentClassName = "", bool isAbstract = true, bool isPartial = true)
         {
             _className = className;
-            var classDefenition = "class " + _className;
             _parentClassName = parentClassName;
+            var classDefenition = $"class { _className}";
             if (!String.IsNullOrEmpty(_parentClassName))
-                classDefenition = classDefenition + " : " + _parentClassName;
+            { 
+                classDefenition +=" : " + _parentClassName;
+                classDefenition += $", I{_className}";
+            }
+            else
+                classDefenition += $" : I{_className}";
+
+
+            var interfaceDefenition = $"interface I{_className}";
             if (isPartial) classDefenition = AddPartialExp(classDefenition);
             if (isAbstract) classDefenition = AddAbstractExp(classDefenition);
             classDefenition = AddPublicExp(classDefenition);
+            interfaceDefenition = AddPublicExp(interfaceDefenition);
 
             for (int i = 0; i < _templateContent.Length; i++)
             {
                 _templateContent[i] = _templateContent[i].Replace("@@classDef", classDefenition);
+                _templateContent[i] = _templateContent[i].Replace("@@interfaceDef", interfaceDefenition);
                 _templateContent[i] = _templateContent[i].Replace("@@className", _className);
             }
         }
@@ -109,21 +119,21 @@ namespace OwlToT4templatesTool
             _properties.Add(protected_field);
 
         }
-        void AddMethodsForNotFunctionalDataProperty(OntologyPropertyStru propertyStru)
+        void AddMethodsForNotFunctionalDataProperty(OntologyPropertyStru propertyStru, bool isPublic = false, bool isAbstract = false)
         {
             string noun = propertyStru.Name.Replace("Is", "").Replace("Of", "").Replace("Has", "");
             string methodName = "AddInto" + noun;
             string args = propertyStru.Type + " item";
-            AddMethod(methodName, args);
+            AddMethod(methodName, args, isPublic, isAbstract);
             methodName = "RemoveFrom" + noun;
-            AddMethod(methodName, args);
+            AddMethod(methodName, args, isPublic, isAbstract);
         }
-        void AddMethodsForFunctionalDataProperty(OntologyPropertyStru propertyStru)
+        void AddMethodsForFunctionalDataProperty(OntologyPropertyStru propertyStru, bool isPublic = false, bool isAbstract = false)
         {
             string noun = propertyStru.Name.Replace("Is", "").Replace("Of", "").Replace("Has", "");
             string methodName = "Set" + noun;
             string args = propertyStru.Type + " item";
-            AddMethod(methodName, args);
+            AddMethod(methodName, args, isPublic, isAbstract);
         }
 
         public void AddMethod(string name, string args = "", bool isPublic = true, bool isAbstract = true, string returnType = "void")

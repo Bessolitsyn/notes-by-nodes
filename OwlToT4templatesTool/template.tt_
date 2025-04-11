@@ -7,6 +7,7 @@
 <#@ output extension=".cs" #>
 <# string namespaceDef = "@@namespaceDef";
 	string classDef = "@@classDef";
+	string interfaceDef = "@@interfaceDef";
 	var properties = File.ReadLines(this.Host.ResolvePath("@@className.prp"));	
 	var methods = File.ReadLines(this.Host.ResolvePath("@@className.mth"));
 #>
@@ -24,7 +25,10 @@ namespace <#=namespaceDef#>
 	<# foreach (string property in properties)  { 	#>	
 		<#= property #>
 	<# } #>
+	}
 
+	<#=interfaceDef#>
+	{
 	<# foreach (string method in methods)  { 	#>	
 		<#= method #>
 	<# } #>
