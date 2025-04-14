@@ -1,10 +1,13 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using notes_by_nodes.Entities;
 
+[assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.UseCases.AppRules
 {
     internal class LocalUser : User
@@ -15,13 +18,15 @@ namespace notes_by_nodes.UseCases.AppRules
         { 
             Storage = storage;
             Type = "LocalUser";
+            hasOwner = this;
+            hasParentNode = this;
 
         }
         public override IEnumerable<Node> HasChildNodes => GetChildNodes();
 
-        public override User HasOwner => this;
+        public override User HasOwner => hasOwner;
 
-        public override Node HasParentNode => this;
+        public override Node HasParentNode => hasParentNode;
 
         public override IEnumerable<Node> IsOwnerOf => isOwnerOf;
 

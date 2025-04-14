@@ -11,7 +11,7 @@ namespace notes_by_nodes.Entities
         public Node(Node parentNode):this()
         {
             hasParentNode = parentNode;
-            hasOwner = parentNode.hasOwner;
+            hasOwner = parentNode.HasOwner;
             parentNode.AddIntoChildNodes(this);
             hasOwner.AddIntoOwner(this);
         }

@@ -21,4 +21,11 @@ namespace notes_by_nodes.Entities
     {
 
     }
+
+    public interface INodeStorageFactory
+    {
+        IBoxStorage GetBoxStorage();
+        IUserStorage GetUserStorage();
+        INoteStorage GetNoteStorage();
+    }
 }

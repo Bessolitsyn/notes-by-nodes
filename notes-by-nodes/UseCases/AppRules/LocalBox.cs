@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using notes_by_nodes.Entities;
 
+[assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.UseCases.AppRules
 {
     internal class LocalBox : Box
     {
         public IBoxStorage Storage { get; init; }
         
-        public LocalBox(User owner, IBoxStorage storage) : base(owner)
+        public LocalBox(User owner, IBoxStorage storage, string name="", string desc="") : base(owner)
         { 
             Storage = storage;
             Type = "LocalBox";
+            Name = name;
+            Description = desc;
             hasChildNodes.AddRange(GetChildNodes());
 
         }

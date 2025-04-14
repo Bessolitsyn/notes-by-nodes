@@ -2,22 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
- namespace notes_by_nodes.UseCases.AppRules
+[assembly: InternalsVisibleTo("TestProject")]
+namespace notes_by_nodes.UseCases.AppRules
 {    
     internal class LocalNote : Note
     {
         private INoteStorage Storage { get; init; }
                 
-        public LocalNote(LocalNote parentNode):base(parentNode)
+        public LocalNote(LocalNote parentNode, string name = "", string desc = "") :base(parentNode)
         {
             Storage = parentNode.Storage;
             Type = "LocalNote";
+            Name = name;
+            Description = desc;
 
         }
-        public LocalNote(LocalBox rootNode) : base(rootNode)
+        public LocalNote(LocalBox rootNode, string name = "", string desc = "") : base(rootNode)
         {
             Storage = rootNode.Storage;
             Type = "LocalNote";
