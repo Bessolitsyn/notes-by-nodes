@@ -60,7 +60,7 @@ namespace notes_by_nodes.Entities
         protected IEnumerable<Node> GetChildNodes()
         {
             uploadNodesChildNodesIfItEmpty();
-            return getChildNodes();
+            return hasChildNodes;
         }
         private void uploadNodesChildNodesIfItEmpty()
         {
