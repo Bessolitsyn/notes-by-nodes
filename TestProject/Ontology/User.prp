@@ -1,2 +1,0 @@
-public abstract IEnumerable<Node> IsOwnerOf { get; }
-protected List<Node> isOwnerOf = [];

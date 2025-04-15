@@ -52,6 +52,7 @@
     <ProjectReference Include="..\EasyFileObjectStorage\EasyObjectFileStorage.csproj" />
     <ProjectReference Include="..\notes-by-nodes\notes-by-nodes.csproj" />
     <ProjectReference Include="..\OwlToT4templatesTool\OwlToT4templatesTool.csproj" />
+    <ProjectReference Include="..\StorageAdapters\StorageAdapters.csproj" />
   </ItemGroup>
 
   <ItemGroup>

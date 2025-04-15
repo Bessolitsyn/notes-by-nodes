@@ -1,4 +1,5 @@
 ﻿using notes_by_nodes.Entities;
+using notes_by_nodes.Storage;
 using notes_by_nodes.UseCases.AppRules;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,11 @@ namespace TestProject
         public static void TestUserBoxNodes()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage());
-            LocalBox box = new(user, storageFactory.GetBoxStorage(), "Name of the test box", "Description of the test box");
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
+            LocalBox box = new(user, storageFactory.GetBoxStorage(""), "Name of the test box", "Description of the test box");
             
             bool boxWasAddedToUser = user.HasChildNodes.Count()==1 && box.HasParentNode==user;
-            box.RemoveFromChildNodes(box);
+            user.RemoveFromChildNodes(box);
             bool boxWasDeletedFromUser = user.HasChildNodes.Count()==0;
             Assert.True(boxWasDeletedFromUser && boxWasDeletedFromUser);
 
@@ -29,7 +30,7 @@ namespace TestProject
         public static void TestUserConstructor()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage());
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
             Assert.True(true);
 
         }
@@ -37,8 +38,8 @@ namespace TestProject
         public static void TestBoxConstructor()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage());
-            LocalBox box = new(user, storageFactory.GetBoxStorage(), "Name of the test box", "Description of the test box");
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
+            LocalBox box = new(user, storageFactory.GetBoxStorage(""), "Name of the test box", "Description of the test box");
             Assert.True(true);
 
         }
@@ -47,8 +48,8 @@ namespace TestProject
         public static void TestLocalNoteConstructor()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage());
-            LocalBox box = new(user, storageFactory.GetBoxStorage(), "Name of the test box", "Description of the test box");
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
+            LocalBox box = new(user, storageFactory.GetBoxStorage(""), "Name of the test box", "Description of the test box");
             LocalNote note = new LocalNote(box, "Untitled 1", "Description of UntitledNote1");
             LocalNote note2 = new LocalNote(note, "Untitled 2", "Description of UntitledNote2");
             Assert.True(box.HasChildNodes.Contains(note) &&
@@ -61,42 +62,47 @@ namespace TestProject
 
     class NodeStorageTestFactory : INodeStorageFactory
     {
-        public NodeStorageTestFactory() 
+        public IBoxStorage GetBoxStorage(string storageFolder)
         {
-            //folder.Create();
-
-        }
-        public IBoxStorage GetBoxStorage()
-        {
-            return new TestStorage();
+            return new FakeStorage();
         }
 
-        public INoteStorage GetNoteStorage()
+        public IUserStorage GetUserStorage(string storageFolder)
+        {
+            return new FakeStorage();
+        }
+    }
+
+    class FakeStorage : IUserStorage, IBoxStorage
+    {
+        LocalBox IBoxStorage.GetBox(int Uid)
         {
             throw new NotImplementedException();
         }
 
-        public IUserStorage GetUserStorage()
-        {
-            return new TestStorage();
-        }
-    }
-
-    class TestStorage : IUserStorage, IBoxStorage
-    {
-        public IEnumerable<Node> GetChildNodes(Node parentNode)
+        IEnumerable<LocalUser> IUserStorage.GetBoxes(LocalBox parentNode)
         {
             return [];
         }
 
-        public IEnumerable<Note> GetNotesHasReferenceToIt(Note note)
+        IEnumerable<Node> INodeStorage.GetChildNodes(Node parentNode)
         {
             return [];
         }
 
-        public IEnumerable<Note> GetReferencedNotes(Note note)
+        IEnumerable<Note> INoteStorage.GetNotesHasReferenceToIt(Note note)
         {
             return [];
+        }
+
+        IEnumerable<Note> INoteStorage.GetReferencedNotes(Note note)
+        {
+            return [];
+        }
+
+        LocalUser IUserStorage.GetUser(int Uid)
+        {
+            throw new NotImplementedException();
         }
     }
 
