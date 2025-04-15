@@ -1,0 +1,80 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>notes_by_nodes.StorageAdapters</RootNamespace>
+    <AssemblyName>notes_by_nodes.StorageAdapters</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyFileObjectStorage\EasyObjectFileStorage.csproj" />
+    <ProjectReference Include="..\notes-by-nodes\notes-by-nodes.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dataset\BoxDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BoxDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\ContentDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContentDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\FileDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FileDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\NodeDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NodeDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\NoteDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NoteDataset.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\UserDataset.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UserDataset.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dataset\BoxDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BoxDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\ContentDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContentDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\FileDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FileDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\NodeDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NodeDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\NoteDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NoteDataset.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\UserDataset.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UserDataset.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

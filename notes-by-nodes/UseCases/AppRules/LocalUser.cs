@@ -6,11 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using notes_by_nodes.Entities;
+using notes_by_nodes.Storage;
 
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.UseCases.AppRules
 {
-    internal class LocalUser : User
+    public class LocalUser : User
     {
         public IUserStorage Storage { get; init; }
         

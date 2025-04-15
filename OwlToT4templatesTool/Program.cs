@@ -64,8 +64,8 @@ public static class OntologyToT4toolExecuter
     public static string OntoDirectory { get; set; } = "c:\\Users\\tocha\\source\\notes-by-nodes\\notes-by-nodes\\Ontology\\notes-by-nodes.rdf";
     public static string TemplatesDirectory { get; set; } = $"c:\\Users\\tocha\\source\\notes-by-nodes\\notes-by-nodes\\Entities\\";
     public static string NameSpace { get; set; } = "notes_by_nodes.Entities";
-    public static string TemplatesDirectoryForRecords { get; set; } = $"c:\\Users\\tocha\\source\\notes-by-nodes\\notes-by-nodes\\Storage\\Dataset\\";
-    public static string NameSpaceForRecords { get; set; } = "notes_by_nodes.Storage.Dataset";
+    public static string TemplatesDirectoryForRecords { get; set; } = $"c:\\Users\\tocha\\source\\notes-by-nodes\\StorageAdapters\\Dataset\\";
+    public static string NameSpaceForRecords { get; set; } = "notes_by_nodes.Storage";
     
     public static void DeleteFiles(string templatesDirectory)
     {
@@ -78,16 +78,16 @@ public static class OntologyToT4toolExecuter
         RecodArguments.Clean();
 
     }
-    public static void ReadOntology(string ontoDirectory, bool addRecord = false)
+    public static void ReadOntology(string ontoDirectory, bool addRecord = false, bool replaceExistedFiles = true)
     {
        
-        OntologyToT4tool.CreateAllT4Templates(ontoDirectory, addRecord, true);
+        OntologyToT4tool.CreateAllT4Templates(ontoDirectory, addRecord, replaceExistedFiles);
     }
 
-    public static void ReadOntologyForOneClass(string ontoClass, string ontoDirectory, bool addRecord = false)
+    public static void ReadOntologyForOneClass(string ontoClass, string ontoDirectory, bool addRecord = false, bool replaceExistedFiles = true)
     {
 
-        OntologyToT4tool.CreateClassT4Templates(ontoClass, ontoDirectory, addRecord, true);
+        OntologyToT4tool.CreateClassT4Templates(ontoClass, ontoDirectory, addRecord, replaceExistedFiles);
     }
 }
 

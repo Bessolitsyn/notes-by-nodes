@@ -1,4 +1,5 @@
 ﻿using notes_by_nodes.Entities;
+using notes_by_nodes.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.UseCases.AppRules
-{    
+{
     internal class LocalNote : Note
     {
         private INoteStorage Storage { get; init; }
@@ -54,7 +55,7 @@ namespace notes_by_nodes.UseCases.AppRules
 
         public override Node HasParentNode => hasParentNode;             
 
-        protected override INoteStorage GetStorage()
+        protected override INodeStorage GetStorage()
         {
             return Storage;
         }

@@ -11,9 +11,9 @@ namespace notes_by_nodes.UseCases
     internal class NoteInsideInteractor: NodeInsideInteractor
     {
         private INoteStorage Storage { get; init; }
-        public NoteInsideInteractor(INoteStorage storage):base(storage) 
+        public NoteInsideInteractor(INodeStorage storage):base(storage) 
         {
-            Storage = storage;
+            //Storage = storage;
         }
 
         public IEnumerable<Note> GetNotesHasReferenceToIt(Note note)

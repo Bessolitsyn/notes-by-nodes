@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace notes_by_nodes.UseCases
+namespace notes_by_nodes.UseCases.AppRules
 {
-    internal interface UseCases
+    internal class AppInstance
     {
 
 
