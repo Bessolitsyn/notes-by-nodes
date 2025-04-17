@@ -14,6 +14,8 @@ namespace notes_by_nodes.Entities
             hasParentNode = parentNode;
             hasOwner = parentNode.HasOwner;
             parentNode.AddIntoChildNodes(this);
+#warning TODO
+            // Таким образом список из того чем владеет owner со временем может стать очень большим!
             hasOwner.AddIntoOwner(this);
         }
         public Node()
@@ -71,6 +73,8 @@ namespace notes_by_nodes.Entities
         private IEnumerable<Node> getChildNodes()
         {
             INodeStorage storage = GetStorage();
+            if (storage == null)
+                throw new Exception("Storage wasn't set. Node doesn't have a storage");
             return storage.GetChildNodes(this);
         }
 
@@ -78,6 +82,8 @@ namespace notes_by_nodes.Entities
         {
             return DateTime.Now.GetHashCode();
         }
+
+        
     }
 
 }

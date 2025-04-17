@@ -19,8 +19,9 @@ namespace notes_by_nodes.Storage
     }
     public interface IUserStorage : INodeStorage
     {
+        LocalUser [] GetUsers();
         LocalUser GetUser(int Uid);
-        IEnumerable<LocalUser> GetBoxes(LocalBox parentNode);
+        void SaveUser(LocalUser user);
 
     }
 }

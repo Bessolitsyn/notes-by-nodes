@@ -11,7 +11,8 @@ namespace notes_by_nodes.Storage
     {
         static string[] ErrorMessage { get; } = [
             "Пользователь не найден",
-            "Неизвестная ошибка"
+            "Неизвестная ошибка",
+            "Node не найден"
             ];
         
 
@@ -29,6 +30,7 @@ namespace notes_by_nodes.Storage
     public enum StorageErrorCode : int
     {
         NoUser = 0,
-        Unknown = 1
+        Unknown = 1,
+        NoNode = 2
     }
 }

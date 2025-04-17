@@ -13,17 +13,17 @@ namespace notes_by_nodes.UseCases.AppRules
 {
     public class LocalUser : User
     {
-        public IUserStorage Storage { get; init; }
+        public IBoxStorage NoteStorage { get; init; }
         
-        public LocalUser(string name, string email, IUserStorage storage) : base(name, email)
-        { 
-            Storage = storage;
+        public LocalUser(string name, string email, IBoxStorage storage) : base(name, email)
+        {
+            NoteStorage = storage;
             Type = "LocalUser";
             hasOwner = this;
             hasParentNode = this;
 
         }
-        public override IEnumerable<Node> HasChildNodes => GetChildNodes();
+        public override IEnumerable<Node> HasChildNodes => hasChildNodes;
 
         public override User HasOwner => hasOwner;
 
@@ -33,8 +33,9 @@ namespace notes_by_nodes.UseCases.AppRules
 
         protected override INodeStorage GetStorage()
         {
-            return Storage;
+            return NoteStorage;
         }
+        
 
     }
 }

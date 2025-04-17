@@ -16,9 +16,9 @@ namespace TestProject
         public static void TestUserBoxNodes()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
-            LocalBox box = new(user, storageFactory.GetBoxStorage(""), "Name of the test box", "Description of the test box");
-            
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetBoxStorage());
+            LocalBox box = new(user, "Name of the test box", "Description of the test box");
+          
             bool boxWasAddedToUser = user.HasChildNodes.Count()==1 && box.HasParentNode==user;
             user.RemoveFromChildNodes(box);
             bool boxWasDeletedFromUser = user.HasChildNodes.Count()==0;
@@ -30,7 +30,7 @@ namespace TestProject
         public static void TestUserConstructor()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetBoxStorage());
             Assert.True(true);
 
         }
@@ -38,8 +38,8 @@ namespace TestProject
         public static void TestBoxConstructor()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
-            LocalBox box = new(user, storageFactory.GetBoxStorage(""), "Name of the test box", "Description of the test box");
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetBoxStorage());
+            LocalBox box = new(user, "Name of the test box", "Description of the test box");
             Assert.True(true);
 
         }
@@ -48,8 +48,9 @@ namespace TestProject
         public static void TestLocalNoteConstructor()
         {
             var storageFactory = new NodeStorageTestFactory();
-            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetUserStorage(""));
-            LocalBox box = new(user, storageFactory.GetBoxStorage(""), "Name of the test box", "Description of the test box");
+            LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetBoxStorage());
+            LocalBox box = new(user, "Name of the test box", "Description of the test box");            
+            box.SetNoteStorage(storageFactory.GetNoteStorage(box));
             LocalNote note = new LocalNote(box, "Untitled 1", "Description of UntitledNote1");
             LocalNote note2 = new LocalNote(note, "Untitled 2", "Description of UntitledNote2");
             Assert.True(box.HasChildNodes.Contains(note) &&
@@ -62,12 +63,17 @@ namespace TestProject
 
     class NodeStorageTestFactory : INodeStorageFactory
     {
-        public IBoxStorage GetBoxStorage(string storageFolder)
+        public IBoxStorage GetBoxStorage()
         {
             return new FakeStorage();
         }
 
-        public IUserStorage GetUserStorage(string storageFolder)
+        public INoteStorage GetNoteStorage(LocalBox box)
+        {
+            return new FakeStorage();
+        }
+
+        public IUserStorage GetUserStorage()
         {
             return new FakeStorage();
         }
@@ -75,14 +81,19 @@ namespace TestProject
 
     class FakeStorage : IUserStorage, IBoxStorage
     {
-        LocalBox IBoxStorage.GetBox(int Uid)
+        public string[] GetUsers()
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<LocalUser> IUserStorage.GetBoxes(LocalBox parentNode)
+        public void SaveUser(LocalUser user)
         {
-            return [];
+            throw new NotImplementedException();
+        }
+
+        LocalBox IBoxStorage.GetBox(int Uid)
+        {
+            throw new NotImplementedException();
         }
 
         IEnumerable<Node> INodeStorage.GetChildNodes(Node parentNode)
@@ -101,6 +112,11 @@ namespace TestProject
         }
 
         LocalUser IUserStorage.GetUser(int Uid)
+        {
+            throw new NotImplementedException();
+        }
+
+        LocalUser[] IUserStorage.GetUsers()
         {
             throw new NotImplementedException();
         }

@@ -9,5 +9,6 @@ namespace notes_by_nodes.Entities
 {
     public abstract partial class Box(Node parentNode) : Node(parentNode), IBox
     {
+        
     }
 }

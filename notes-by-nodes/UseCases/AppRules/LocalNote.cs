@@ -12,11 +12,11 @@ namespace notes_by_nodes.UseCases.AppRules
 {
     internal class LocalNote : Note
     {
-        private INoteStorage Storage { get; init; }
+        private INoteStorage NoteStorage { get; init; }
                 
         public LocalNote(LocalNote parentNode, string name = "", string desc = "") :base(parentNode)
         {
-            Storage = parentNode.Storage;
+            NoteStorage = parentNode.NoteStorage;
             Type = "LocalNote";
             Name = name;
             Description = desc;
@@ -24,7 +24,7 @@ namespace notes_by_nodes.UseCases.AppRules
         }
         public LocalNote(LocalBox rootNode, string name = "", string desc = "") : base(rootNode)
         {
-            Storage = rootNode.Storage;
+            NoteStorage = rootNode.NoteStorage;
             Type = "LocalNote";
 
         }
@@ -35,7 +35,7 @@ namespace notes_by_nodes.UseCases.AppRules
 
         private IEnumerable<Note> getReference()
         {
-            hasReference.AddRange(Storage.GetReferencedNotes(this));
+            hasReference.AddRange(NoteStorage.GetReferencedNotes(this));
             return hasReference;
         }
 
@@ -44,7 +44,7 @@ namespace notes_by_nodes.UseCases.AppRules
 
         private IEnumerable<Note> getReferenced()
         {
-            isRefernced.AddRange(Storage.GetNotesHasReferenceToIt(this));
+            isRefernced.AddRange(NoteStorage.GetNotesHasReferenceToIt(this));
             return isRefernced;
         }
 
@@ -57,7 +57,7 @@ namespace notes_by_nodes.UseCases.AppRules
 
         protected override INodeStorage GetStorage()
         {
-            return Storage;
+            return NoteStorage;
         }
 
     }

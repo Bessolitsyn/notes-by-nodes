@@ -12,15 +12,14 @@ namespace notes_by_nodes.UseCases.AppRules
 {
     public class LocalBox : Box
     {
-        public IBoxStorage Storage { get; init; }
+        public INoteStorage NoteStorage { get; private set; }
         
-        public LocalBox(User owner, IBoxStorage storage, string name="", string desc="") : base(owner)
+        public LocalBox(User owner, string name, string desc="") : base(owner)
         { 
-            Storage = storage;
             Type = "LocalBox";
             Name = name;
             Description = desc;
-            hasChildNodes.AddRange(GetChildNodes());
+            hasOwner = owner;
 
         }
         public override IEnumerable<Node> HasChildNodes => GetChildNodes();
@@ -29,9 +28,15 @@ namespace notes_by_nodes.UseCases.AppRules
 
         public override Node HasParentNode => hasParentNode;
 
+        
+        public void SetNoteStorage(INoteStorage noteStorage)
+        {
+            NoteStorage = noteStorage;
+        }
+
         protected override INodeStorage GetStorage()
         {
-            return Storage;
+            return NoteStorage;
         }
     }
 }

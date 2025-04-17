@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,18 +13,27 @@ namespace notes_by_nodes.UseCases
 {
     internal class InsideInteractor
     {
-        const string PATH_TO_PROFILES = "";
-        protected IUserStorage Storage { get; init; }       
+        protected IUserStorage Storage { get; init; }
+        protected LocalUser ActiveUser { get; init; }
 
-        InsideInteractor(IUserStorage storage)
+        internal InsideInteractor(INodeStorageFactory storageFactory, int activeUserUID)
         {
-            Storage = Storage;
+            Storage = storageFactory.GetUserStorage();
+            ActiveUser = Storage.GetUser(activeUserUID);
         }
 
-        LocalUser GetUser(int uid)
+
+        internal IEnumerable<string> GetBoxes()
         {
-            return Storage.GetUser(uid);
+            foreach (var item in ActiveUser.IsOwnerOf)
+            {
+                if (item is LocalBox lbox)
+                {
+                    yield return lbox.Name;
+                }
+            }
         }
 
+        
     }
 }
