@@ -17,7 +17,7 @@ namespace EasyObjectFileStorage
         readonly string FILE_EXTENSION;
 
 
-        public JsonFileStorage(string pathToRootFolder, string subfolder, string fileExtension = "*.json") : base(pathToRootFolder)
+        public JsonFileStorage(string pathToRootFolder, string subfolder, string fileExtension = "json") : base(pathToRootFolder)
         {
             FOLDER_FOR_DATASET_STORAGE = subfolder;
             FILE_EXTENSION = fileExtension;
@@ -28,7 +28,7 @@ namespace EasyObjectFileStorage
         {
             try
             {
-                string[] files = GetAllFiles($"/{FOLDER_FOR_DATASET_STORAGE}/", FILE_EXTENSION);
+                string[] files = GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION);
                 var contents = GetAllDeserializeObject<object>(files);
                 return contents;
             }
@@ -45,7 +45,7 @@ namespace EasyObjectFileStorage
         {
             try
             {
-                string[] files = GetAllFiles($"/{FOLDER_FOR_DATASET_STORAGE}/", FILE_EXTENSION);
+                string[] files = GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION);
                 var contents = GetAllDeserializeObject<T>(files);
                 return contents;
             }
@@ -57,38 +57,40 @@ namespace EasyObjectFileStorage
                 throw;
             }
         }
-
-        public void SaveObject(object obj)
+        public T GetObject<T>(string filename)
         {
             try
             {
-                var fileContent = JsonConvert.SerializeObject(obj, Formatting.Indented);
-                var filename = obj.GetHashCode().ToString(CultureInfo.InvariantCulture) + FILE_EXTENSION;
-                SaveFile($"/{FOLDER_FOR_DATASET_STORAGE}/", filename, fileContent, out var _);
+                string[] files = [.. GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f=>f==filename)];
+                var contents = GetAllDeserializeObject<T>(files);
+                return contents[0];
             }
             catch (Exception ex)
             {
-                string logmessage = $"{EX_MESSAGE_WHEN_SAVING} ex.message; {ex.Message}";
+                string logmessage = $"{EX_MESSAGE_WHEN_READING} ex.message; {ex.Message}";
                 Logging(logmessage);
                 //TO DO Logging must be done!:) 
                 throw;
             }
         }
-
-        public void SaveNewDataset(object? obj)
+        public void SaveObject(object obj)
+        {
+            var filename = obj.GetHashCode().ToString(CultureInfo.InvariantCulture);
+            SaveObject(obj, filename);
+        }
+        public void SaveObject(object obj, string filename)
         {
             try
             {
                 var fileContent = JsonConvert.SerializeObject(obj, Formatting.Indented);
-                var filename = obj.GetHashCode().ToString(CultureInfo.InvariantCulture) + FILE_EXTENSION;
-                SaveFile($"/{FOLDER_FOR_DATASET_STORAGE}/", filename, fileContent, out var _);
-
+                filename = filename + "." + FILE_EXTENSION;
+                SaveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename, fileContent, out var _);
             }
             catch (Exception ex)
             {
                 string logmessage = $"{EX_MESSAGE_WHEN_SAVING} ex.message; {ex.Message}";
-                //TO DO Logging must be done!:) 
                 Logging(logmessage);
+                //TO DO Logging must be done!:) 
                 throw;
             }
         }
@@ -97,7 +99,8 @@ namespace EasyObjectFileStorage
         {
             try
             {
-                SaveFile($"/{FOLDER_FOR_DATASET_STORAGE}/", filename, sourceStream.ToArray(), out fileid);
+                filename = filename + "." + FILE_EXTENSION;
+                SaveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename, sourceStream.ToArray(), out fileid);
             }
             catch (Exception ex)
             {

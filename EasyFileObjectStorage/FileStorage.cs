@@ -29,11 +29,12 @@ namespace EasyObjectFileStorage
 
         protected string[] GetAllFiles(string path, string fileExt)
         {
-            string[] files = Directory.GetFiles(@RootFolder + path, fileExt);
+            string[] files = Directory.GetFiles(@RootFolder + path, $"*.{fileExt}");
             return files;
         }
 
-        
+
+
 
 
 
