@@ -65,7 +65,7 @@ public static class OntologyToT4toolExecuter
     public static string TemplatesDirectory { get; set; } = $"c:\\Users\\tocha\\source\\notes-by-nodes\\notes-by-nodes\\Entities\\";
     public static string NameSpace { get; set; } = "notes_by_nodes.Entities";
     public static string TemplatesDirectoryForRecords { get; set; } = $"c:\\Users\\tocha\\source\\notes-by-nodes\\StorageAdapters\\Dataset\\";
-    public static string NameSpaceForRecords { get; set; } = "notes_by_nodes.Storage";
+    public static string NameSpaceForRecords { get; set; } = "notes_by_nodes.StorageAdapters.Dataset";
     
     public static void DeleteFiles(string templatesDirectory)
     {
