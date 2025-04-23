@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace notes_by_nodes.StorageAdapters
 {
@@ -15,18 +16,16 @@ namespace notes_by_nodes.StorageAdapters
     {
         //private static Dictionary<int, string> matchingBoxesUidToTheirFoldersList = [];
 
-        INodeStorageFactory nodeStorageFactory;
         //private Dictionary<int, BoxDataset> loadedBoxDatasets = [];
         private Dictionary<int, LocalBox> createdLocalBoxes = [];
 
-        public LocalBoxStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "lbox") : base(pathToRootFolder, subfolder, fileExtension)
+        internal LocalBoxStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "lbox") : base(pathToRootFolder, subfolder, fileExtension)
         {
-            
+
         }
         public LocalBox GetBox(int Uid)
         {
-            var box = createdLocalBoxes[Uid];
-            if (box == null)
+            if (!createdLocalBoxes.TryGetValue(Uid, out LocalBox box))
             {
                 box = (LocalBox)GetNode(Uid);
             }
@@ -43,30 +42,29 @@ namespace notes_by_nodes.StorageAdapters
             throw new NotImplementedException();
         }
 
-        protected override Node GetLocalNodeFromDataset(NodeDataset userDataset, in Dictionary<int, Node> createdLoadedNodes)
+        protected override Node GetLocalNodeFromDataset(NodeDataset boxDataset, in Dictionary<int, Node> createdLoadedNodes)
         {
-            LocalBox box = NewLocalBoxFromDataset((UserDataset)userDataset);
+            LocalBox box = NewLocalBoxFromDataset(boxDataset);
             createdLoadedNodes[box.Uid] = box;
             return box;
         }
 
-        protected override void ReadNodes()
+        internal override void ReadNodes()
         {
-            foreach (var item in GetAllObject<BoxDataset>())
+            foreach (var node in GetAllObject<BoxDataset>())
             {
-                loadedNodeDatasets.Add(item.Uid, item);
-                //loadedBoxDatasets.Add(item.Uid, item);
+                AddtoLoadedNodeDatasets(node);
             }
-            
+
         }
         protected override void ReadNode(int uid)
         {
-            BoxDataset node = GetObject<BoxDataset>(uid.ToString());
-            loadedNodeDatasets.Add(node.Uid, node);
+            if (TryGetObject<BoxDataset>(uid.ToString(), out BoxDataset? node))
+                AddtoLoadedNodeDatasets(node);
         }
 
 
-        private LocalBox NewLocalBoxFromDataset(UserDataset dataset)
+        private LocalBox NewLocalBoxFromDataset(NodeDataset dataset)
         {
             var users = nodeStorageFactory.GetUserStorage();
             var owner = users.GetUser(int.Parse(dataset.HasOwner));
@@ -75,22 +73,42 @@ namespace notes_by_nodes.StorageAdapters
             box.CreationDate = dataset.CreationDate;
             box.Text = dataset.Text;
             box.SetNoteStorage(nodeStorageFactory.GetNoteStorage(box));
+            owner.AddIntoChildNodes(box);
+            owner.AddIntoOwnerOf(box);
 
             AddLocalBoxToCreatedLocalBoxes(box);
             return box;
         }
 
-        internal void SetStorageFactory(INodeStorageFactory factory)
-        {
-            nodeStorageFactory = factory;
-        }
 
+        public void SaveBox(LocalBox box)
+        {
+            BoxDataset boxDS;
+            boxDS = NewDatasetFromLocalBox(box);
+            AddLocalBoxToCreatedLocalBoxes(box);
+
+            SaveNode(boxDS);
+        }
+        private static BoxDataset NewDatasetFromLocalBox(LocalBox box)
+        {
+            BoxDataset boxDS = new(box.CreationDate,
+                box.Description,
+                box.Name,
+                box.Text,
+                box.Type,
+                box.Uid,
+                [.. box.HasChildNodes.Select(u => u.Uid.ToString())],
+                box.HasOwner.Uid.ToString(),
+                box.HasParentNode.Uid.ToString()
+                );
+            return boxDS;
+        }
         internal void AddLocalBoxToCreatedLocalBoxes(LocalBox box)
         {
             createdLocalBoxes[box.Uid] = box;
         }
-
-        //    this.UserStorage = userStorage;
-        //}
     }
+
+    //    this.UserStorage = userStorage;
+
 }

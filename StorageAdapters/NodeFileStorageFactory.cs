@@ -17,6 +17,7 @@ namespace notes_by_nodes.StorageAdapters
         //public static INodeStorageFactory instance;
         private LocalUserStorageAdapter _userstorageAdapter;
         private LocalBoxStorageAdapter _boxStorageAdapter;
+        private Dictionary<int, LocalNoteStorageAdapter> _noteStorageAdapters = [];
         public NodeFileStorageFactory(string profileFolder, string usersFolder="", string boxesFolder = "") {
 
 
@@ -25,6 +26,7 @@ namespace notes_by_nodes.StorageAdapters
                 Directory.CreateDirectory(profileFolder + "\\" + usersFolder);
             }
             _userstorageAdapter = new LocalUserStorageAdapter(profileFolder, usersFolder);
+            _userstorageAdapter.SetStorageFactory(this);
 
             if (!Directory.Exists(profileFolder + "\\" + boxesFolder))
             {
@@ -32,7 +34,11 @@ namespace notes_by_nodes.StorageAdapters
             }
             _boxStorageAdapter = new LocalBoxStorageAdapter(profileFolder, boxesFolder);
             _boxStorageAdapter.SetStorageFactory(this);
-           
+
+            _userstorageAdapter.ReadNodes();
+            _boxStorageAdapter.ReadNodes();
+
+
         }
 
         public IBoxStorage GetBoxStorage()
@@ -42,12 +48,26 @@ namespace notes_by_nodes.StorageAdapters
 
         public INoteStorage GetNoteStorage(LocalBox box)
         {
-            return new LocalNoteStorageAdapter(box.Name, "");            
+            if (!_noteStorageAdapters.TryGetValue(box.Uid, out var storage))
+            {
+                storage = new LocalNoteStorageAdapter(box.Name, "");
+                _noteStorageAdapters.Add(box.Uid, storage);
+                storage.SetStorageFactory(this);
+                storage.ReadNodes();
+            }
+            return storage;
         }
 
         public IUserStorage GetUserStorage()
         {
             return _userstorageAdapter;
+        }
+
+        internal void Dispose()
+        {
+            _userstorageAdapter.Dispose();
+            _boxStorageAdapter.Dispose();
+            _noteStorageAdapters.Clear();
         }
     }
 }

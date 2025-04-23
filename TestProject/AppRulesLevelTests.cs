@@ -40,7 +40,8 @@ namespace TestProject
             var storageFactory = new NodeStorageTestFactory();
             LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetBoxStorage());
             LocalBox box = new(user, "Name of the test box", "Description of the test box");
-            Assert.True(true);
+            //user.AddIntoChildNodes(box);
+            Assert.True(user.HasChildNodes.Contains(box) && box.HasParentNode == user);
 
         }
 
@@ -49,10 +50,14 @@ namespace TestProject
         {
             var storageFactory = new NodeStorageTestFactory();
             LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetBoxStorage());
-            LocalBox box = new(user, "Name of the test box", "Description of the test box");            
+            LocalBox box = new(user, "Name of the test box", "Description of the test box");
+            //user.AddIntoChildNodes(box);
             box.SetNoteStorage(storageFactory.GetNoteStorage(box));
             LocalNote note = new LocalNote(box, "Untitled 1", "Description of UntitledNote1");
             LocalNote note2 = new LocalNote(note, "Untitled 2", "Description of UntitledNote2");
+            //box.AddIntoChildNodes(note);
+            //note.AddIntoChildNodes(note2);
+
             Assert.True(box.HasChildNodes.Contains(note) &&
                 note.HasParentNode == box &&
                 note.HasChildNodes.Contains(note2) &&
@@ -79,9 +84,34 @@ namespace TestProject
         }
     }
 
-    class FakeStorage : IUserStorage, IBoxStorage
+    class FakeStorage : IUserStorage, IBoxStorage, INoteStorage
     {
+        public LocalNote GetNote(int Uid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Note> GetNotesHasReferenceToIt(Note note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Note> GetReferencedNotes(Note note)
+        {
+            throw new NotImplementedException();
+        }
+
         public string[] GetUsers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveBox(LocalBox box)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveNote(LocalNote note)
         {
             throw new NotImplementedException();
         }
@@ -101,15 +131,7 @@ namespace TestProject
             return [];
         }
 
-        IEnumerable<Note> INoteStorage.GetNotesHasReferenceToIt(Note note)
-        {
-            return [];
-        }
-
-        IEnumerable<Note> INoteStorage.GetReferencedNotes(Note note)
-        {
-            return [];
-        }
+        
 
         LocalUser IUserStorage.GetUser(int Uid)
         {

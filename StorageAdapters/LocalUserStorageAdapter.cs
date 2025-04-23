@@ -14,24 +14,21 @@ namespace notes_by_nodes.StorageAdapters
 {
     internal class LocalUserStorageAdapter : NodeStorageAdapter, IUserStorage
     {
-        //private static Dictionary<int, string> matchingBoxesUidToTheirFoldersList = [];
-
-        //private Dictionary<int, UserDataset> loadedUserDatasets = [];
-        private Dictionary<int, LocalUser> createdLocalUsers = [];
-
-        INodeStorageFactory nodeStorageFactory;
-        LocalBoxStorageAdapter boxStorage;
+        
+        private readonly Dictionary<int, LocalUser> createdLocalUsers = [];
+        
+        private IBoxStorage BoxStorage => nodeStorageFactory.GetBoxStorage();
 
 
 
 
 
-        public LocalUserStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "luser") : base(pathToRootFolder, subfolder, fileExtension)
+        internal LocalUserStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "luser") : base(pathToRootFolder, subfolder, fileExtension)
         {
             //loadedUsers = GetAllObject<UserDataset>();
             //ReadNodes();
             //createdLocalUsers.Clear();
-            boxStorage = new LocalBoxStorageAdapter(pathToRootFolder, subfolder);
+            
         }
 
         public IEnumerable<Node> GetChildNodes(Node parentNode)
@@ -59,50 +56,54 @@ namespace notes_by_nodes.StorageAdapters
         private LocalBox GetLocalBox(string uid)
         {
             int boxUid = int.Parse(uid);
-            var box = boxStorage.GetBox(boxUid);
+            var box = BoxStorage.GetBox(boxUid);
             return box;
 
         }
 
-        protected override void ReadNodes()
+        internal override void ReadNodes()
         {
             foreach (var item in GetAllObject<UserDataset>())
             {
-
-                loadedNodeDatasets[item.Uid] = item;
+                AddtoLoadedNodeDatasets(item);
                 LocalUser user = (LocalUser)GetNode(item.Uid);
                 AddLocalUserToCreatedLocalUsers(user);
             }
         }
         protected override void ReadNode(int uid)
         {
-            UserDataset node = GetObject<UserDataset>(uid.ToString());
-            loadedNodeDatasets.Add(node.Uid, node);
+            //UserDataset node;
+            if (TryGetObject<UserDataset>(uid.ToString(), out UserDataset? node))
+                AddtoLoadedNodeDatasets(node);
             //loadedUserDatasets.Add(node.Uid, node);
         }
 
-        internal void SetStorageFactory(INodeStorageFactory factory)
-        {
-            nodeStorageFactory = factory;
-        }
         private LocalUser NewLocalUserFromDataset(UserDataset dataset)
         {
-            var user = new LocalUser(dataset.Name, dataset.Description, boxStorage);
+            var user = new LocalUser(dataset.Name, dataset.Description, BoxStorage);
             user.Uid = dataset.Uid;
             user.CreationDate = dataset.CreationDate;
-            foreach (string item in dataset.IsOwnerOf)
-            {
-                var localBox = GetLocalBox(item);
-                user.AddIntoOwner(localBox);
-            }
 
+            SetIsOwnerOf(user);
             AddLocalUserToCreatedLocalUsers(user);
             return user;
         }
 
-        internal void AddLocalUserToCreatedLocalUsers(LocalUser user)
+        private void SetIsOwnerOf(LocalUser user)
         {
-            createdLocalUsers[user.Uid] = user;
+            UserDataset dataset =(UserDataset)GetNodeDataset(user.Uid);
+            AddNodesToOwnerOf(user, [.. GetNodes(dataset.IsOwnerOf, out var _)]);
+
+        }
+
+        private void AddNodesToOwnerOf(LocalUser user, Node[] nodes)
+        {
+            foreach (var node in nodes)
+            {
+                user.AddIntoOwnerOf(node);
+                
+            }
+
         }
 
         public void SaveUser(LocalUser user)
@@ -110,9 +111,12 @@ namespace notes_by_nodes.StorageAdapters
             UserDataset userDS;
             userDS = NewDatasetFromLocalUser(user);
             AddLocalUserToCreatedLocalUsers(user);
-
             SaveNode(userDS);
 
+        }
+        internal void AddLocalUserToCreatedLocalUsers(LocalUser user)
+        {
+            createdLocalUsers[user.Uid] = user;
         }
         private static UserDataset NewDatasetFromLocalUser(LocalUser user)
         {

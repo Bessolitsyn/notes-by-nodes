@@ -64,7 +64,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="FilesStorage\" />
+    <Folder Include="FilesStorage\Box\" />
+    <Folder Include="FilesStorage\NewFolder\" />
   </ItemGroup>
 
 </Project>

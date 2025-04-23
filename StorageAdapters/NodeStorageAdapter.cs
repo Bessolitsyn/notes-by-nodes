@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
@@ -18,38 +19,64 @@ namespace notes_by_nodes.StorageAdapters
         protected static Dictionary<int,NodeDataset> loadedNodeDatasets = [];
         //protected static Node[] createdLoadedNodes = [];
         protected static Dictionary<int,Node> createdLoadedNodes = [];
+
+        protected INodeStorageFactory nodeStorageFactory;
+        
+
         public NodeStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "node") : base(pathToRootFolder, subfolder, fileExtension)
         {
 #warning TODO Возможно загружать все заметки в боксе в память сразу неправильно - но этот метод вызывается и для узлов типа юзер и бокс
-            ReadNodes();
+            //ReadNodes();
+        }
+        internal void SetStorageFactory(INodeStorageFactory factory)
+        {
+            nodeStorageFactory = factory;
         }
 
         public IEnumerable<Node> GetChildNodes(Node parentNode)
-        {            
+        {
+            var childNodes = new List<Node>();
             NodeDataset dataset = GetNodeDataset(parentNode.Uid);
             foreach (var strUid in dataset.HasChildNodes)
             {
                 if (int.TryParse(strUid, out int uid))
                 {
-                        yield return GetNode(uid);
+                    childNodes.Add(GetNode(uid));
                 }
             }
+            return childNodes;
         }
-        protected abstract void ReadNodes();
+        internal abstract void ReadNodes();
         protected abstract void ReadNode(int uid);
 
-        protected Node GetNode(int uid)
+        public Node GetNode(int uid)
         {
             createdLoadedNodes.TryGetValue(uid, out var node);
             //Node node = createdLoadedNodes.ContainsKey(uid) ? createdLoadedNodes[uid]: null;
             if (node == null)
             {
-                var userDS = GetNodeDataset(uid);
-                node = GetLocalNodeFromDataset(userDS, in createdLoadedNodes);
-                return node;                 
+                var nodeDS = GetNodeDataset(uid);
+                node = GetLocalNodeFromDataset(nodeDS, in createdLoadedNodes);
+            }            
+            return node;                 
+        }
+        protected List<Node> GetNodes(string[] uids, out List<(string, string)>uidsWithErrors)
+        {
+            List<Node> nodes = new List<Node>();
+            uidsWithErrors = new List<(string, string)> ();
+            foreach (string uid in uids)
+            {
+                try
+                {
+                    var node = GetNode(int.Parse(uid));
+                    nodes.Add(node);
+                }
+                catch (Exception ex)
+                {
+                    uidsWithErrors.Add((uid, ex.Message));
+                }
             }
-            
-            throw StorageException.NewException(StorageErrorCode.NoNode);
+            return nodes;
         }
         protected NodeDataset GetNodeDataset(int uid)
         {
@@ -63,11 +90,15 @@ namespace notes_by_nodes.StorageAdapters
         }
         protected void SaveNode(NodeDataset node)
         {
-            loadedNodeDatasets[node.Uid] = node;
+            AddtoLoadedNodeDatasets(node);
             SaveObject(node, node.Uid.ToString());
         }
         protected abstract Node GetLocalNodeFromDataset(NodeDataset userDataset, in Dictionary<int, Node> createdLoadedNodes);
 
+        protected void AddtoLoadedNodeDatasets(NodeDataset node)
+        {
+            loadedNodeDatasets[node.Uid] = node;
+        }
         public void Dispose()
         {
             loadedNodeDatasets = [];

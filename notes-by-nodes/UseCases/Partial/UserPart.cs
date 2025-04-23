@@ -15,7 +15,7 @@ namespace notes_by_nodes.Entities
             Email = email;
         }
 
-        public void AddIntoOwner(Node item)
+        public void AddIntoOwnerOf(Node item)
         {
             if (!isOwnerOf.Contains(item)) { 
                 isOwnerOf.Add(item);            

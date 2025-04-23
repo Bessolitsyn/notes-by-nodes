@@ -22,7 +22,7 @@ namespace notes_by_nodes.UseCases.AppRules
             hasOwner = owner;
 
         }
-        public override IEnumerable<Node> HasChildNodes => GetChildNodes();
+        public override IEnumerable<Node> HasChildNodes => hasChildNodes; //GetChildNodes();
 
         public override User HasOwner => hasOwner;
 

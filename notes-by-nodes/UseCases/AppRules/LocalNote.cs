@@ -10,28 +10,24 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.UseCases.AppRules
 {
-    internal class LocalNote : Note
+    public class LocalNote : Note
     {
-        private INoteStorage NoteStorage { get; init; }
+        public INoteStorage NoteStorage { get; init; }
                 
-        public LocalNote(LocalNote parentNode, string name = "", string desc = "") :base(parentNode)
+        public LocalNote(Node parentNode, string name = "", string desc = "") :base(parentNode)
         {
-            NoteStorage = parentNode.NoteStorage;
+            
+            NoteStorage = parentNode is LocalBox box ? box.NoteStorage : 
+                          parentNode is LocalNote note ? note.NoteStorage: 
+                          throw new NullRefernceUseCaseException("NoteStorage is null in parentNode when LocalNote is constructing");
             Type = "LocalNote";
             Name = name;
             Description = desc;
-
-        }
-        public LocalNote(LocalBox rootNode, string name = "", string desc = "") : base(rootNode)
-        {
-            NoteStorage = rootNode.NoteStorage;
-            Type = "LocalNote";
-
         }
 
-        public override IEnumerable<Content> HasContent => throw new NotImplementedException();
+        public override IEnumerable<Content> HasContent => null;
 
-        public override IEnumerable<Note> HasReference => getReference();
+        public override IEnumerable<Note> HasReference => hasReference; // getReference();
 
         private IEnumerable<Note> getReference()
         {
@@ -40,7 +36,7 @@ namespace notes_by_nodes.UseCases.AppRules
         }
 
 #warning TO DO исправить ошибку в имени
-        public override IEnumerable<Note> IsRefernced => getReferenced();
+        public override IEnumerable<Note> IsRefernced => isRefernced; // getReferenced();
 
         private IEnumerable<Note> getReferenced()
         {
@@ -48,7 +44,7 @@ namespace notes_by_nodes.UseCases.AppRules
             return isRefernced;
         }
 
-        public override IEnumerable<Node> HasChildNodes => GetChildNodes();
+        public override IEnumerable<Node> HasChildNodes => hasChildNodes;// GetChildNodes();
 
 
         public override User HasOwner => hasOwner;

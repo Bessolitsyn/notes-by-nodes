@@ -18,7 +18,7 @@ namespace notes_by_nodes.Entities
 	public interface IUser
 	{
 		
-		void AddIntoOwner(Node item);
+		void AddIntoOwnerOf(Node item);
 		
 		void RemoveFromOwner(Node item);
 	

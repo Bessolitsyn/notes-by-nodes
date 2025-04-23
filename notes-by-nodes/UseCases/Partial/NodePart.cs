@@ -16,7 +16,7 @@ namespace notes_by_nodes.Entities
             parentNode.AddIntoChildNodes(this);
 #warning TODO
             // Таким образом список из того чем владеет owner со временем может стать очень большим!
-            hasOwner.AddIntoOwner(this);
+            hasOwner.AddIntoOwnerOf(this);
         }
         public Node()
         {
@@ -29,7 +29,7 @@ namespace notes_by_nodes.Entities
 
         public void AddIntoChildNodes(Node item)
         {
-            uploadNodesChildNodesIfItEmpty();
+            //uploadNodesChildNodesIfItEmpty();
             if (!hasChildNodes.Contains(item))
             { 
                 hasChildNodes.Add(item);
@@ -48,7 +48,7 @@ namespace notes_by_nodes.Entities
             if (hasOwner.Uid != item.Uid)
             {
                 hasOwner = item;
-                item.AddIntoOwner(this);
+                item.AddIntoOwnerOf(this);
             }
         }
 
@@ -60,17 +60,27 @@ namespace notes_by_nodes.Entities
                 item.AddIntoChildNodes(this);
             }
         }
+        //там внутр вызывается конструктор нода и дочерние ноды добавляютя в соответсвующую 
+        public void LoadChildNodes()
+        {
+            INodeStorage storage = GetStorage();
+            if (storage == null)
+                throw new Exception("Storage wasn't set. Node doesn't have a storage");
+            var _ = storage.GetChildNodes(this);
+        }
+
+        //protected IEnumerable<Node> GetChildNodes()
+        //{
+        //    uploadNodesChildNodesIfItEmpty();
+        //    return hasChildNodes;
+        //}
+        //private void uploadNodesChildNodesIfItEmpty()
+        //{
+        //    if (hasChildNodes.Count == 0)
+        //        hasChildNodes.AddRange(getChildNodes());
+        //}
+        //private IEnumerable<Node> getChildNodes()
         protected IEnumerable<Node> GetChildNodes()
-        {
-            uploadNodesChildNodesIfItEmpty();
-            return hasChildNodes;
-        }
-        private void uploadNodesChildNodesIfItEmpty()
-        {
-            if (hasChildNodes.Count == 0)
-                hasChildNodes.AddRange(getChildNodes());
-        }
-        private IEnumerable<Node> getChildNodes()
         {
             INodeStorage storage = GetStorage();
             if (storage == null)

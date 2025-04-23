@@ -12,10 +12,13 @@ namespace notes_by_nodes.Storage
     {
         IEnumerable<Note> GetNotesHasReferenceToIt(Note note);
         IEnumerable<Note> GetReferencedNotes(Note note);
+        LocalNote GetNote(int Uid);
+        void SaveNote(LocalNote note);
     }
-    public interface IBoxStorage : INoteStorage
+    public interface IBoxStorage : INodeStorage
     {
         LocalBox GetBox(int Uid);
+        void SaveBox(LocalBox box);
     }
     public interface IUserStorage : INodeStorage
     {

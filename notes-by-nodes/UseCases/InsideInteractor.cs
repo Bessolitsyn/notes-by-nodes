@@ -1,4 +1,5 @@
-﻿using notes_by_nodes.Storage;
+﻿using notes_by_nodes.Entities;
+using notes_by_nodes.Storage;
 using notes_by_nodes.UseCases.AppRules;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace notes_by_nodes.UseCases
     internal class InsideInteractor
     {
         protected IUserStorage Storage { get; init; }
+        protected INodeStorageFactory StorageFactor { get; init; }
         protected LocalUser ActiveUser { get; init; }
 
         internal InsideInteractor(INodeStorageFactory storageFactory, int activeUserUID)
@@ -23,17 +25,26 @@ namespace notes_by_nodes.UseCases
         }
 
 
-        internal IEnumerable<string> GetBoxes()
+        internal IEnumerable<LocalBox> GetBoxes()
         {
-            foreach (var item in ActiveUser.IsOwnerOf)
+            foreach (var item in ActiveUser.HasChildNodes)
             {
                 if (item is LocalBox lbox)
                 {
-                    yield return lbox.Name;
+                    yield return lbox;
                 }
             }
         }
 
-        
+
+        //internal IEnumerable<string> NewBox()
+        //{
+        //    var boxStorage = StorageFactor.GetBoxStorage();
+        //    boxStorage.Ne
+
+
+        //}
+
+
     }
 }

@@ -1,0 +1,14 @@
+{
+  "CreationDate": "2025-04-23T13:26:09.7735994+03:00",
+  "Description": "FirstTestBox",
+  "Name": "C:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\bin\\Debug\\net8.0\\..\\..\\..\\FilesStorage\\Box",
+  "Text": null,
+  "Type": "LocalBox",
+  "Uid": 1640725280,
+  "HasChildNodes": [
+    "1640481357",
+    "1640462559"
+  ],
+  "HasOwner": "1641014976",
+  "HasParentNode": "1641014976"
+}

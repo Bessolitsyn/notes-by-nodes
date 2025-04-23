@@ -57,13 +57,24 @@ namespace EasyObjectFileStorage
                 throw;
             }
         }
-        public T GetObject<T>(string filename)
+        public bool TryGetObject<T>(string filename, out T? obj)
         {
             try
             {
-                string[] files = [.. GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f=>f==filename)];
+                string[] files = [.. GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f=>f.Contains(filename))];
                 var contents = GetAllDeserializeObject<T>(files);
-                return contents[0];
+
+                if (contents.Length != 0)
+                { 
+                    obj = contents[0];
+                    return true;
+                }
+                obj = default;
+                return false;
+
+
+
+
             }
             catch (Exception ex)
             {

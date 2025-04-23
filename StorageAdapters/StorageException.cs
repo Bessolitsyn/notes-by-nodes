@@ -9,28 +9,39 @@ namespace notes_by_nodes.Storage
 {
     internal class StorageException : Exception
     {
-        static string[] ErrorMessage { get; } = [
+        
+        public static string[] ErrorMessage { get; } = [
             "Пользователь не найден",
             "Неизвестная ошибка",
             "Node не найден"
             ];
         
 
-        private StorageException(string message) : base(message)
+        internal StorageException(string message) : base(message)
         {
 
         }
         public static StorageException NewException(StorageErrorCode errorCode)
         {
-            return new StorageException(StorageException.ErrorMessage[(int)errorCode]);
+            if (Enumerable.Range(0, 1).Contains((int)errorCode))
+                return new NoNodeInStorageException(StorageException.ErrorMessage[(int)errorCode]);
+            else
+                return new UnknownStorageException();
         }
         
         
     }
+
+    internal class NoNodeInStorageException(string message) : StorageException(message)
+    {
+    }
+    internal class UnknownStorageException() : StorageException("Неизвестная ошибка")
+    {
+    }
     public enum StorageErrorCode : int
     {
         NoUser = 0,
-        Unknown = 1,
-        NoNode = 2
+        NoNode = 1,
+        Unknown = 2,
     }
 }
