@@ -111,7 +111,17 @@ namespace TestProject
             throw new NotImplementedException();
         }
 
+        public Task SaveBoxAsync(LocalBox box)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SaveNote(LocalNote note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveNoteAsync(LocalNote note)
         {
             throw new NotImplementedException();
         }

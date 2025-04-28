@@ -8,10 +8,15 @@ namespace notes_by_nodes.Entities
 {
     public abstract partial class Note(Node parentNode) : Node(parentNode), INote
     {
+        //protected Note(Node parentNode) : base(parentNode)
+        //{ 
+        //}
+
         public void AddIntoContent(Content item)
         {
             if (!hasContent.Contains(item))
                 hasContent.Add(item);
+            
         }
 
         public void AddIntoReference(Note item)
@@ -24,7 +29,7 @@ namespace notes_by_nodes.Entities
         public void AddIntoRefernced(Note item)
         {
             if (!isRefernced.Contains(item))
-                isRefernced.Add(item);
+                isRefernced.Add(item);            
         }
 
         public void RemoveFromContent(Content item)

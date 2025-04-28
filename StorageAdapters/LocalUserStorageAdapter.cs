@@ -15,25 +15,16 @@ namespace notes_by_nodes.StorageAdapters
     internal class LocalUserStorageAdapter : NodeStorageAdapter, IUserStorage
     {
         
-        private readonly Dictionary<int, LocalUser> createdLocalUsers = [];
-        
+        private readonly Dictionary<int, LocalUser> createdLocalUsers = [];        
         private IBoxStorage BoxStorage => nodeStorageFactory.GetBoxStorage();
 
 
-
-
-
-        internal LocalUserStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "luser") : base(pathToRootFolder, subfolder, fileExtension)
+        internal LocalUserStorageAdapter(INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder) : base(nodeBuilder, pathToRootFolder, subfolder, "luser")
         {
             //loadedUsers = GetAllObject<UserDataset>();
             //ReadNodes();
             //createdLocalUsers.Clear();
             
-        }
-
-        public IEnumerable<Node> GetChildNodes(Node parentNode)
-        {
-            throw new NotImplementedException();
         }
 
         public LocalUser GetUser(int Uid)
@@ -80,10 +71,9 @@ namespace notes_by_nodes.StorageAdapters
 
         private LocalUser NewLocalUserFromDataset(UserDataset dataset)
         {
-            var user = new LocalUser(dataset.Name, dataset.Description, BoxStorage);
+            var user = nodeBuilder.NewLocalUser(dataset.Name, dataset.Description, BoxStorage);
             user.Uid = dataset.Uid;
             user.CreationDate = dataset.CreationDate;
-
             SetIsOwnerOf(user);
             AddLocalUserToCreatedLocalUsers(user);
             return user;
@@ -93,7 +83,6 @@ namespace notes_by_nodes.StorageAdapters
         {
             UserDataset dataset =(UserDataset)GetNodeDataset(user.Uid);
             AddNodesToOwnerOf(user, [.. GetNodes(dataset.IsOwnerOf, out var _)]);
-
         }
 
         private void AddNodesToOwnerOf(LocalUser user, Node[] nodes)

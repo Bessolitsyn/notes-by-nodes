@@ -14,7 +14,7 @@ namespace notes_by_nodes.UseCases.AppRules
     {
         public INoteStorage NoteStorage { get; init; }
                 
-        public LocalNote(Node parentNode, string name = "", string desc = "") :base(parentNode)
+        internal LocalNote(Node parentNode, string name = "", string text = "") :base(parentNode)
         {
             
             NoteStorage = parentNode is LocalBox box ? box.NoteStorage : 
@@ -22,7 +22,7 @@ namespace notes_by_nodes.UseCases.AppRules
                           throw new NullRefernceUseCaseException("NoteStorage is null in parentNode when LocalNote is constructing");
             Type = "LocalNote";
             Name = name;
-            Description = desc;
+            Text = text;
         }
 
         public override IEnumerable<Content> HasContent => null;

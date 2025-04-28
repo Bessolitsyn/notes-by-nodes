@@ -9,16 +9,17 @@ namespace notes_by_nodes.Entities
 {
     public abstract partial class Node : INode
     {
-        public Node(Node parentNode):this()
+        protected Node(Node parentNode):this()
         {
             hasParentNode = parentNode;
             hasOwner = parentNode.HasOwner;
+
             parentNode.AddIntoChildNodes(this);
 #warning TODO
             // Таким образом список из того чем владеет owner со временем может стать очень большим!
             hasOwner.AddIntoOwnerOf(this);
         }
-        public Node()
+        protected Node()
         {
             CreationDate = DateTime.Now;
             Uid = GetUID();
@@ -61,12 +62,17 @@ namespace notes_by_nodes.Entities
             }
         }
         //там внутр вызывается конструктор нода и дочерние ноды добавляютя в соответсвующую 
-        public void LoadChildNodes()
+        internal void LoadChildNodes()
         {
             INodeStorage storage = GetStorage();
             if (storage == null)
                 throw new Exception("Storage wasn't set. Node doesn't have a storage");
             var _ = storage.GetChildNodes(this);
+        }
+
+        internal async Task LoadChildNodesAsync()
+        {
+            await Task.Run(LoadChildNodes);
         }
 
         //protected IEnumerable<Node> GetChildNodes()

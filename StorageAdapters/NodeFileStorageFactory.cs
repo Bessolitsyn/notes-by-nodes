@@ -18,21 +18,23 @@ namespace notes_by_nodes.StorageAdapters
         private LocalUserStorageAdapter _userstorageAdapter;
         private LocalBoxStorageAdapter _boxStorageAdapter;
         private Dictionary<int, LocalNoteStorageAdapter> _noteStorageAdapters = [];
-        public NodeFileStorageFactory(string profileFolder, string usersFolder="", string boxesFolder = "") {
+        private readonly INodeBuilder nodeBuilder;
+        public NodeFileStorageFactory(INodeBuilder nodeBuilder, string profileFolder, string usersFolder="", string boxesFolder = "") {
 
+            this.nodeBuilder = nodeBuilder;
 
             if (!Directory.Exists(profileFolder + "\\" + usersFolder))
             { 
                 Directory.CreateDirectory(profileFolder + "\\" + usersFolder);
             }
-            _userstorageAdapter = new LocalUserStorageAdapter(profileFolder, usersFolder);
+            _userstorageAdapter = new LocalUserStorageAdapter(this.nodeBuilder, profileFolder, usersFolder);
             _userstorageAdapter.SetStorageFactory(this);
 
             if (!Directory.Exists(profileFolder + "\\" + boxesFolder))
             {
                 Directory.CreateDirectory(profileFolder + "\\" + boxesFolder);
             }
-            _boxStorageAdapter = new LocalBoxStorageAdapter(profileFolder, boxesFolder);
+            _boxStorageAdapter = new LocalBoxStorageAdapter(this.nodeBuilder, profileFolder, boxesFolder);
             _boxStorageAdapter.SetStorageFactory(this);
 
             _userstorageAdapter.ReadNodes();
@@ -50,7 +52,7 @@ namespace notes_by_nodes.StorageAdapters
         {
             if (!_noteStorageAdapters.TryGetValue(box.Uid, out var storage))
             {
-                storage = new LocalNoteStorageAdapter(box.Name, "");
+                storage = new LocalNoteStorageAdapter(nodeBuilder, box.Name, "");
                 _noteStorageAdapters.Add(box.Uid, storage);
                 storage.SetStorageFactory(this);
                 storage.ReadNodes();

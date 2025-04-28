@@ -19,9 +19,8 @@ namespace notes_by_nodes.StorageAdapters
         //private Dictionary<int, BoxDataset> loadedBoxDatasets = [];
         private Dictionary<int, LocalBox> createdLocalBoxes = [];
 
-        internal LocalBoxStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "lbox") : base(pathToRootFolder, subfolder, fileExtension)
+        internal LocalBoxStorageAdapter(INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder) : base(nodeBuilder, pathToRootFolder, subfolder, "lbox")
         {
-
         }
         public LocalBox GetBox(int Uid)
         {
@@ -68,13 +67,11 @@ namespace notes_by_nodes.StorageAdapters
         {
             var users = nodeStorageFactory.GetUserStorage();
             var owner = users.GetUser(int.Parse(dataset.HasOwner));
-            var box = new LocalBox(owner, dataset.Name, dataset.Description);
+            var box = nodeBuilder.NewLocalBox(owner, dataset.Name, dataset.Description);
             box.Uid = dataset.Uid;
             box.CreationDate = dataset.CreationDate;
             box.Text = dataset.Text;
-            box.SetNoteStorage(nodeStorageFactory.GetNoteStorage(box));
-            owner.AddIntoChildNodes(box);
-            owner.AddIntoOwnerOf(box);
+            box.SetNoteStorage(nodeStorageFactory.GetNoteStorage(box));           
 
             AddLocalBoxToCreatedLocalBoxes(box);
             return box;
@@ -106,6 +103,11 @@ namespace notes_by_nodes.StorageAdapters
         internal void AddLocalBoxToCreatedLocalBoxes(LocalBox box)
         {
             createdLocalBoxes[box.Uid] = box;
+        }
+
+        public async Task SaveBoxAsync(LocalBox box)
+        {
+            await Task.Run(()=>SaveBox(box));
         }
     }
 

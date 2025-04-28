@@ -15,7 +15,7 @@ namespace notes_by_nodes.UseCases.AppRules
     {
         public IBoxStorage NoteStorage { get; init; }
         
-        public LocalUser(string name, string email, IBoxStorage storage) : base(name, email)
+        internal LocalUser(string name, string email, IBoxStorage storage) : base(name, email)
         {
             NoteStorage = storage;
             Type = "LocalUser";

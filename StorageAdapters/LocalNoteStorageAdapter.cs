@@ -14,8 +14,10 @@ namespace notes_by_nodes.StorageAdapters
     {
         
         private Dictionary<int, LocalNote> createdLocalNotes = [];
+        
 
-        internal LocalNoteStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "lnote") : base(pathToRootFolder, subfolder, fileExtension)
+
+        internal LocalNoteStorageAdapter(INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder) : base(nodeBuilder, pathToRootFolder, subfolder, "lnote")
         {
         }
 
@@ -53,10 +55,10 @@ namespace notes_by_nodes.StorageAdapters
         {
             var owner = nodeStorageFactory.GetUserStorage().GetUser(int.Parse(dataset.HasOwner));
             var parentNode = GetNode(int.Parse(dataset.HasParentNode));
-            var note = new LocalNote(parentNode, dataset.Name, dataset.Description);
+            var note = nodeBuilder.NewLocalNote(parentNode, dataset.Name, dataset.Text);
             note.Uid = dataset.Uid;
             note.CreationDate = dataset.CreationDate;
-            note.Text = dataset.Text;
+            note.Description = dataset.Description;
            
 
             AddLocalNoteToCreatedLocalNotes(note);
@@ -99,6 +101,11 @@ namespace notes_by_nodes.StorageAdapters
                 note = (LocalNote)GetNode(Uid);
             }
             return note;
+        }
+
+        public async Task SaveNoteAsync(LocalNote note)
+        {
+            await Task.Run(()=>SaveNote(note));
         }
     }
 }

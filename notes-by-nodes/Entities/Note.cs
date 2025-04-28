@@ -25,18 +25,18 @@ namespace notes_by_nodes.Entities
 
 	public interface INote
 	{
-		
-		void AddIntoContent(Content item);
-		
-		void RemoveFromContent(Content item);
-		
-		void AddIntoReference(Note item);
-		
-		void RemoveFromReference(Note item);
-		
-		void AddIntoRefernced(Note item);
-		
-		void RemoveFromRefernced(Note item);
+
+        void AddIntoContent(Content item);
+
+        void RemoveFromContent(Content item);
+
+        void AddIntoReference(Note item);
+
+        void RemoveFromReference(Note item);
+
+        void AddIntoRefernced(Note item);
+
+        void RemoveFromRefernced(Note item);
 	
 	}
 }

@@ -101,38 +101,36 @@ namespace TestProject
         public LocalUser? currentUser;
         public NodeFileStorageFactory storageFactory;
         //Lazy
-        InsideInteractor interactor;
+        CoreInteractor interactor;
+        UserInteractor userInteractor;
         public TestAppCore()
         {
-            storageFactory = new NodeFileStorageFactory(profileFolder);
-            currentUser = SelectUser();
-            currentUser.LoadChildNodes();
-            interactor = new InsideInteractor(storageFactory, currentUser.Uid);
+            INodeBuilder nodeBuilder = new NodeBuilder();
+            storageFactory = new NodeFileStorageFactory(nodeBuilder, profileFolder);
+            userInteractor = new UserInteractor(storageFactory);
+            currentUser = SelectUser();            
+            interactor = new CoreInteractor(storageFactory, currentUser);
 
 
 
             //UseCase user selecting  
-            
+
 
         }
         LocalUser SelectUser()
         {
-            var userStorage = storageFactory.GetUserStorage();
-            var users = userStorage.GetUsers();
+            var users = userInteractor.GetUsers();
             if (users.Length == 0)
             {
-                return MakeUserProfile();
+                var newUser = userInteractor.MakeUser("Anton", "Anton@mail");
+                newUser = userInteractor.GetUsers().SingleOrDefault(u => u.Uid == newUser.Uid) ?? throw new NullRefernceUseCaseException("user creating error");
+                return newUser;
             }
-
-            var selectedUser = users.First();            
-            return selectedUser;
-
-            LocalUser MakeUserProfile()
-            {
-                LocalUser user = new("Anton", "Anton@mail", storageFactory.GetBoxStorage());
-                storageFactory.GetUserStorage().SaveUser(user);
-                users = userStorage.GetUsers();
-                return user;
+            else { 
+                var selectedUser = users.First();
+                selectedUser.LoadChildNodes();
+                return selectedUser;           
+            
             }
         }
 

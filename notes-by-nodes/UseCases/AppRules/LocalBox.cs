@@ -14,13 +14,13 @@ namespace notes_by_nodes.UseCases.AppRules
     {
         public INoteStorage NoteStorage { get; private set; }
         
-        public LocalBox(User owner, string name, string desc="") : base(owner)
+        internal LocalBox(User owner, string name, string desc="") : base(owner)
         { 
             Type = "LocalBox";
             Name = name;
             Description = desc;
             hasOwner = owner;
-
+            
         }
         public override IEnumerable<Node> HasChildNodes => hasChildNodes; //GetChildNodes();
 

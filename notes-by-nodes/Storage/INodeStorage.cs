@@ -14,11 +14,13 @@ namespace notes_by_nodes.Storage
         IEnumerable<Note> GetReferencedNotes(Note note);
         LocalNote GetNote(int Uid);
         void SaveNote(LocalNote note);
+        Task SaveNoteAsync(LocalNote note);
     }
     public interface IBoxStorage : INodeStorage
     {
         LocalBox GetBox(int Uid);
         void SaveBox(LocalBox box);
+        Task SaveBoxAsync(LocalBox box);
     }
     public interface IUserStorage : INodeStorage
     {

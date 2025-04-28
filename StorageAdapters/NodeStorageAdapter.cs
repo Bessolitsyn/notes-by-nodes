@@ -19,12 +19,13 @@ namespace notes_by_nodes.StorageAdapters
         protected static Dictionary<int,NodeDataset> loadedNodeDatasets = [];
         //protected static Node[] createdLoadedNodes = [];
         protected static Dictionary<int,Node> createdLoadedNodes = [];
-
+        protected readonly INodeBuilder nodeBuilder;
         protected INodeStorageFactory nodeStorageFactory;
         
 
-        public NodeStorageAdapter(string pathToRootFolder, string subfolder, string fileExtension = "node") : base(pathToRootFolder, subfolder, fileExtension)
+        public NodeStorageAdapter(INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder, string fileExtension = "node") : base(pathToRootFolder, subfolder, fileExtension)
         {
+            this.nodeBuilder = nodeBuilder;
 #warning TODO Возможно загружать все заметки в боксе в память сразу неправильно - но этот метод вызывается и для узлов типа юзер и бокс
             //ReadNodes();
         }
@@ -104,6 +105,7 @@ namespace notes_by_nodes.StorageAdapters
             loadedNodeDatasets = [];
             createdLoadedNodes = [];
         }
+
     }
 
 }
