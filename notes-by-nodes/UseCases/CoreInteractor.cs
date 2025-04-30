@@ -46,7 +46,6 @@ namespace notes_by_nodes.UseCases
         internal async Task<LocalNote> AddNoteToNote(LocalNote pnote, string title, string text)
         {
             LocalNote note = new LocalNote(pnote, title, text);
-            var boxStorage = StorageFactory.GetBoxStorage();
             await note.NoteStorage.SaveNoteAsync(pnote);
             await note.NoteStorage.SaveNoteAsync(note);
             return note;
