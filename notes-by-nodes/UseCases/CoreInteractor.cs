@@ -1,4 +1,5 @@
-﻿using notes_by_nodes.Entities;
+﻿using Microsoft.VisualBasic;
+using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
 using notes_by_nodes.UseCases.AppRules;
 using System;
@@ -17,7 +18,6 @@ namespace notes_by_nodes.UseCases
     {
         protected INodeStorageFactory StorageFactory { get; init; }
         protected LocalUser ActiveUser { get; init; }
-        protected List<LocalBox> Boxes { get; init; } 
 
         internal CoreInteractor(INodeStorageFactory storageFactory, LocalUser activeUser)
         {
@@ -27,6 +27,7 @@ namespace notes_by_nodes.UseCases
 
         internal IEnumerable<LocalBox> GetBoxes()
         {
+            
             foreach (var item in ActiveUser.HasChildNodes)
             {
                 if (item is LocalBox lbox)
@@ -55,6 +56,18 @@ namespace notes_by_nodes.UseCases
         {
            
         }
+
+        public void NewBox(string folderToBox, string desc)
+        {
+            var bxStorage = StorageFactory.GetBoxStorage();
+            LocalBox box = new(ActiveUser, folderToBox, desc);
+            box.SetNoteStorage(StorageFactory.GetNoteStorage(box));
+            bxStorage.SaveBox(box);
+            ActiveUser.AddIntoChildNodes(box);
+            StorageFactory.GetUserStorage().SaveUser(ActiveUser);
+
+        }
+
 
     }
 }

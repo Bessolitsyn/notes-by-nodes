@@ -3,10 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:notes_by_nodes_wpfApp"
+        xmlns:local="clr-namespace:notes_by_nodes_wpfApp" 
+        d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" MinHeight="450" MinWidth="800">
+
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Width="150">
+            <TextBox Width="100" Text="sfdxvdv"></TextBox>
+            <TextBox Width="100" Text="{Binding User}"></TextBox>
+            <ListView Height="200" ItemsSource="{Binding NodesTree}" ItemTemplate="{Binding Name}" SelectedItem="{Binding SelectedNode}"></ListView>
+            <!--<Button Command="{Binding UpdateDataCommand}" >update</Button>-->
+        </StackPanel>
 
     </Grid>
 </Window>

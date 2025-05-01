@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace notes_by_nodes_wpfApp
 {
@@ -16,10 +17,12 @@ namespace notes_by_nodes_wpfApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        internal MainWindow(MainViewModel viewModel)
+        public MainWindow(MainViewModel viewModel)
         {
             InitializeComponent();
             DataContext = viewModel;
+            viewModel.Init();
+
         }
     }
 }

@@ -34,6 +34,7 @@ namespace notes_by_nodes.StorageAdapters
             if (user == null)
             {
                 user = (LocalUser)GetNode(Uid);
+
             }
             return user;
 

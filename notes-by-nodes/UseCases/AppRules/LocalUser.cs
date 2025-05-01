@@ -21,6 +21,7 @@ namespace notes_by_nodes.UseCases.AppRules
             Type = "LocalUser";
             hasOwner = this;
             hasParentNode = this;
+            
 
         }
         public override IEnumerable<Node> HasChildNodes => hasChildNodes;

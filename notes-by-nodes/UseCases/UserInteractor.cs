@@ -25,6 +25,12 @@ namespace notes_by_nodes.UseCases
             userStorage.SaveUser(user);
             return user;
         }
+        internal LocalUser GetUser(int uid)
+        {
+            var user = StorageFactory.GetUserStorage().GetUser(uid);
+            user.LoadChildNodes();
+            return user;
+        }
     }
 }
 

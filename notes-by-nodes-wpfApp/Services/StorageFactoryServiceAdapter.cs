@@ -37,7 +37,7 @@ namespace notes_by_nodes_wpfApp.Services
 
         public IUserStorage GetUserStorage()
         {
-            return GetUserStorage();
+            return _storageFactory.GetUserStorage();
         }
     }
 }

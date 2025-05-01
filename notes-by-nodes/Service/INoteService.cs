@@ -9,12 +9,11 @@ namespace notes_by_nodes.Services
 {
     public interface INoteService
     {
-        void SetUserProfile(string profilePath);
         void GetUsers();
         void SetActiveUser(int userUid);
-        void MakeUserProfile();
         void GetBoxes();
         void AddNewBox(string name);
+        void LoadNotesIntoParentNode(int boxUid);
 
     }
 }

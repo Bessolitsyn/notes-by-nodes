@@ -8,32 +8,59 @@ using System.Threading.Tasks;
 using notes_by_nodes_wpfApp.Services;
 using Microsoft.Extensions.Options;
 using notes_by_nodes_wpfApp.Settings;
+using notes_by_nodes.Services;
+using notes_by_nodes_wpfApp.ViewModel;
+using System.Collections.ObjectModel;
 
 namespace notes_by_nodes_wpfApp
 {
     public partial class MainViewModel : ObservableObject
     {
-        private readonly INotePresenter _userService;
+        private readonly MainViewModelPresenter _presenter;
         private readonly INoteService _notesService;
 
-        [ObservableProperty]
-        private string _user;
+        public ObservableCollection<NodeViewModel> NodesTree { get; } = [];
 
         [ObservableProperty]
-        private string _note;
+        private List<UserViewModel> _users = [];
 
-        public MainViewModel(INotePresenter userService, INoteService notesService, IOptions<NotesByNodesSettings> options)
+        [ObservableProperty]
+        private string _user = "No User";
+
+        [ObservableProperty]
+        private string _note = "No Note";
+
+        [ObservableProperty]
+        private NodeViewModel _selectedNode;
+
+        //props changing events handlers
+        
+        //
+
+
+        public MainViewModel(INotePresenter presenter, INoteService notesService, IOptions<NotesByNodesSettings> options)
         {
-            _userService = userService;
-            _notesService = notesService;
+            _presenter = (MainViewModelPresenter)presenter;
+            _notesService = notesService;        
         }
 
         [RelayCommand]
         private void UpdateData()
         {
-            _user = "Anton";
-            _note = "My first Note";
+            User = "Anton";
+            Note = "My first Note";
             
+        }
+        public void Init()
+        {
+            _presenter.SetMainViewModel(this);
+            _notesService.GetUsers();
+            var activeUser = Users.FirstOrDefault() ?? throw new NullReferenceException("Users collection is empty");
+            User = activeUser.Name;
+            _notesService.SetActiveUser(activeUser.Uid);
+            _notesService.GetBoxes();
+
+
         }
     }
 }

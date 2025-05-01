@@ -29,12 +29,8 @@ namespace notes_by_nodes_wpfApp
             base.OnStartup(e);
 
             var services = new ServiceCollection();
-
-
-
             // Конфигурация
             services.Configure<NotesByNodesSettings>(ConfigureServices);
-
             // Сервисы
             //services.AddSingleton<INodeBuilder, NodeBuilder>();
             services.AddSingleton<INodeStorageFactory, StorageFactoryServiceAdapter>();
@@ -48,24 +44,19 @@ namespace notes_by_nodes_wpfApp
             services.AddSingleton<MainWindow>();
 
             ServiceProvider = services.BuildServiceProvider();
-
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }
 
         static void ConfigureServices(NotesByNodesSettings configure)
         {
-            //var builder = new ConfigurationBuilder()
-            //     .SetBasePath(Directory.GetCurrentDirectory())
-            //     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            //Configuration = builder.Build();
-            //var sdsd = Configuration.GetRequiredSection("NotesByNodesSettings").Value;
-            //configure.UserProfile = "Configured";
+            string pathToIniFile = Directory.GetCurrentDirectory();
+            var builder = new ConfigurationBuilder()
+                 .SetBasePath(pathToIniFile)
+                 .AddIniFile("appsettings.ini", optional: false, reloadOnChange: true);
+            var Configuration = builder.Build();
+            configure.UserProfile = Configuration.GetRequiredSection("Startup:userprofile").Value ?? throw new NullReferenceException();
         }
-        static NodeFileStorageFactory GetNodeFileStorageFactory(IServiceProvider serviceProvider)
-        {
-            INodeBuilder builder = new NodeBuilder();
-            return new NodeFileStorageFactory(builder, "");
-        }
+        
     }
 }

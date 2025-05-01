@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.4" />
   </ItemGroup>
@@ -20,6 +20,12 @@
   <ItemGroup>
     <ProjectReference Include="..\notes-by-nodes\notes-by-nodes.csproj" />
     <ProjectReference Include="..\StorageAdapters\StorageAdapters.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

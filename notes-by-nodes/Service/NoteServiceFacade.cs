@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using notes_by_nodes.Storage;
 using notes_by_nodes.UseCases.AppRules;
 using notes_by_nodes.UseCases;
+using Microsoft.VisualBasic;
 
 namespace notes_by_nodes.Services
 {
@@ -33,10 +34,19 @@ namespace notes_by_nodes.Services
 
         public void GetBoxes()
         {
-            throw new NotImplementedException();
+            var boxes = coreInteractor.GetBoxes();
+            notePresenter.SetBoxes(boxes.Select(b => (b.Uid, b.Name, b.Description)));
         }
 
         public void GetUsers()
+        {
+            var users = userInteractor.GetUsers();
+            if (users != null && users.Length > 0)
+                notePresenter.SetUsers(users.Select(u => (u.Uid, u.Name, u.Email)));
+            else throw new NullRefernceUseCaseException("No users");
+        }
+
+        public void LoadNotesIntoParentNode(int boxUid)
         {
             throw new NotImplementedException();
         }
@@ -48,12 +58,12 @@ namespace notes_by_nodes.Services
 
         public void SetActiveUser(int userUid)
         {
-            coreInteractor = new CoreInteractor(storageFactory, activeUser);            
+            activeUser = userInteractor.GetUser(userUid);
+            coreInteractor = new CoreInteractor(storageFactory, activeUser);
+            
+
+
         }
 
-        public void SetUserProfile(string profilePath)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
