@@ -15,9 +15,9 @@ namespace notes_by_nodes.StorageAdapters
     {
         //public static INodeStorageFactory Instance { get => instance; }
         //public static INodeStorageFactory instance;
-        private LocalUserStorageAdapter _userstorageAdapter;
-        private LocalBoxStorageAdapter _boxStorageAdapter;
-        private Dictionary<int, LocalNoteStorageAdapter> _noteStorageAdapters = [];
+        private LocalUserStorageAdapter userstorageAdapter;
+        private LocalBoxStorageAdapter boxStorageAdapter;
+        private Dictionary<int, LocalNoteStorageAdapter> noteStorageAdapters = [];
         private readonly INodeBuilder nodeBuilder;
         public NodeFileStorageFactory(INodeBuilder nodeBuilder, string profileFolder, string usersFolder="", string boxesFolder = "") {
 
@@ -27,33 +27,33 @@ namespace notes_by_nodes.StorageAdapters
             { 
                 Directory.CreateDirectory(profileFolder + "\\" + usersFolder);
             }
-            _userstorageAdapter = new LocalUserStorageAdapter(this.nodeBuilder, profileFolder, usersFolder);
-            _userstorageAdapter.SetStorageFactory(this);
+            userstorageAdapter = new LocalUserStorageAdapter(this.nodeBuilder, profileFolder, usersFolder);
+            userstorageAdapter.SetStorageFactory(this);
 
             if (!Directory.Exists(profileFolder + "\\" + boxesFolder))
             {
                 Directory.CreateDirectory(profileFolder + "\\" + boxesFolder);
             }
-            _boxStorageAdapter = new LocalBoxStorageAdapter(this.nodeBuilder, profileFolder, boxesFolder);
-            _boxStorageAdapter.SetStorageFactory(this);
+            boxStorageAdapter = new LocalBoxStorageAdapter(this.nodeBuilder, profileFolder, boxesFolder);
+            boxStorageAdapter.SetStorageFactory(this);
 
-            _userstorageAdapter.ReadNodes();
-            _boxStorageAdapter.ReadNodes();
+            userstorageAdapter.ReadNodes();
+            boxStorageAdapter.ReadNodes();
 
 
         }
 
         public IBoxStorage GetBoxStorage()
         {
-            return _boxStorageAdapter;
+            return boxStorageAdapter;
         }
 
         public INoteStorage GetNoteStorage(LocalBox box)
         {
-            if (!_noteStorageAdapters.TryGetValue(box.Uid, out var storage))
+            if (!noteStorageAdapters.TryGetValue(box.Uid, out var storage))
             {
                 storage = new LocalNoteStorageAdapter(nodeBuilder, box.Name, "");
-                _noteStorageAdapters.Add(box.Uid, storage);
+                noteStorageAdapters.Add(box.Uid, storage);
                 storage.SetStorageFactory(this);
                 storage.ReadNodes();
             }
@@ -62,14 +62,14 @@ namespace notes_by_nodes.StorageAdapters
 
         public IUserStorage GetUserStorage()
         {
-            return _userstorageAdapter;
+            return userstorageAdapter;
         }
 
         internal void Dispose()
         {
-            _userstorageAdapter.Dispose();
-            _boxStorageAdapter.Dispose();
-            _noteStorageAdapters.Clear();
+            userstorageAdapter.Dispose();
+            boxStorageAdapter.Dispose();
+            noteStorageAdapters.Clear();
         }
     }
 }

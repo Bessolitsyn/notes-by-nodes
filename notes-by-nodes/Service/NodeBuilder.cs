@@ -1,20 +1,19 @@
 ﻿using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
+using notes_by_nodes.UseCases.AppRules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace notes_by_nodes.UseCases.AppRules
+namespace notes_by_nodes.Service
 {
-    class NodeBuilder : INodeBuilder
+    public class NodeBuilder : INodeBuilder
     {
         public LocalBox NewLocalBox(User owner, string name, string desc = "")
         {
             var box = new LocalBox(owner, name, desc);
-            //owner.AddIntoChildNodes(box);
-            //owner.AddIntoOwnerOf(box);
             return box;
         }
 

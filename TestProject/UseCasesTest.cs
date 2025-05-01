@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using notes_by_nodes.Entities;
+using notes_by_nodes.Service;
 using notes_by_nodes.Storage;
 using notes_by_nodes.StorageAdapters;
 using notes_by_nodes.UseCases;

@@ -8,8 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Factories\**" />
     <Compile Remove="Storage\Dataset\**" />
+    <EmbeddedResource Remove="Factories\**" />
     <EmbeddedResource Remove="Storage\Dataset\**" />
+    <None Remove="Factories\**" />
     <None Remove="Storage\Dataset\**" />
   </ItemGroup>
 
@@ -78,7 +81,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Factories\" />
+    <EditorConfigFiles Remove="C:\Users\tocha\source\notes-by-nodes\notes-by-nodes\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\tocha\source\notes-by-nodes\notes-by-nodes\.editorconfig" />
   </ItemGroup>
 
 </Project>
