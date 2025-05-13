@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using notes_by_nodes.Storage;
 using System.Runtime.CompilerServices;
 using System.IO;
-using notes_by_nodes.UseCases.AppRules;
+using notes_by_nodes.AppRules;
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.StorageAdapters
 {

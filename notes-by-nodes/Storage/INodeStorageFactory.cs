@@ -1,5 +1,5 @@
-﻿using notes_by_nodes.Entities;
-using notes_by_nodes.UseCases.AppRules;
+﻿using notes_by_nodes.AppRules;
+using notes_by_nodes.Entities;
 
 namespace notes_by_nodes.Storage
 {

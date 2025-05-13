@@ -6,9 +6,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using EasyObjectFileStorage;
+using notes_by_nodes.AppRules;
 using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
-using notes_by_nodes.UseCases.AppRules;
 
 namespace notes_by_nodes.StorageAdapters
 {

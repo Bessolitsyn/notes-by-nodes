@@ -8,35 +8,35 @@ using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
 
 [assembly: InternalsVisibleTo("TestProject")]
-namespace notes_by_nodes.UseCases.AppRules
+namespace notes_by_nodes.AppRules
 {
     public class LocalBox : Box
     {
-        public INoteStorage NoteStorage { get; private set; }
-        
-        internal LocalBox(User owner, string name, string desc="") : base(owner)
-        { 
+        //public INoteStorage NoteStorage { get; private set; }
+
+        internal LocalBox(User owner, string name, string desc = "") : base(owner)
+        {
             Type = "LocalBox";
             Name = name;
             Description = desc;
             hasOwner = owner;
-            
+
         }
-        public override IEnumerable<Node> HasChildNodes => hasChildNodes; //GetChildNodes();
+        public override IEnumerable<Node> HasChildNodes => hasChildNodes; //LoadChildNodes();
 
         public override User HasOwner => hasOwner;
 
         public override Node HasParentNode => hasParentNode;
 
-        
-        public void SetNoteStorage(INoteStorage noteStorage)
-        {
-            NoteStorage = noteStorage;
-        }
 
-        protected override INodeStorage GetStorage()
-        {
-            return NoteStorage;
-        }
+        //public void SetNoteStorage(INoteStorage noteStorage)
+        //{
+        //    NoteStorage = noteStorage;
+        //}
+
+        //protected override INodeStorage GetStorage()
+        //{
+        //    return NoteStorage;
+        //}
     }
 }

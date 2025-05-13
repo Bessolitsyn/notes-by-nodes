@@ -4,15 +4,10 @@ using System.IO;
 using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
-using System.Windows;
 using notes_by_nodes_wpfApp.Settings;
 using notes_by_nodes_wpfApp.Services;
 using notes_by_nodes.Storage;
-using notes_by_nodes.StorageAdapters;
-using notes_by_nodes.Service;
 using notes_by_nodes.Services;
-using System.Formats.Asn1;
 using notes_by_nodes_wpfApp.ViewModel;
 
 namespace notes_by_nodes_wpfApp
@@ -34,7 +29,7 @@ namespace notes_by_nodes_wpfApp
             // Сервисы
             //services.AddSingleton<INodeBuilder, NodeBuilder>();
             services.AddSingleton<INodeStorageFactory, StorageFactoryServiceAdapter>();
-            services.AddSingleton<INotePresenter, MainViewModelPresenter>();
+            services.AddSingleton<INotePresenter, ModelsPresenter>();
             services.AddSingleton<INoteService, NoteServiceFacade>();
 
             // ViewModel
@@ -55,8 +50,12 @@ namespace notes_by_nodes_wpfApp
                  .SetBasePath(pathToIniFile)
                  .AddIniFile("appsettings.ini", optional: false, reloadOnChange: true);
             var Configuration = builder.Build();
+#if DEBUG
+            configure.UserProfile = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\FilesStorage\\";
+#else
             configure.UserProfile = Configuration.GetRequiredSection("Startup:userprofile").Value ?? throw new NullReferenceException();
+#endif
         }
-        
+
     }
 }

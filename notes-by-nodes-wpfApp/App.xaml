@@ -4,6 +4,14 @@
              xmlns:local="clr-namespace:notes_by_nodes_wpfApp">
     <!--StartupUri="MainWindow.xaml"-->
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+
+                <!--<ResourceDictionary Source="Dictionary2.xaml" />
+                    <ResourceDictionary Source="ButtonStyles.xaml" />
+                    <SolidColorBrush Color="LimeGreen" x:Key="limeButton" />-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

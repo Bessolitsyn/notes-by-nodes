@@ -1,6 +1,6 @@
-﻿using notes_by_nodes.Entities;
+﻿using notes_by_nodes.AppRules;
+using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
-using notes_by_nodes.UseCases.AppRules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +52,7 @@ namespace TestProject
             LocalUser user = new("Anton", "Anton@mailbox", storageFactory.GetBoxStorage());
             LocalBox box = new(user, "Name of the test box", "Description of the test box");
             //user.AddIntoChildNodes(box);
-            box.SetNoteStorage(storageFactory.GetNoteStorage(box));
+            //box.SetNoteStorage(storageFactory.GetNoteStorage(box));
             LocalNote note = new LocalNote(box, "Untitled 1", "Description of UntitledNote1");
             LocalNote note2 = new LocalNote(note, "Untitled 2", "Description of UntitledNote2");
             //box.AddIntoChildNodes(note);
@@ -136,7 +136,7 @@ namespace TestProject
             throw new NotImplementedException();
         }
 
-        IEnumerable<Node> INodeStorage.GetChildNodes(Node parentNode)
+        IEnumerable<Node> INodeStorage.LoadChildNodes(Node parentNode)
         {
             return [];
         }

@@ -12,8 +12,8 @@ namespace notes_by_nodes.Storage
         
         public static string[] ErrorMessage { get; } = [
             "Пользователь не найден",
-            "Неизвестная ошибка",
-            "Node не найден"
+            "Node не найден",
+            "Неизвестная ошибка"
             ];
         
 
@@ -23,7 +23,7 @@ namespace notes_by_nodes.Storage
         }
         public static StorageException NewException(StorageErrorCode errorCode)
         {
-            if (Enumerable.Range(0, 1).Contains((int)errorCode))
+            if (Enumerable.Range(0, 2).Contains((int)errorCode))
                 return new NoNodeInStorageException(StorageException.ErrorMessage[(int)errorCode]);
             else
                 return new UnknownStorageException();

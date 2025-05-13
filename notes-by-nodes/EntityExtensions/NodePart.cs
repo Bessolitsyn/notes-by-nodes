@@ -9,6 +9,7 @@ namespace notes_by_nodes.Entities
 {
     public abstract partial class Node : INode
     {
+        
         protected Node(Node parentNode):this()
         {
             hasParentNode = parentNode;
@@ -24,9 +25,10 @@ namespace notes_by_nodes.Entities
             CreationDate = DateTime.Now;
             Uid = GetUID();
             Type = this.GetType().ToString();
+            //IsFullyLoaded = false;
         }
 
-        protected abstract INodeStorage GetStorage();
+        //protected abstract INodeStorage GetStorage();
 
         public void AddIntoChildNodes(Node item)
         {
@@ -62,37 +64,26 @@ namespace notes_by_nodes.Entities
             }
         }
         //там внутр вызывается конструктор нода и дочерние ноды добавляютя в соответсвующую 
-        internal void LoadChildNodes()
-        {
-            INodeStorage storage = GetStorage();
-            if (storage == null)
-                throw new Exception("Storage wasn't set. Node doesn't have a storage");
-            var _ = storage.GetChildNodes(this);
-        }
+        //internal void LoadChildNodes()
+        //{
+        //    INodeStorage storage = GetStorage();
+        //    if (storage == null)
+        //        throw new Exception("Storage wasn't set. Node doesn't have a storage");
+        //    storage.LoadChildNodes(this);
+        //}
 
-        internal async Task LoadChildNodesAsync()
-        {
-            await Task.Run(LoadChildNodes);
-        }
-
+        //internal async Task LoadChildNodesAsync()
+        //{
+        //    await Task.Run(LoadChildNodes);
+        //}
+       
         //protected IEnumerable<Node> GetChildNodes()
         //{
-        //    uploadNodesChildNodesIfItEmpty();
-        //    return hasChildNodes;
+        //    INodeStorage storage = GetStorage();
+        //    if (storage == null)
+        //        throw new Exception("Storage wasn't set. Node doesn't have a storage");
+        //    return storage.LoadChildNodes(this);
         //}
-        //private void uploadNodesChildNodesIfItEmpty()
-        //{
-        //    if (hasChildNodes.Count == 0)
-        //        hasChildNodes.AddRange(getChildNodes());
-        //}
-        //private IEnumerable<Node> getChildNodes()
-        protected IEnumerable<Node> GetChildNodes()
-        {
-            INodeStorage storage = GetStorage();
-            if (storage == null)
-                throw new Exception("Storage wasn't set. Node doesn't have a storage");
-            return storage.GetChildNodes(this);
-        }
 
         protected int GetUID()
         {

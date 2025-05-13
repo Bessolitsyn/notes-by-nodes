@@ -1,7 +1,7 @@
 ﻿using EasyObjectFileStorage;
+using notes_by_nodes.AppRules;
 using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
-using notes_by_nodes.UseCases.AppRules;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -71,7 +71,7 @@ namespace notes_by_nodes.StorageAdapters
             box.Uid = dataset.Uid;
             box.CreationDate = dataset.CreationDate;
             box.Text = dataset.Text;
-            box.SetNoteStorage(nodeStorageFactory.GetNoteStorage(box));           
+            //box.SetNoteStorage(nodeStorageFactory.GetNoteStorage(box));           
 
             AddLocalBoxToCreatedLocalBoxes(box);
             return box;
@@ -98,6 +98,8 @@ namespace notes_by_nodes.StorageAdapters
                 box.HasOwner.Uid.ToString(),
                 box.HasParentNode.Uid.ToString()
                 );
+
+
             return boxDS;
         }
         internal void AddLocalBoxToCreatedLocalBoxes(LocalBox box)

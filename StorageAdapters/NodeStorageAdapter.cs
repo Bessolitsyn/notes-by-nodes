@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using EasyObjectFileStorage;
 using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
-using notes_by_nodes.UseCases.AppRules;
+using notes_by_nodes.AppRules;
 
 namespace notes_by_nodes.StorageAdapters
 {
@@ -34,7 +34,7 @@ namespace notes_by_nodes.StorageAdapters
             nodeStorageFactory = factory;
         }
 
-        public IEnumerable<Node> GetChildNodes(Node parentNode)
+        public IEnumerable<Node> LoadChildNodes(Node parentNode)
         {
             var childNodes = new List<Node>();
             NodeDataset dataset = GetNodeDataset(parentNode.Uid);
@@ -42,6 +42,7 @@ namespace notes_by_nodes.StorageAdapters
             {
                 if (int.TryParse(strUid, out int uid))
                 {
+                    //parentNode.AddIntoChildNodes(GetNode(uid));
                     childNodes.Add(GetNode(uid));
                 }
             }
@@ -85,7 +86,8 @@ namespace notes_by_nodes.StorageAdapters
             if (userDataset == null)
             { 
                 ReadNode(uid);
-                userDataset = loadedNodeDatasets[uid] ?? throw StorageException.NewException(StorageErrorCode.NoNode);
+                loadedNodeDatasets.TryGetValue(uid, out userDataset);
+                if (userDataset == null) throw StorageException.NewException(StorageErrorCode.NoNode);
             }                
             return userDataset;
         }

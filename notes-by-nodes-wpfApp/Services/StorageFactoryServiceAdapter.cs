@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
+using notes_by_nodes.AppRules;
 using notes_by_nodes.Service;
 using notes_by_nodes.Storage;
 using notes_by_nodes.StorageAdapters;
-using notes_by_nodes.UseCases.AppRules;
 using notes_by_nodes_wpfApp.Settings;
 using System;
 using System.Collections.Generic;

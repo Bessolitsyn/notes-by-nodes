@@ -9,19 +9,19 @@ using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
 
 [assembly: InternalsVisibleTo("TestProject")]
-namespace notes_by_nodes.UseCases.AppRules
+namespace notes_by_nodes.AppRules
 {
     public class LocalUser : User
     {
         public IBoxStorage NoteStorage { get; init; }
-        
+
         internal LocalUser(string name, string email, IBoxStorage storage) : base(name, email)
         {
             NoteStorage = storage;
             Type = "LocalUser";
             hasOwner = this;
             hasParentNode = this;
-            
+
 
         }
         public override IEnumerable<Node> HasChildNodes => hasChildNodes;
@@ -32,15 +32,15 @@ namespace notes_by_nodes.UseCases.AppRules
 
         public override IEnumerable<Node> IsOwnerOf => isOwnerOf;
 
-        protected override INodeStorage GetStorage()
-        {
-            return NoteStorage;
-        }
+        //protected override INodeStorage GetStorage()
+        //{
+        //    return NoteStorage;
+        //}
 
 
-        
 
-        
+
+
 
     }
 }

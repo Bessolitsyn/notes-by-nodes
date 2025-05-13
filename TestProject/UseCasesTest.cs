@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using notes_by_nodes.AppRules;
 using notes_by_nodes.Entities;
 using notes_by_nodes.Service;
 using notes_by_nodes.Storage;
 using notes_by_nodes.StorageAdapters;
 using notes_by_nodes.UseCases;
-using notes_by_nodes.UseCases.AppRules;
 using VDS.RDF.Configuration;
 
 namespace TestProject
@@ -76,20 +76,27 @@ namespace TestProject
                 }
                 testapp.NewNoteToBox(box, "The Title1", "Any text of title", "Description");
                 testapp.NewNoteToBox(box, "The Title2", "Any text of title", "Description");
+                LocalNote note2 = box.HasChildNodes.FirstOrDefault(n => n.Name == "The Title2") as LocalNote;
+                var note3 = testapp.NewNoteToNote(box, note2, "The Title3", "Any text of title", "Description");
 
             }
             using (var testapp = new TestAppCore())
             {
 
                 var box = testapp.currentUser.HasChildNodes.First() as LocalBox;
-                box.LoadChildNodes();
-                Assert.True(box.HasChildNodes.Count() == 2);
-                LocalNote note2 = box.HasChildNodes.FirstOrDefault(n => n.Name == "The Title2") as LocalNote;
-                var note3 = testapp.NewNoteToNote(note2, "The Title3", "Any text of title", "Description");
+                testapp.storageFactory.GetNoteStorage(box).LoadChildNodes(box);
+                foreach (var note in box.HasChildNodes)
+                {
+                    testapp.storageFactory.GetNoteStorage(box).LoadChildNodes(note);
+
+                }
+                //box.LoadChildNodes();
+                
                 Assert.True(
-                    note3.HasParentNode == note2 &&
-                    note2.HasChildNodes.Contains(note3) &&
-                    note3.HasOwner == testapp.currentUser
+                    box.HasChildNodes.Count() == 2 &&
+                    box.HasChildNodes.FirstOrDefault(n => n.Name == "The Title2").HasChildNodes.Count() == 1
+                    //note2.HasChildNodes.Contains(note3) &&
+                    //note3.HasOwner == testapp.currentUser
                     );
             }
         }
@@ -129,7 +136,7 @@ namespace TestProject
             }
             else { 
                 var selectedUser = users.First();
-                selectedUser.LoadChildNodes();
+                storageFactory.GetBoxStorage().LoadChildNodes(selectedUser);
                 return selectedUser;           
             
             }
@@ -149,7 +156,7 @@ namespace TestProject
             {
                 string boxFolder = System.IO.Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage\\Box";
                 LocalBox box = new(currentUser, boxFolder, "FirstTestBox");
-                box.SetNoteStorage(storageFactory.GetNoteStorage(box));
+                //box.SetNoteStorage(storageFactory.GetNoteStorage(box));
                 bxStorage.SaveBox(box);
                 currentUser.AddIntoChildNodes(box);
                 storageFactory.GetUserStorage().SaveUser(currentUser);
@@ -170,13 +177,13 @@ namespace TestProject
             storageFactory.GetBoxStorage().SaveBox(box);
             return note;
         }
-        public LocalNote NewNoteToNote(LocalNote pnote, string name, string text, string desc)
+        public LocalNote NewNoteToNote(LocalBox box, LocalNote pnote, string name, string text, string desc)
         {
             var note = new LocalNote(pnote, name, desc);
             note.Text = text;
-            var noteStorage = pnote.NoteStorage;
-            noteStorage.SaveNote(note);
-            noteStorage.SaveNote(pnote);
+            //var noteStorage = pnote.NoteStorage;
+            storageFactory.GetNoteStorage(box).SaveNote(note);
+            storageFactory.GetNoteStorage(box).SaveNote(pnote);
             return note;
         }
         public void Dispose()

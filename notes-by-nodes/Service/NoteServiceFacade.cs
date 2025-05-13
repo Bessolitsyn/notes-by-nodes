@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using notes_by_nodes.Storage;
-using notes_by_nodes.UseCases.AppRules;
 using notes_by_nodes.UseCases;
 using Microsoft.VisualBasic;
+using notes_by_nodes.AppRules;
 
 namespace notes_by_nodes.Services
 {
@@ -14,14 +14,12 @@ namespace notes_by_nodes.Services
     {
         private readonly UserInteractor userInteractor;
         private readonly INodeStorageFactory storageFactory;
-        private readonly INotePresenter notePresenter;
-
         private LocalUser activeUser;
         private CoreInteractor coreInteractor;
 
-        public NoteServiceFacade(INotePresenter notePresenter, INodeStorageFactory storageFactory) {
+        public NoteServiceFacade(INodeStorageFactory storageFactory) {
 
-            this.notePresenter = notePresenter;
+            
             this.storageFactory = storageFactory;
             this.userInteractor = new UserInteractor(storageFactory);
 
@@ -32,36 +30,62 @@ namespace notes_by_nodes.Services
             throw new NotImplementedException();
         }
 
-        public void GetBoxes()
+        public IEnumerable<(int, string, string)> GetBoxes()
         {
             var boxes = coreInteractor.GetBoxes();
-            notePresenter.SetBoxes(boxes.Select(b => (b.Uid, b.Name, b.Description)));
+            return boxes.Select(b => (b.Uid, b.Name, b.Description));
         }
-
-        public void GetUsers()
+        
+        public IEnumerable<(int, string, string)> GetUsers()
         {
             var users = userInteractor.GetUsers();
             if (users != null && users.Length > 0)
-                notePresenter.SetUsers(users.Select(u => (u.Uid, u.Name, u.Email)));
+                return users.Select(u => (u.Uid, u.Name, u.Email));
             else throw new NullRefernceUseCaseException("No users");
         }
-
-        public void LoadNotesIntoParentNode(int boxUid)
+        public IEnumerable<(int, string, string)> GetChildNodesOfTheBox(int boxUid)
         {
-            throw new NotImplementedException();
+            var box = coreInteractor.GetBox(boxUid);
+            var childNodes = box.HasChildNodes.Select(u => (u.Uid, u.Name, u.Description));
+            return childNodes;
         }
 
-        public void MakeUserProfile()
+        public IEnumerable<(int, string, string)> GetChildNodes(int boxUid, int parentNodeUid)
         {
-            throw new NotImplementedException();
+            (int, string, string)[] childNotes = [];
+            var childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Select(u => (u.Uid, u.Name, u.Description));
+            return childNodes;
         }
 
-        public void SetActiveUser(int userUid)
+
+        public void ModifyBox(int nodeUid, string name, string desc)
+        {
+            var box = coreInteractor.GetBox(nodeUid);
+            box.Name = name;
+            box.Description = desc;
+            coreInteractor.SaveBox(box);
+        }
+
+        public void ModifyNote(int boxUid, int noteUid, string name, string desc)
+        {
+            //var box = coreInteractor.GetBox(boxUid);
+            var note = coreInteractor.GetNote(boxUid, noteUid);
+            note.Description = desc;
+            note.Name = name;
+            coreInteractor.SaveNote(boxUid, note);
+        }
+
+        public void ModifyUser(int userUid, string name, string email)
+        {
+            activeUser.Name = name;
+            userInteractor.SaveUser(activeUser);
+        }
+
+
+        public void SelectUser(int userUid)
         {
             activeUser = userInteractor.GetUser(userUid);
-            coreInteractor = new CoreInteractor(storageFactory, activeUser);
-            
-
+            coreInteractor = new CoreInteractor(storageFactory, activeUser);      
 
         }
 

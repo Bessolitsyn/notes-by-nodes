@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Services
 {
+    [Obsolete]
     public interface INotePresenter
     {
         /// <summary>
@@ -18,7 +19,18 @@ namespace notes_by_nodes.Services
         
         void SetBoxes(IEnumerable<(int, string, string)> boxes);
 
-        void SetChildNotes(int parentNodeUid, int[] childNodes);
+        void SetChildNotes(int parentNodeUid, (int, string, string)[] childNodes);
+
+        void Attach(INotePresenterObserver observer);
+        void Detach(INotePresenterObserver observer);
+
+        
+
+    }
+    [Obsolete]
+    public interface INotePresenterObserver
+    {
+        void GetViewModel<T>(int uid);
 
     }
 }

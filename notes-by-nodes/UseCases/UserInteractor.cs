@@ -1,5 +1,5 @@
-﻿using notes_by_nodes.Storage;
-using notes_by_nodes.UseCases.AppRules;
+﻿using notes_by_nodes.AppRules;
+using notes_by_nodes.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,9 +27,14 @@ namespace notes_by_nodes.UseCases
         }
         internal LocalUser GetUser(int uid)
         {
-            var user = StorageFactory.GetUserStorage().GetUser(uid);
-            user.LoadChildNodes();
+            var storage = storageFactory.GetUserStorage();
+            var user = storage.GetUser(uid);
+            StorageFactory.GetBoxStorage().LoadChildNodes(user);
             return user;
+        }
+        internal void SaveUser(LocalUser user)
+        {
+            StorageFactory.GetUserStorage().SaveUser(user);
         }
     }
 }
