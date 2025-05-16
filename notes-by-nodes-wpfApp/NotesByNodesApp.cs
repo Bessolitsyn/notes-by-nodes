@@ -9,6 +9,7 @@ using notes_by_nodes_wpfApp.Services;
 using notes_by_nodes.Storage;
 using notes_by_nodes.Services;
 using notes_by_nodes_wpfApp.ViewModel;
+using System.Reflection;
 
 namespace notes_by_nodes_wpfApp
 {
@@ -51,7 +52,10 @@ namespace notes_by_nodes_wpfApp
                  .AddIniFile("appsettings.ini", optional: false, reloadOnChange: true);
             var Configuration = builder.Build();
 #if DEBUG
-            configure.UserProfile = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\FilesStorage\\";
+            var current = Directory.GetCurrentDirectory() + "\\..\\..\\..\\..\\TestProject\\FilesStorage\\";
+            Directory.SetCurrentDirectory(current);
+            configure.UserProfile = Directory.GetCurrentDirectory();
+            //configure.UserProfile = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\FilesStorage\\";
 #else
             configure.UserProfile = Configuration.GetRequiredSection("Startup:userprofile").Value ?? throw new NullReferenceException();
 #endif
