@@ -25,12 +25,18 @@ namespace notes_by_nodes_wpfApp
             viewModel.Init();
         }
 
+
         private void NodeTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (DataContext is MainViewModel vm)
             {
-                vm.SelectedNode = (INodeViewModel)e.NewValue;
+                vm.SelectedNode = (INoteViewModel)e.NewValue;
             }
         }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }        
     }
 }

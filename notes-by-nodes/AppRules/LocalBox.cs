@@ -5,12 +5,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using notes_by_nodes.Entities;
+using notes_by_nodes.Services;
 using notes_by_nodes.Storage;
 
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.AppRules
 {
-    public class LocalBox : Box
+    public class LocalBox : Box, INodeDto
     {
         //public INoteStorage NoteStorage { get; private set; }
 

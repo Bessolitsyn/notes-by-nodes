@@ -10,13 +10,28 @@ namespace notes_by_nodes.Services
     public interface INoteService
     {
         void SelectUser(int userUid);
-        IEnumerable<(int, string, string)> GetUsers();
-        IEnumerable<(int, string, string)> GetBoxes();
+        IEnumerable<IUserDto> GetUsers();
+        IEnumerable<INodeDto> GetBoxes();
         void AddNewBox(string name);
-        IEnumerable<(int, string, string)> GetChildNodes(int boxUid, int parentNodeUid);
-        IEnumerable<(int, string, string)> GetChildNodesOfTheBox(int boxUid);
-        void ModifyUser(int userUid, string name, string email);
-        void ModifyBox(int boxUid, string name, string desc);
-        void ModifyNote(int boxUid, int noteUid, string name, string desc);
+        IEnumerable<INodeDto> GetChildNodes(int boxUid, int parentNodeUid);
+        IEnumerable<INodeDto> GetChildNodesOfTheBox(int boxUid);
+        void ModifyUser(IUserDto user);
+        void ModifyBox(INodeDto box);
+        void ModifyNote(int boxUid, INodeDto note);
     }
+
+    public interface INodeDto
+    {
+        int Uid { get; set; }
+        string Name { get; set; }
+        string Description { get; set; }
+        string Text { get; set; }
+    }
+    public interface IUserDto
+    {
+        int Uid { get; set; }
+        string Name { get; set; }
+        string Email { get; set; }
+    }
+
 }

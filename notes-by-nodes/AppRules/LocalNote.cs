@@ -1,4 +1,5 @@
 ﻿using notes_by_nodes.Entities;
+using notes_by_nodes.Services;
 using notes_by_nodes.Storage;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.AppRules
 {
-    public class LocalNote : Note
+    public class LocalNote : Note, INodeDto
     {
         //[Obsolete]
         //public INoteStorage NoteStorage { get; init; }

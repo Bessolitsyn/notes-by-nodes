@@ -7,6 +7,7 @@ using notes_by_nodes.Storage;
 using notes_by_nodes.UseCases;
 using Microsoft.VisualBasic;
 using notes_by_nodes.AppRules;
+using System.Xml.Linq;
 
 namespace notes_by_nodes.Services
 {
@@ -30,54 +31,60 @@ namespace notes_by_nodes.Services
             throw new NotImplementedException();
         }
 
-        public IEnumerable<(int, string, string)> GetBoxes()
+        public IEnumerable<INodeDto> GetBoxes()
         {
             var boxes = coreInteractor.GetBoxes();
-            return boxes.Select(b => (b.Uid, b.Name, b.Description));
+            //return boxes.Select(b => (b.Uid, b.Name, b.Description));
+            return boxes.Cast<INodeDto>();
         }
         
-        public IEnumerable<(int, string, string)> GetUsers()
+        public IEnumerable<IUserDto> GetUsers()
         {
             var users = userInteractor.GetUsers();
             if (users != null && users.Length > 0)
-                return users.Select(u => (u.Uid, u.Name, u.Email));
+                //return users.Select(u => (u.Uid, u.Name, u.Email));
+                return users;
+                //return users.Cast<IUserDto>()
             else throw new NullRefernceUseCaseException("No users");
         }
-        public IEnumerable<(int, string, string)> GetChildNodesOfTheBox(int boxUid)
+        public IEnumerable<INodeDto> GetChildNodesOfTheBox(int boxUid)
         {
             var box = coreInteractor.GetBox(boxUid);
-            var childNodes = box.HasChildNodes.Select(u => (u.Uid, u.Name, u.Description));
+            //var childNodes = box.HasChildNodes.Select(u => (u.Uid, u.Name, u.Description));
+            var childNodes = box.HasChildNodes.Cast<INodeDto>();
             return childNodes;
         }
 
-        public IEnumerable<(int, string, string)> GetChildNodes(int boxUid, int parentNodeUid)
+        public IEnumerable<INodeDto> GetChildNodes(int boxUid, int parentNodeUid)
         {
-            (int, string, string)[] childNotes = [];
-            var childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Select(u => (u.Uid, u.Name, u.Description));
+            //INodeDto[] childNotes = [];
+            //var childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid);
+            var childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Cast<INodeDto>();
             return childNodes;
         }
 
 
-        public void ModifyBox(int nodeUid, string name, string desc)
+        public void ModifyBox(INodeDto box)
         {
-            var box = coreInteractor.GetBox(nodeUid);
-            box.Name = name;
-            box.Description = desc;
-            coreInteractor.SaveBox(box);
+            var _box = coreInteractor.GetBox(box.Uid);
+            _box.Name = box.Name;
+            _box.Description = box.Description;
+            coreInteractor.SaveBox(_box);
         }
 
-        public void ModifyNote(int boxUid, int noteUid, string name, string desc)
+        public void ModifyNote(int boxUid, INodeDto note)
         {
             //var box = coreInteractor.GetBox(boxUid);
-            var note = coreInteractor.GetNote(boxUid, noteUid);
-            note.Description = desc;
-            note.Name = name;
-            coreInteractor.SaveNote(boxUid, note);
+            var _note = coreInteractor.GetNote(boxUid, note.Uid);
+            _note.Description = note.Description;
+            _note.Name = note.Name;
+            coreInteractor.SaveNote(boxUid, _note);
         }
 
-        public void ModifyUser(int userUid, string name, string email)
+        public void ModifyUser(IUserDto user)
         {
-            activeUser.Name = name;
+            activeUser.Name = user.Name;
+            activeUser.Email = user.Email;
             userInteractor.SaveUser(activeUser);
         }
 

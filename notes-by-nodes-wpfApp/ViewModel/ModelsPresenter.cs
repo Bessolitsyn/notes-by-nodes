@@ -31,7 +31,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
 
         public void SetChildNotes(int parentNodeUid, (int, string, string)[] childNodes)
         {
-            //NotifyObservers<INodeViewModel>(childNodes.Select(box => new NoteViewModel(box.Item1, box.Item2, box.Item3)));
+            //NotifyObservers<INoteViewModel>(childNodes.Select(box => new NoteViewModel(box.Item1, box.Item2, box.Item3)));
         }
 
         //public void SetMainViewModel(MainViewModel mainViewModel)

@@ -8,12 +8,32 @@
         d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" MinHeight="450" MinWidth="800">
+    <Window.Resources>
+        <HierarchicalDataTemplate x:Key="NoteTemplate" DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Name}"/>
+                <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
+                <TextBlock Text="{Binding Desc}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" TextAlignment="Left"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate x:Key="BoxTemplate" DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Desc}"/>
+                <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
+                <TextBlock Text="{Binding Name}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <local:CustomTemplateSelector x:Key="NodeTemplateSelector"
+            BoxTemplate="{StaticResource BoxTemplate}"
+            NoteTemplate="{StaticResource NoteTemplate}" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="100"/>
+            <ColumnDefinition Width="*" MinWidth="200"/>
             <ColumnDefinition Width="2"/>
             <!-- Для GridSplitter -->
-            <ColumnDefinition Width="2*" MinWidth="100"/>
+            <ColumnDefinition Width="3*" MinWidth="300"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -22,31 +42,42 @@
 
         <!-- Левая панель -->
         <Border Grid.Column="0" Grid.Row="0" Background="White" >
-            <StackPanel Orientation="Vertical">
-                <TextBox Text="{Binding SelectedNode.Desc, UpdateSourceTrigger=LostFocus}"></TextBox>
-                <TextBox Text="{Binding ElementName=NodeTreeView, Path=SelectedValue.Desc}"></TextBox>
-                <TextBox Text="{Binding User, UpdateSourceTrigger=LostFocus}"></TextBox>
-                <Button Content="Add Child" Command="{Binding AddChildCommand}" />
-                <Button Content="Remove Node" Command="{Binding RemoveNodeCommand}"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Для TextBox и кнопок -->
+                    <RowDefinition Height="*"/>
+                    <!-- Для TreeView (займет все оставшееся место) -->
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <TreeView ItemsSource="{Binding NodesTree}" 
-                    Name="NodeTreeView" MinHeight="300"
-                    SelectedItemChanged="NodeTreeView_SelectedItemChanged"                        
-                    >
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type vm:INodeViewModel}" ItemsSource="{Binding ChildNodes}">
-                            <StackPanel Orientation="Vertical" MinHeight="50">
-                                <!--<Image Source="/Images/node.png" Width="16" Height="16" Margin="0,0,5,0"/>-->
+                <StackPanel Orientation="Vertical" Grid.Row="0">
+                    <!--<TextBox Text="{Binding SelectedNode.Desc, UpdateSourceTrigger=LostFocus}"></TextBox>
+                    <TextBox Text="{Binding ElementName=NodeTreeView, Path=SelectedValue.Desc}"></TextBox>
+                    <TextBox Text="{Binding User, UpdateSourceTrigger=LostFocus}"></TextBox>-->
+                    <Button Content="Add Child" Command="{Binding NewChildNodeCommand}" CommandParameter="{Binding SelectedNode}" />
+                    <Button Content="Remove Node" Command="{Binding RemoveNodeCommand}" CommandParameter="{Binding SelectedNode}"/>
+                </StackPanel>
+
+                <TreeView ItemsSource="{Binding NodesTree}" Grid.Row="1" Grid.Column="0"
+                    Name="NodeTreeView" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"  
+                          HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch"
+                    SelectedItemChanged="NodeTreeView_SelectedItemChanged"
+                    ItemTemplateSelector="{StaticResource NodeTemplateSelector}">
+                    <!--<TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
+                            <StackPanel Orientation="Vertical">
                                 <TextBlock Text="{Binding Name}"/>
-                                <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' ({0} children)'}" Foreground="Gray" Margin="5,0,0,0"/>
+                                <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
+                                <TextBlock Text="{Binding Desc}" Width="200" Foreground="Gray" FontSize="10" TextAlignment="Left"/>
                             </StackPanel>
                         </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-
-
+                    </TreeView.ItemTemplate>-->
                 </TreeView>
-            </StackPanel>
 
+            </Grid>
         </Border>
 
         <!-- Разделитель -->
@@ -55,7 +86,45 @@
 
         <!-- Правая панель -->
         <Border Grid.Column="2" Background="LightBlue">
-            <TextBlock Text="Правая панель" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TabControl Name="MainNoteTabViewer" Background="Transparent" ItemsSource="{Binding Tabs}">
+                <!--<TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel Orientation="Horizontal">                            
+                            <TextBlock Text="{Binding Header}"/>
+                            <Button Name="CloseButton" Content="X" Width="20" Height="20" Margin="3" Click="CloseButton_Click"/>                            
+                        </WrapPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>-->
+                <TabControl.Resources>
+                    <!--<Style TargetType="{x:Type TabItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type TabItem}">
+                                    <Grid>
+                                        <Border Name="Border" Background="LightGray" BorderBrush="Gray" 
+                                                BorderThickness="1,1,1,0" CornerRadius="4,4,0,0" HorizontalAlignment="Left" Width="Auto">
+                                            <DockPanel>
+                                                <Button Name="CloseButton" DockPanel.Dock="Right" Content="X" Width="20" Height="20" Margin="3" 
+                                                Click="CloseButton_Click"/>
+                                                <ContentPresenter ContentSource="Header" 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Margin="10,2"/>
+                                            </DockPanel>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>-->
+                </TabControl.Resources>
+                <!--<TabItem Header="asasas">
+                    sadsadsadsadsadsadsad
+                </TabItem>
+                <TabItem Header="fsdfccccccdsf">
+                    wawqewqeqwd
+                </TabItem>-->
+            </TabControl>
         </Border>
     </Grid>
 
