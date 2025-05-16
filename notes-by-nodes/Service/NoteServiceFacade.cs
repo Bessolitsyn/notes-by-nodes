@@ -8,6 +8,7 @@ using notes_by_nodes.UseCases;
 using Microsoft.VisualBasic;
 using notes_by_nodes.AppRules;
 using System.Xml.Linq;
+using notes_by_nodes.Entities;
 
 namespace notes_by_nodes.Services
 {
@@ -69,6 +70,7 @@ namespace notes_by_nodes.Services
             var _box = coreInteractor.GetBox(box.Uid);
             _box.Name = box.Name;
             _box.Description = box.Description;
+            _box.Text = box.Text;
             coreInteractor.SaveBox(_box);
         }
 
@@ -78,6 +80,7 @@ namespace notes_by_nodes.Services
             var _note = coreInteractor.GetNote(boxUid, note.Uid);
             _note.Description = note.Description;
             _note.Name = note.Name;
+            _note.Text = note.Text;
             coreInteractor.SaveNote(boxUid, _note);
         }
 

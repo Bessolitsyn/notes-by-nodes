@@ -6,29 +6,37 @@ using notes_by_nodes.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace notes_by_nodes_wpfApp.ViewModel
 {
-    public partial class BoxViewModel(int uid, string path, string desc, string text, IParentNode parentNode) : NodeViewModel(), INoteViewModel
+    public partial class BoxViewModel : NodeViewModel, INoteViewModel
     {
         //public ObservableCollection<INoteViewModel> ChildNodes { get; set; } = [];
 
-        [ObservableProperty]
-        private int uid = uid;
-        [ObservableProperty]
-        private string name = path;
-        [ObservableProperty]
-        private string desc = desc;
-        [ObservableProperty]
-        private string text = text;
-        protected override IParentNode ParentNode { get; init; } = parentNode;
-        partial void OnDescChanged(string? oldValue, string newValue)
-        {
-            if (IsLoaded && newValue != null && newValue != String.Empty)
-                NoteService.ModifyBox((INodeDto)this);
+        //[ObservableProperty]
+        //private int uid = uid;
+        //[ObservableProperty]
+        //private string name = path;
+        //[ObservableProperty]
+        //private string description = desc;
+        //[ObservableProperty]
+        //private string text = text;
+        //protected override IParentNode ParentNode { get; init; } = parentNode;
+        //partial void OnDescriptionChanged(string? oldValue, string newValue)
+        //{
+        //    if (IsLoaded && newValue != null && newValue != String.Empty)
+        //        NoteService.ModifyBox((INodeDto)this);
+        //}
+        public BoxViewModel(int uid, string path, string desc, string text, IParentNode parentNode)
+            : base(uid, path, desc, text, parentNode)
+        { 
         }
         public void LoadChildNodes()
         {
@@ -38,6 +46,19 @@ namespace notes_by_nodes_wpfApp.ViewModel
                 ChildNodes.Add(note);
             }
             IsLoaded= true;
+        }
+
+        public override void TrySaveChanges()
+        {
+            try
+            {
+                if (IsLoaded)
+                    NoteService.ModifyBox((INodeDto)this);
+            }
+            catch (Exception)
+            {
+#warning TO DO error message box
+            }
         }
 
         public override void Remove()
@@ -56,26 +77,30 @@ namespace notes_by_nodes_wpfApp.ViewModel
             ChildNodes.Remove(childNote);
         }
     }
-    public partial class NoteViewModel(int uid, int boxUid, string name, string desc, string text, INoteViewModel parent ) : NodeViewModel(), INoteViewModel
+    public partial class NoteViewModel : NodeViewModel, INoteViewModel
     {
         
         [ObservableProperty]
-        private int uid = uid;
-        [ObservableProperty]
-        private int boxUid = boxUid;
-        [ObservableProperty]
-        private string name = name;
-        [ObservableProperty]
-        private string desc = desc;
-        [ObservableProperty]
-        private string text = text;
+        private int boxUid;
 
-        protected override IParentNode ParentNode { get; init; } = parent;
+        public NoteViewModel(int uid, int boxUid, string name, string desc, string text, INoteViewModel parent)
+            :base(uid, name, desc, text, parent)
+        {
+            this.boxUid = boxUid;
+        }
 
-        partial void OnDescChanged(string? oldValue, string newValue)
-        {            
-            if (IsLoaded && newValue != null&& newValue != String.Empty)
-                NoteService.ModifyNote(boxUid, (INodeDto)this);
+        public override void TrySaveChanges()
+        {
+            try
+            {
+                if (IsLoaded)
+                    NoteService.ModifyNote(BoxUid, (INodeDto)this);
+            }
+            catch (Exception ex )
+            {
+#warning TO DO error message box
+                
+            }  
         }
         public void LoadChildNodes()
         {
@@ -104,29 +129,62 @@ namespace notes_by_nodes_wpfApp.ViewModel
         }
     }
 
-    public abstract partial class NodeViewModel : ObservableObject
+    public abstract partial class NodeViewModel : ObservableObject, INodeDto
     {
         public bool IsLoaded { get; set; }
         public ObservableCollection<INoteViewModel> ChildNodes { get; set; } = [];
-        protected abstract IParentNode ParentNode { get; init; }
+        protected IParentNode ParentNode { get; init; }
         protected INoteService NoteService { get; init; }
-        public NodeViewModel()
+
+        [ObservableProperty]
+        private int uid;
+        [ObservableProperty]
+        private string name;
+        [ObservableProperty]
+        private string description;
+        [ObservableProperty]
+        private string text;
+        [ObservableProperty]
+        private FlowDocument textDoc;
+        
+
+        partial void OnDescriptionChanged(string value)
+        {
+            TrySaveChanges();
+        }
+        partial void OnTextChanged(string value)
+        {
+            TrySaveChanges();
+        }
+        partial void OnNameChanged(string value)
+        {
+            TrySaveChanges();
+        }
+
+        public NodeViewModel(int uid, string name, string desc, string text, IParentNode parent)
         {   
+            this.uid = uid;
+            this.name = name;
+            this.description = desc;
+            this.text = text;
+            ParentNode = parent;
             NotesByNodesApp app = (NotesByNodesApp)NotesByNodesApp.Current;
             NoteService = app.ServiceProvider.GetRequiredService<INoteService>();
             IsLoaded = false;
+            
         }
-        
+        abstract public void TrySaveChanges();
         abstract public void Remove();
         abstract public void NewChild();
+        
     }
-
-    public interface INoteViewModel:IParentNode 
+    public interface INoteViewModel:IParentNode
     {
         ObservableCollection<INoteViewModel> ChildNodes { get; set; }
         int Uid { get;set; }
         string Name { get;set; }
-        string Desc { get;set; }
+        string Description { get;set; }
+        string Text { get; set; }
         bool IsLoaded { get; set; }        
         void LoadChildNodes();
         void Remove();

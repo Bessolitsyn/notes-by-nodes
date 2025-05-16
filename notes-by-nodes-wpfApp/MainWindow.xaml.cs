@@ -23,9 +23,10 @@ namespace notes_by_nodes_wpfApp
             InitializeComponent();
             DataContext = viewModel;
             viewModel.Init();
+            NodeTreeView.MouseDoubleClick += viewModel.NodeTreeView_MouseDoubleClick;
+            NodeTreeView.SelectedItemChanged += NodeTreeView_SelectedItemChanged;
+
         }
-
-
         private void NodeTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (DataContext is MainViewModel vm)
@@ -34,9 +35,5 @@ namespace notes_by_nodes_wpfApp
             }
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }        
     }
 }

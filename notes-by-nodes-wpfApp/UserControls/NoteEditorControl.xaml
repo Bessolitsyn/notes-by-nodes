@@ -14,14 +14,20 @@
             <ColumnDefinition Width="20" MinWidth="20"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="10" />
         </Grid.RowDefinitions>
-        <Border Grid.Column="0" Grid.Row="0">
-            <StackPanel>                
-                <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus}"></TextBox>
-                <TextBox Text="{Binding Desc, UpdateSourceTrigger=LostFocus}"></TextBox>
+            <StackPanel Grid.Column="0" Grid.Row="0">
+            <TextBox BorderThickness="0" FontSize="16" Padding="5"
+                         Text="{Binding Name, UpdateSourceTrigger=LostFocus}"></TextBox>
+            <TextBox BorderThickness="0" FontSize="14" Padding="5" Background="AliceBlue"
+                         Text="{Binding Description, UpdateSourceTrigger=LostFocus}"></TextBox>                
             </StackPanel>
-        </Border>
+        <RichTextBox BorderThickness="0" FontSize="12" Padding="5"
+                     x:Name="NoteContentRTBox" LostKeyboardFocus="RichTextBox_LostKeyboardFocus"
+            Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" />
+        <!--<Border Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch">
+        </Border>-->
     </Grid>
 </UserControl>

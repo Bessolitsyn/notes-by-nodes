@@ -13,12 +13,12 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding Name}"/>
                 <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
-                <TextBlock Text="{Binding Desc}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" TextAlignment="Left"/>
+                <TextBlock Text="{Binding Description}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" TextAlignment="Left"/>
             </StackPanel>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate x:Key="BoxTemplate" DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Desc}"/>
+                <TextBlock Text="{Binding Description}"/>
                 <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
                 <TextBlock Text="{Binding Name}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" />
             </StackPanel>
@@ -63,8 +63,7 @@
 
                 <TreeView ItemsSource="{Binding NodesTree}" Grid.Row="1" Grid.Column="0"
                     Name="NodeTreeView" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"  
-                          HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch"
-                    SelectedItemChanged="NodeTreeView_SelectedItemChanged"
+                          HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch"   
                     ItemTemplateSelector="{StaticResource NodeTemplateSelector}">
                     <!--<TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">

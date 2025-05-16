@@ -42,24 +42,46 @@ namespace notes_by_nodes_wpfApp
         private INoteViewModel _selectedNode;
         partial void OnSelectedNodeChanging(INoteViewModel value)
         {
-            if (!value.IsLoaded)
+            try
             {
-                //TryExecuteUseCase(value.LoadChildNodes);
-                value.LoadChildNodes();               
+                if (!value.IsLoaded)
+                {
+                    //TryExecuteUseCase(value.LoadChildNodes);
+                    value.LoadChildNodes();
+                }
+                foreach (var note in value.ChildNodes)
+                {
+                    if (!note.IsLoaded) //TryExecuteUseCase(value.LoadChildNodes);
+                        note.LoadChildNodes();
+                }
+                ShowNoteInActiveTab(value);
             }
-            foreach (var note in value.ChildNodes)
+            catch (Exception ex )
             {
-                if (!note.IsLoaded) //TryExecuteUseCase(value.LoadChildNodes);
-                    note.LoadChildNodes();
-            }
-            AddNoteTabToTabControl(value);
+                System.Windows.MessageBox.Show(ex.ToString());
+            }         
 
+        }
+
+
+        #region COMMANDS
+
+        [RelayCommand]
+        private void UpdateData()
+        {
+            //User = "Anton";
+            Note = "My first Note";
+            //переделать комманды
         }
 
         public ICommand CloseTabCommand => new RelayCommand<NodeTabItem>(tab =>
         {
             if (tab!=null)
                 Tabs.Remove(tab);
+        });
+        public ICommand TreeNodeDoubleClickCommand => new RelayCommand(()=>
+        {
+            
         });
         public ICommand RemoveNodeCommand => new RelayCommand<INoteViewModel>(node =>
         {
@@ -84,7 +106,16 @@ namespace notes_by_nodes_wpfApp
 #warning TO DO uniwersal error message box;
             }
         }
+        #endregion
 
+
+        #region EVENTS
+        public void NodeTreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ShowNoteInNewTab(SelectedNode);
+        }
+
+        #endregion EVENTS
 
         public MainViewModel(INoteService notesService, IOptions<NotesByNodesSettings> options)
         {
@@ -92,13 +123,6 @@ namespace notes_by_nodes_wpfApp
             _notesService = notesService;               
         }
 
-        [RelayCommand]
-        private void UpdateData()
-        {
-            //User = "Anton";
-            Note = "My first Note";
-            
-        }
         public void Init()//TabControl noteTab)
         {
             //_presenter.Attach(this);
@@ -130,20 +154,31 @@ namespace notes_by_nodes_wpfApp
             }
         }
 
-        void AddNoteTabToTabControl(INoteViewModel node)
+        void ShowNoteInNewTab(INoteViewModel node)
         {
             var tabItem = NoteTabItemBuilder.GetNoteEditorTabItem(node, CloseTabCommand);
             //var nodeTabItem = NodeTabItem.CastToTabItem(tabItem, node.Uid);
+            Tabs.Add(tabItem);
+            tabItem.IsSelected = true;
 
-            if (!Tabs.Any(t => t.NodeUid == node.Uid))
-            {
-                Tabs.Add(tabItem);
-                tabItem.IsSelected = true;
-            }
-            else {
-                Tabs.Single(t => t.NodeUid == node.Uid).IsSelected = true;
-            }
+            //if (!Tabs.Any(t => t.NodeUid == node.Uid))
+            //{
+               
+            //}
+            //else {
+            //    Tabs.Single(t => t.NodeUid == node.Uid).IsSelected = true;
+            //}
 
+        }
+        void ShowNoteInActiveTab(INoteViewModel node)
+        {
+            var tabItem = NoteTabItemBuilder.GetNoteEditorTabItem(node, CloseTabCommand);
+            //var nodeTabItem = NodeTabItem.CastToTabItem(tabItem, node.Uid);
+            //Tabs.Clear();
+            if (Tabs.Count>0)
+                Tabs.RemoveAt(0);
+            Tabs.Insert(0, tabItem);
+            tabItem.IsSelected = true;
         }
 
 
