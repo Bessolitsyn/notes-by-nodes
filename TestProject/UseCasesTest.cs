@@ -56,7 +56,7 @@ namespace TestProject
             using (var testapp = new TestAppCore())
             {
                 var box = testapp.NewBox();
-                Assert.True(testapp.currentUser.HasChildNodes.Contains(box));
+                Assert.True(testapp?.currentUser?.HasChildNodes.Contains(box));
                 
             }
         }
@@ -67,8 +67,8 @@ namespace TestProject
         {
             using (var testapp = new TestAppCore())
             {
-                
-                var box = testapp.currentUser.HasChildNodes.First() as LocalBox;
+
+                var box = testapp?.currentUser?.HasChildNodes.First() as LocalBox; ;
                 foreach (string item in Directory.GetFiles(box.Name))
                 {
                     if (item.Contains(".lnote"))

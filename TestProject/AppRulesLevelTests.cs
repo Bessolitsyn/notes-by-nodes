@@ -152,6 +152,31 @@ namespace TestProject
         {
             throw new NotImplementedException();
         }
+
+        public void RemoveUser(LocalUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveBox(LocalBox box)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveNote(LocalNote note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveNode(Node note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveNote(Node note)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
