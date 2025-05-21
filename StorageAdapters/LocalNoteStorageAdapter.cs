@@ -11,8 +11,8 @@ using notes_by_nodes.Storage;
 namespace notes_by_nodes.StorageAdapters
 {
     internal class LocalNoteStorageAdapter : NodeStorageAdapter, INoteStorage
-    {
-        
+    {        
+        //kind of cashing 
         private Dictionary<int, LocalNote> createdLocalNotes = [];
         
 
@@ -96,7 +96,7 @@ namespace notes_by_nodes.StorageAdapters
 
         public LocalNote GetNote(int Uid)
         {
-            if (!createdLocalNotes.TryGetValue(Uid, out LocalNote note))
+            if (!createdLocalNotes.TryGetValue(Uid, out LocalNote? note))
             {
                 note = (LocalNote)GetNode(Uid);
             }
@@ -106,6 +106,12 @@ namespace notes_by_nodes.StorageAdapters
         public async Task SaveNoteAsync(LocalNote note)
         {
             await Task.Run(()=>SaveNote(note));
+        }
+
+        public void RemoveNote(LocalNote note)
+        {
+            createdLocalNotes.Remove(note.Uid);
+            RemoveNode(note);
         }
     }
 }

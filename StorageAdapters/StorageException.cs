@@ -12,8 +12,9 @@ namespace notes_by_nodes.Storage
         
         public static string[] ErrorMessage { get; } = [
             "Пользователь не найден",
-            "Node не найден",
-            "Неизвестная ошибка"
+            "Ошибка при чтении или файл не существует",
+            "Неизвестная ошибка",
+            "Ошибка при удалении"
             ];
         
 
@@ -43,5 +44,6 @@ namespace notes_by_nodes.Storage
         NoUser = 0,
         NoNode = 1,
         Unknown = 2,
+        RemoveError = 3
     }
 }

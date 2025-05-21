@@ -96,6 +96,11 @@ namespace notes_by_nodes.StorageAdapters
             AddtoLoadedNodeDatasets(node);
             SaveObject(node, node.Uid.ToString());
         }
+        public void RemoveNode(Node node)
+        {
+            if (!TryRemoveObject(node.Uid.ToString())) throw StorageException.NewException(StorageErrorCode.RemoveError);
+            loadedNodeDatasets.Remove(node.Uid);
+        }
         protected abstract Node GetLocalNodeFromDataset(NodeDataset userDataset, in Dictionary<int, Node> createdLoadedNodes);
 
         protected void AddtoLoadedNodeDatasets(NodeDataset node)
