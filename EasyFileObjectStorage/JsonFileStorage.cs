@@ -12,6 +12,7 @@ namespace EasyObjectFileStorage
     public class JsonFileStorage : FileStorage 
     {
         const string EX_MESSAGE_WHEN_SAVING = $"FileStorageMessage_ Error when saving;";
+        const string EX_MESSAGE_WHEN_DELETING = $"FileStorageMessage_ Error when deleting;";
         const string EX_MESSAGE_WHEN_READING = $"FileStorageMessage_ Error when reading;";
         readonly string FOLDER_FOR_DATASET_STORAGE;
         readonly string FILE_EXTENSION;
@@ -84,7 +85,7 @@ namespace EasyObjectFileStorage
                 throw;
             }
         }
-        public void SaveObject(object obj)
+        public void SaveNewObject(object obj)
         {
             var filename = obj.GetHashCode().ToString(CultureInfo.InvariantCulture);
             SaveObject(obj, filename);
@@ -103,6 +104,20 @@ namespace EasyObjectFileStorage
                 Logging(logmessage);
                 //TO DO Logging must be done!:) 
                 throw;
+            }
+        }
+        public bool TryRemoveObject(string filename)
+        {
+            try
+            {              
+                filename = filename + "." + FILE_EXTENSION;
+                return TryRemoveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename);
+            }
+            catch (Exception ex)
+            {
+                string logmessage = $"{EX_MESSAGE_WHEN_DELETING} ex.message; {ex.Message}";
+                Logging(logmessage);
+                return false;
             }
         }
 
