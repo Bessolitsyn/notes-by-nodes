@@ -19,9 +19,10 @@ namespace notes_by_nodes.Services
         private LocalUser activeUser;
         private CoreInteractor coreInteractor;
 
-        public NoteServiceFacade(INodeStorageFactory storageFactory) {
+        public NoteServiceFacade(INodeStorageFactory storageFactory)
+        {
 
-            
+
             this.storageFactory = storageFactory;
             this.userInteractor = new UserInteractor(storageFactory);
 
@@ -35,31 +36,25 @@ namespace notes_by_nodes.Services
         public IEnumerable<INodeDto> GetBoxes()
         {
             var boxes = coreInteractor.GetBoxes();
-            //return boxes.Select(b => (b.Uid, b.Name, b.Description));
             return boxes.Cast<INodeDto>();
         }
-        
+
         public IEnumerable<IUserDto> GetUsers()
         {
             var users = userInteractor.GetUsers();
             if (users != null && users.Length > 0)
-                //return users.Select(u => (u.Uid, u.Name, u.Email));
                 return users;
-                //return users.Cast<IUserDto>()
             else throw new NullRefernceUseCaseException("No users");
         }
         public IEnumerable<INodeDto> GetChildNodesOfTheBox(int boxUid)
         {
             var box = coreInteractor.GetBox(boxUid);
-            //var childNodes = box.HasChildNodes.Select(u => (u.Uid, u.Name, u.Description));
             var childNodes = box.HasChildNodes.Cast<INodeDto>();
             return childNodes;
         }
 
         public IEnumerable<INodeDto> GetChildNodes(int boxUid, int parentNodeUid)
         {
-            //INodeDto[] childNotes = [];
-            //var childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid);
             var childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Cast<INodeDto>();
             return childNodes;
         }
@@ -84,6 +79,26 @@ namespace notes_by_nodes.Services
             coreInteractor.SaveNote(boxUid, _note);
         }
 
+        public INodeDto NewNote(int boxUid, INodeDto note, INodeDto childNote)
+        {
+            LocalNote _childNote;
+            if (boxUid != note.Uid)
+            {
+                var _note = coreInteractor.GetNote(boxUid, note.Uid);
+                _childNote = new LocalNote(_note, childNote.Name, childNote.Text) { Description = childNote.Description };
+                coreInteractor.SaveNote(boxUid, _note);
+                coreInteractor.SaveNote(boxUid, _childNote);
+
+            }
+            else {
+                var _box = coreInteractor.GetBox(boxUid);
+                _childNote = new LocalNote(_box, childNote.Name, childNote.Text) { Description = childNote.Description };
+                coreInteractor.SaveBox(_box);
+                coreInteractor.SaveNote(_box.Uid, _childNote);
+            }
+            return _childNote;
+        }
+
         public void ModifyUser(IUserDto user)
         {
             activeUser.Name = user.Name;
@@ -95,9 +110,14 @@ namespace notes_by_nodes.Services
         public void SelectUser(int userUid)
         {
             activeUser = userInteractor.GetUser(userUid);
-            coreInteractor = new CoreInteractor(storageFactory, activeUser);      
+            coreInteractor = new CoreInteractor(storageFactory, activeUser);
 
         }
 
+        public void Remove(int boxUid, INodeDto note)
+        {
+            var _note = coreInteractor.GetNote(boxUid, note.Uid);
+            coreInteractor.Remove(boxUid, _note);
+        }
     }
 }

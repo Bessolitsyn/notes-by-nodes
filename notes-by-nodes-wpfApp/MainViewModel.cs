@@ -23,17 +23,12 @@ namespace notes_by_nodes_wpfApp
     {
         //private readonly ModelsPresenter _presenter;
         private readonly INoteService _notesService;
-        //private TabControl _noteTabControl;
-
 
         [ObservableProperty]
         private List<UserViewModel> _users = [];
-        [ObservableProperty]
-        private UserViewModel _user; 
-        
 
         [ObservableProperty]
-        private string _note = "No Note";
+        private UserViewModel _user; 
         
         public ObservableCollection<INoteViewModel> NodesTree { get; } = [];
         public ObservableCollection<NodeTabItem> Tabs { get; } = [];
@@ -63,59 +58,14 @@ namespace notes_by_nodes_wpfApp
 
         }
 
+        //#region EVENTS
 
-        #region COMMANDS
-
-        [RelayCommand]
-        private void UpdateData()
-        {
-            //User = "Anton";
-            Note = "My first Note";
-            //переделать комманды
-        }
-
-        public ICommand CloseTabCommand => new RelayCommand<NodeTabItem>(tab =>
-        {
-            if (tab!=null)
-                Tabs.Remove(tab);
-        });
-        public ICommand TreeNodeDoubleClickCommand => new RelayCommand(()=>
-        {
+        //public void NodeTreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        //{
             
-        });
-        public ICommand RemoveNodeCommand => new RelayCommand<INoteViewModel>(node =>
-        {
-            if(node != null)
-                TryExecuteUseCase(node.Remove);
+        //}
 
-        });
-        public ICommand NewChildNodeCommand => new RelayCommand<INoteViewModel>(node =>
-        {
-            if (node!=null)
-                TryExecuteUseCase(node.NewChild);
-        });
-
-        void TryExecuteUseCase(Action action)
-        {
-            try
-            {
-                action?.Invoke();
-            }
-            catch (Exception)
-            {
-#warning TO DO uniwersal error message box;
-            }
-        }
-        #endregion
-
-
-        #region EVENTS
-        public void NodeTreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            ShowNoteInNewTab(SelectedNode);
-        }
-
-        #endregion EVENTS
+        //#endregion EVENTS
 
         public MainViewModel(INoteService notesService, IOptions<NotesByNodesSettings> options)
         {
@@ -123,7 +73,7 @@ namespace notes_by_nodes_wpfApp
             _notesService = notesService;               
         }
 
-        public void Init()//TabControl noteTab)
+        public void Init()
         {
             //_presenter.Attach(this);
             //_noteTabControl = noteTab;
@@ -154,22 +104,6 @@ namespace notes_by_nodes_wpfApp
             }
         }
 
-        void ShowNoteInNewTab(INoteViewModel node)
-        {
-            var tabItem = NoteTabItemBuilder.GetNoteEditorTabItem(node, CloseTabCommand);
-            //var nodeTabItem = NodeTabItem.CastToTabItem(tabItem, node.Uid);
-            Tabs.Add(tabItem);
-            tabItem.IsSelected = true;
-
-            //if (!Tabs.Any(t => t.NodeUid == node.Uid))
-            //{
-               
-            //}
-            //else {
-            //    Tabs.Single(t => t.NodeUid == node.Uid).IsSelected = true;
-            //}
-
-        }
         void ShowNoteInActiveTab(INoteViewModel node)
         {
             var tabItem = NoteTabItemBuilder.GetNoteEditorTabItem(node, CloseTabCommand);
@@ -184,20 +118,5 @@ namespace notes_by_nodes_wpfApp
 
 
     }
-
-    public class CustomTemplateSelector : DataTemplateSelector
-    {
-        public HierarchicalDataTemplate BoxTemplate { get; set; }
-        public HierarchicalDataTemplate NoteTemplate { get; set; }
-
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
-        {
-            if (item is BoxViewModel)
-                return BoxTemplate;
-            else if (item is NoteViewModel)
-                return NoteTemplate;
-
-            return base.SelectTemplate(item, container);
-        }
-    }
+    
 }

@@ -7,6 +7,7 @@ namespace notes_by_nodes.Storage
     {
         //void LoadChildNodes(Node parentNode);
         IEnumerable<Node> LoadChildNodes(Node parentNode);
+        void RemoveNode(Node note);
     }
 
     public interface INoteStorage : INodeStorage
@@ -15,6 +16,7 @@ namespace notes_by_nodes.Storage
         IEnumerable<Note> GetReferencedNotes(Note note);
         LocalNote GetNote(int Uid);
         void SaveNote(LocalNote note);
+        void RemoveNote(LocalNote note);
         Task SaveNoteAsync(LocalNote note);
     }
     public interface IBoxStorage : INodeStorage

@@ -104,6 +104,21 @@ namespace notes_by_nodes.UseCases
             StorageFactory.GetNoteStorage(box).SaveNote(note);
         }
 
+        internal void Remove(int boxUid, Node note)
+        {
 
+            foreach (var item in note.HasChildNodes)
+            {
+                Remove(boxUid, item);
+            }
+            note.HasParentNode.RemoveFromChildNodes(note);
+            var storage = StorageFactory.GetNoteStorage(GetBox(boxUid));
+            storage.RemoveNode(note);
+            if (boxUid != note.HasParentNode.Uid)
+                storage.SaveNote((LocalNote)note.HasParentNode);
+            else
+                SaveBox((LocalBox)note.HasParentNode);
+
+        }
     }
 }

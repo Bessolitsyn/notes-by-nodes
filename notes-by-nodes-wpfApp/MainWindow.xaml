@@ -3,8 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:notes_by_nodes_wpfApp"      
         xmlns:vm="clr-namespace:notes_by_nodes_wpfApp.ViewModel"
+        xmlns:vh="clr-namespace:notes_by_nodes_wpfApp.ViewHelpers"
         d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" MinHeight="450" MinWidth="800">
@@ -24,7 +26,7 @@
             </StackPanel>
         </HierarchicalDataTemplate>
 
-        <local:CustomTemplateSelector x:Key="NodeTemplateSelector"
+        <vh:CustomTemplateSelector x:Key="NodeTemplateSelector"
             BoxTemplate="{StaticResource BoxTemplate}"
             NoteTemplate="{StaticResource NoteTemplate}" />
     </Window.Resources>
@@ -57,14 +59,23 @@
                     <!--<TextBox Text="{Binding SelectedNode.Desc, UpdateSourceTrigger=LostFocus}"></TextBox>
                     <TextBox Text="{Binding ElementName=NodeTreeView, Path=SelectedValue.Desc}"></TextBox>
                     <TextBox Text="{Binding User, UpdateSourceTrigger=LostFocus}"></TextBox>-->
-                    <Button Content="Add Child" Command="{Binding NewChildNodeCommand}" CommandParameter="{Binding SelectedNode}" />
-                    <Button Content="Remove Node" Command="{Binding RemoveNodeCommand}" CommandParameter="{Binding SelectedNode}"/>
+                    <Button Content="Add Child" Command="{Binding NewChildNodeCommand}" />
+                    <Button Content="Remove Node" Command="{Binding RemoveNodeCommand}" />
                 </StackPanel>
 
                 <TreeView ItemsSource="{Binding NodesTree}" Grid.Row="1" Grid.Column="0"
                     Name="NodeTreeView" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"  
                           HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch"   
                     ItemTemplateSelector="{StaticResource NodeTemplateSelector}">
+                    <i:Interaction.Triggers>                        
+                        <i:EventTrigger EventName="SelectedItemChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectTreeNodeItemCommand}"
+                                  CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding ShowNoteInNewTabCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <!--<TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
                             <StackPanel Orientation="Vertical">

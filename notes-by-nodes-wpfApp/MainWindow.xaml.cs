@@ -23,8 +23,8 @@ namespace notes_by_nodes_wpfApp
             InitializeComponent();
             DataContext = viewModel;
             viewModel.Init();
-            NodeTreeView.MouseDoubleClick += viewModel.NodeTreeView_MouseDoubleClick;
-            NodeTreeView.SelectedItemChanged += NodeTreeView_SelectedItemChanged;
+            //NodeTreeView.MouseDoubleClick += viewModel.NodeTreeView_MouseDoubleClick;
+            //NodeTreeView.SelectedItemChanged += NodeTreeView_SelectedItemChanged;
 
         }
         private void NodeTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

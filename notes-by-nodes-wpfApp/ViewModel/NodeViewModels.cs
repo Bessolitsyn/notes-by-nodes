@@ -28,17 +28,17 @@ namespace notes_by_nodes_wpfApp.ViewModel
         //private string description = desc;
         //[ObservableProperty]
         //private string text = text;
-        //protected override IParentNode ParentNode { get; init; } = parentNode;
+        //protected override ITreeNode ParentNode { get; init; } = parentNode;
         //partial void OnDescriptionChanged(string? oldValue, string newValue)
         //{
         //    if (IsLoaded && newValue != null && newValue != String.Empty)
         //        NoteService.ModifyBox((INodeDto)this);
         //}
-        public BoxViewModel(int uid, string path, string desc, string text, IParentNode parentNode)
+        public BoxViewModel(int uid, string path, string desc, string text, ITreeNode parentNode)
             : base(uid, path, desc, text, parentNode)
         { 
         }
-        public void LoadChildNodes()
+        public override void LoadChildNodes()
         {
             var notes = NoteService.GetChildNodesOfTheBox(Uid).Select(note=> new NoteViewModel(note.Uid, Uid, note.Name, note.Description, note.Text, this));
             foreach (var note in notes)
@@ -66,15 +66,14 @@ namespace notes_by_nodes_wpfApp.ViewModel
             throw new NotImplementedException();
         }
 
-        public override void NewChild()
-        {
-            var note = new NoteViewModel(0, Uid, "note.Item2", "note.Item3", "text", this);
-            ChildNodes.Add(note);
-        }
-
         public void RemoveChild(INoteViewModel childNote)
         {
             ChildNodes.Remove(childNote);
+        }
+
+        public void NewNote()
+        {
+            NewChild(Uid, this);
         }
     }
     public partial class NoteViewModel : NodeViewModel, INoteViewModel
@@ -102,7 +101,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
                 
             }  
         }
-        public void LoadChildNodes()
+        public override void LoadChildNodes()
         {
             var notes = NoteService.GetChildNodes(BoxUid, Uid).Select(note => new NoteViewModel(note.Uid, BoxUid, note.Name, note.Description, note.Text, this));
             foreach (var note in notes)
@@ -114,18 +113,13 @@ namespace notes_by_nodes_wpfApp.ViewModel
 
         public override void Remove()
         {
-            ParentNode?.RemoveChild(this);
+            NoteService.Remove(BoxUid, this);
         }
 
-        public override void NewChild()
-        {
-            var note = new NoteViewModel(0, BoxUid, "note.Item2", "note.Item3", "Text", this);
-            ChildNodes.Add(note);
-        }
 
-        public void RemoveChild(INoteViewModel childNote)
+        public void NewNote()
         {
-            ChildNodes.Remove(childNote);
+            NewChild(BoxUid, this);
         }
     }
 
@@ -133,7 +127,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
     {
         public bool IsLoaded { get; set; }
         public ObservableCollection<INoteViewModel> ChildNodes { get; set; } = [];
-        protected IParentNode ParentNode { get; init; }
+        public ITreeNode ParentNode { get; init; }
         protected INoteService NoteService { get; init; }
 
         [ObservableProperty]
@@ -144,8 +138,8 @@ namespace notes_by_nodes_wpfApp.ViewModel
         private string description;
         [ObservableProperty]
         private string text;
-        [ObservableProperty]
-        private FlowDocument textDoc;
+        //[ObservableProperty]
+        //private FlowDocument textDoc;
         
 
         partial void OnDescriptionChanged(string value)
@@ -161,7 +155,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
             TrySaveChanges();
         }
 
-        public NodeViewModel(int uid, string name, string desc, string text, IParentNode parent)
+        public NodeViewModel(int uid, string name, string desc, string text, ITreeNode parent)
         {   
             this.uid = uid;
             this.name = name;
@@ -175,10 +169,30 @@ namespace notes_by_nodes_wpfApp.ViewModel
         }
         abstract public void TrySaveChanges();
         abstract public void Remove();
-        abstract public void NewChild();
-        
+        //abstract public void NewChild();
+        abstract public void LoadChildNodes();
+        protected void Load()
+        {
+            if (!IsLoaded)
+            {
+                LoadChildNodes();
+            }
+        }
+        protected void NewChild(int boxUid, INoteViewModel parent)
+        {
+            Load();
+            var note = new NoteViewModel(0, boxUid, "note.Item2", "note.Item3", "Text", parent);
+            var newNote = NoteService.NewNote(boxUid, (INodeDto)parent, (INodeDto)note);
+            note.Uid = newNote.Uid;
+            note.IsLoaded = true;
+            ChildNodes.Insert(0, note);
+        }
+        public void RemoveChild(INoteViewModel childNote)
+        {
+            ChildNodes.Remove(childNote);
+        }
     }
-    public interface INoteViewModel:IParentNode
+    public interface INoteViewModel: ITreeNode
     {
         ObservableCollection<INoteViewModel> ChildNodes { get; set; }
         int Uid { get;set; }
@@ -188,10 +202,11 @@ namespace notes_by_nodes_wpfApp.ViewModel
         bool IsLoaded { get; set; }        
         void LoadChildNodes();
         void Remove();
-        void NewChild();
+        void NewNote();
     }
-    public interface IParentNode
+    public interface ITreeNode
     {
+        ITreeNode ParentNode { get; init; }
         void RemoveChild(INoteViewModel childNote);
     }
 

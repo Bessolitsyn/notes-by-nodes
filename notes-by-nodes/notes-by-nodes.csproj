@@ -84,8 +84,4 @@
     <EditorConfigFiles Remove="C:\Users\tocha\source\notes-by-nodes\notes-by-nodes\.editorconfig" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="C:\Users\tocha\source\notes-by-nodes\notes-by-nodes\.editorconfig" />
-  </ItemGroup>
-
 </Project>

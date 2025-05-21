@@ -18,6 +18,8 @@ namespace notes_by_nodes.Services
         void ModifyUser(IUserDto user);
         void ModifyBox(INodeDto box);
         void ModifyNote(int boxUid, INodeDto note);
+        INodeDto NewNote(int boxUid, INodeDto note, INodeDto childNote);
+        void Remove(int boxUid, INodeDto note);
     }
 
     public interface INodeDto
