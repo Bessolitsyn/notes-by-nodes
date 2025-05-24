@@ -101,7 +101,7 @@ namespace notes_by_nodes.StorageAdapters
             UserDataset userDS;
             userDS = NewDatasetFromLocalUser(user);
             AddLocalUserToCreatedLocalUsers(user);
-            SaveNode(userDS);
+            SaveNode(userDS, user);
 
         }
         internal void AddLocalUserToCreatedLocalUsers(LocalUser user)

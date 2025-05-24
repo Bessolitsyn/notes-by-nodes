@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -13,7 +14,8 @@ namespace notes_by_nodes.StorageAdapters
     internal class LocalNoteStorageAdapter : NodeStorageAdapter, INoteStorage
     {        
         //kind of cashing 
-        private Dictionary<int, LocalNote> createdLocalNotes = [];
+        //private Dictionary<int, LocalNote> createdLocalNotes = [];
+        private readonly ConcurrentDictionary<int, LocalNote> createdLocalNotes = [];
         
 
 
@@ -70,7 +72,7 @@ namespace notes_by_nodes.StorageAdapters
             noteDS = NewDatasetFromLocalNote(note);
             AddLocalNoteToCreatedLocalNotes(note);
 
-            SaveNode(noteDS);
+            SaveNode(noteDS, note);
         }
         private static NoteDataset NewDatasetFromLocalNote(LocalNote note)
         {
@@ -110,7 +112,7 @@ namespace notes_by_nodes.StorageAdapters
 
         public void RemoveNote(LocalNote note)
         {
-            createdLocalNotes.Remove(note.Uid);
+            createdLocalNotes.Remove(note.Uid, out _);
             RemoveNode(note);
         }
     }

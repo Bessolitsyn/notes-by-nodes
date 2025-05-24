@@ -84,7 +84,7 @@ namespace notes_by_nodes.StorageAdapters
             boxDS = NewDatasetFromLocalBox(box);
             AddLocalBoxToCreatedLocalBoxes(box);
 
-            SaveNode(boxDS);
+            SaveNode(boxDS, box);
         }
         private static BoxDataset NewDatasetFromLocalBox(LocalBox box)
         {

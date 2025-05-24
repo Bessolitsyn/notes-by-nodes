@@ -17,8 +17,8 @@ namespace notes_by_nodes.StorageAdapters
     {
         //protected static NodeDataset[] loadedNodes = [];
         protected static Dictionary<int,NodeDataset> loadedNodeDatasets = [];
-        //protected static Node[] createdLoadedNodes = [];
-        protected static Dictionary<int,Node> createdLoadedNodes = [];
+        //protected static Node[] loadedNodes = [];
+        protected static Dictionary<int,Node> loadedNodes = [];
         protected readonly INodeBuilder nodeBuilder;
         protected INodeStorageFactory nodeStorageFactory;
         
@@ -43,7 +43,8 @@ namespace notes_by_nodes.StorageAdapters
                 if (int.TryParse(strUid, out int uid))
                 {
                     //parentNode.AddIntoChildNodes(GetNode(uid));
-                    childNodes.Add(GetNode(uid));
+                    var node = GetNode(uid);
+                    childNodes.Add(node);
                 }
             }
             return childNodes;
@@ -53,12 +54,12 @@ namespace notes_by_nodes.StorageAdapters
 
         public Node GetNode(int uid)
         {
-            createdLoadedNodes.TryGetValue(uid, out var node);
-            //Node node = createdLoadedNodes.ContainsKey(uid) ? createdLoadedNodes[uid]: null;
+            loadedNodes.TryGetValue(uid, out var node);
+            //Node node = loadedNodes.ContainsKey(uid) ? loadedNodes[uid]: null;
             if (node == null)
             {
                 var nodeDS = GetNodeDataset(uid);
-                node = GetLocalNodeFromDataset(nodeDS, in createdLoadedNodes);
+                node = GetLocalNodeFromDataset(nodeDS, in loadedNodes);
             }            
             return node;                 
         }
@@ -91,26 +92,31 @@ namespace notes_by_nodes.StorageAdapters
             }                
             return userDataset;
         }
-        protected void SaveNode(NodeDataset node)
+        protected void SaveNode(NodeDataset nodeds, Node node)
         {
-            AddtoLoadedNodeDatasets(node);
-            SaveObject(node, node.Uid.ToString());
+            AddtoLoadedNodeDatasets(nodeds);
+            AddtoLoadedNodes(node);
+            SaveObject(nodeds, nodeds.Uid.ToString());
         }
         public void RemoveNode(Node node)
         {
             if (!TryRemoveObject(node.Uid.ToString())) throw StorageException.NewException(StorageErrorCode.RemoveError);
             loadedNodeDatasets.Remove(node.Uid);
         }
-        protected abstract Node GetLocalNodeFromDataset(NodeDataset userDataset, in Dictionary<int, Node> createdLoadedNodes);
+        protected abstract Node GetLocalNodeFromDataset(NodeDataset nodeds, in Dictionary<int, Node> createdLoadedNodes);
 
-        protected void AddtoLoadedNodeDatasets(NodeDataset node)
+        protected void AddtoLoadedNodeDatasets(NodeDataset nodeds)
         {
-            loadedNodeDatasets[node.Uid] = node;
+            loadedNodeDatasets[nodeds.Uid] = nodeds;
+        }
+        protected void AddtoLoadedNodes(Node node)
+        {
+            loadedNodes[node.Uid] = node;
         }
         public void Dispose()
         {
             loadedNodeDatasets = [];
-            createdLoadedNodes = [];
+            loadedNodes = [];
         }
 
     }
