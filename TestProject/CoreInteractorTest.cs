@@ -13,7 +13,7 @@ using VDS.RDF.Configuration;
 
 namespace TestProject
 {
-    public class UseCasesTest
+    public class CoreInteractorTest
     {
         [Fact]
         public static void TestStartAppWhenNoUser()
