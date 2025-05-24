@@ -1,5 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
+using notes_by_nodes.Dto;
 using notes_by_nodes.Entities;
+using notes_by_nodes.Service;
+using notes_by_nodes_wpfApp.Helpers;
 using notes_by_nodes_wpfApp.Services;
 using notes_by_nodes_wpfApp.ViewModel;
 using System;
@@ -7,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace notes_by_nodes_wpfApp
@@ -25,7 +31,7 @@ namespace notes_by_nodes_wpfApp
         //public ICommand CloseTabCommand2 => new RelayCommand<NodeTabItem>(tab =>
         //{
         //    if (tab != null)
-        //        Tabs.Remove(tab);
+        //        Tabs.RemoveAsync(tab);
         //});
 
         //[RelayCommand]
@@ -34,50 +40,48 @@ namespace notes_by_nodes_wpfApp
 
         //});
         [RelayCommand]
-        public void RemoveNode()
+        public async Task RemoveNode()
         {
             if (SelectedNode != null)
-                if (TryExecuteUseCase(SelectedNode.Remove))
-                {
-                    SelectedNode.ParentNode.RemoveChild(SelectedNode);
-                };
-                
+            {
+                await TryExecuteUseCase(SelectedNode.RemoveAsync);
+                SelectedNode.ParentNode?.RemoveChild(SelectedNode);
+            }                
         }
         //public ICommand RemoveNodeCommand => new RelayCommand<INoteViewModel>(node =>
         //{
         //    if (node != null)
-        //        TryExecuteUseCase(node.Remove);
+        //        TryExecuteUseCase(node.RemoveAsync);
 
         //});
         [RelayCommand]
-        public void NewChildNode()
+        public async Task NewChildNode()
         {
             if (SelectedNode != null)
-                TryExecuteUseCase(SelectedNode.NewNote);
+                await TryExecuteUseCase(SelectedNode.NewNoteAsync);
             
         }
-        //public ICommand NewChildNodeCommand => new RelayCommand<INoteViewModel>(node =>
-        //{
-        //    if (node != null)
-        //        TryExecuteUseCase(node.NewChild);
-        //});
+
+        [RelayCommand]
+        public async Task NewBox()
+        {
+            if (DialogManager.ShowNewBoxDialog(out var newFolder))
+            {
+                INodeDto newboxDto = _notesService.NewBox(new NodeDto(0, newFolder, "New Box", ""));
+                var newbox = new BoxViewModel(newboxDto.Uid, newboxDto.Name, newboxDto.Description, newboxDto.Text);
+                //await newbox.LoadChildNodesAsync();
+                //await Task.Delay(2000);
+                NodesTree.Insert(0, newbox);
+            }
+
+    }
 
         [RelayCommand]
         void ShowNoteInNewTab()
         {
             var tabItem = NoteTabItemBuilder.GetNoteEditorTabItem(SelectedNode, CloseTabCommand);
-            //var nodeTabItem = NodeTabItem.CastToTabItem(tabItem, node.Uid);
             Tabs.Add(tabItem);
             tabItem.IsSelected = true;
-
-            //if (!Tabs.Any(t => t.NodeUid == node.Uid))
-            //{
-
-            //}
-            //else {
-            //    Tabs.Single(t => t.NodeUid == node.Uid).IsSelected = true;
-            //}
-
         }
 
         [RelayCommand]
@@ -86,19 +90,17 @@ namespace notes_by_nodes_wpfApp
             SelectedNode = selectedNode;
         }
 
-        static bool TryExecuteUseCase(Action action)
+        static async Task TryExecuteUseCase(Func<Task> action)
         {
             try
             {
                 action?.Invoke();
-                return true;
             }
             catch (Exception ex)
             {
 
 #warning TO DO uniwersal error message box;
                 System.Windows.MessageBox.Show(ex.ToString());
-                return false;
             }
         }
         #endregion

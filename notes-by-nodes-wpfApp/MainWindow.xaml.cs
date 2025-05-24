@@ -35,5 +35,9 @@ namespace notes_by_nodes_wpfApp
             }
         }
 
+        private void NodeTreeView_Expanded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

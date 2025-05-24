@@ -50,7 +50,7 @@ namespace notes_by_nodes_wpfApp.Services
                 //Style = (Style)FindResource("ClosableTabItemStyle")
             };
 
-            //closeButton.Click += (s, e) => parent.Items.Remove(this);
+            //closeButton.Click += (s, e) => parent.Items.RemoveAsync(this);
             headerStack.Children.Add(closeButton);
             tabItem.Header = headerStack;
             return tabItem;

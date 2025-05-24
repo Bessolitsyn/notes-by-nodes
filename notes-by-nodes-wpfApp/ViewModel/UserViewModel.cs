@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
-using notes_by_nodes.Services;
+using notes_by_nodes.Service;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,13 +10,12 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes_wpfApp.ViewModel
 {
-    public partial class UserViewModel: ObservableObject, ITreeNode
+    public partial class UserViewModel: ObservableObject, IUserDto
     {
 
         public int Uid { get; init; }
         
         private INoteService _noteService { get; init; }
-        public ITreeNode ParentNode { get; init; }
 
         [ObservableProperty]
         private string email;
@@ -53,8 +52,6 @@ namespace notes_by_nodes_wpfApp.ViewModel
             Name = name;
             NotesByNodesApp app = (NotesByNodesApp)NotesByNodesApp.Current;
             _noteService = app.ServiceProvider.GetRequiredService<INoteService>();
-            ParentNode = null;
-
 
 
         }

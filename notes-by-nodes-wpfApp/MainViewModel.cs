@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using notes_by_nodes_wpfApp.Services;
 using Microsoft.Extensions.Options;
 using notes_by_nodes_wpfApp.Settings;
-using notes_by_nodes.Services;
+using notes_by_nodes.Service;
 using notes_by_nodes_wpfApp.ViewModel;
 using System.Collections.ObjectModel;
 using notes_by_nodes.Entities;
@@ -16,6 +16,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml.Linq;
 using System.Windows;
+using notes_by_nodes_wpfApp.Helpers;
+using notes_by_nodes.UseCases;
+using notes_by_nodes.Dto;
 
 namespace notes_by_nodes_wpfApp
 {
@@ -37,25 +40,7 @@ namespace notes_by_nodes_wpfApp
         private INoteViewModel _selectedNode;
         partial void OnSelectedNodeChanging(INoteViewModel value)
         {
-            try
-            {
-                if (!value.IsLoaded)
-                {
-                    //TryExecuteUseCase(value.LoadChildNodes);
-                    value.LoadChildNodes();
-                }
-                foreach (var note in value.ChildNodes)
-                {
-                    if (!note.IsLoaded) //TryExecuteUseCase(value.LoadChildNodes);
-                        note.LoadChildNodes();
-                }
-                ShowNoteInActiveTab(value);
-            }
-            catch (Exception ex )
-            {
-                System.Windows.MessageBox.Show(ex.ToString());
-            }         
-
+            ShowNoteInActiveTab(value);
         }
 
         //#region EVENTS
@@ -79,15 +64,42 @@ namespace notes_by_nodes_wpfApp
             //_noteTabControl = noteTab;
             //_noteTabControl.ItemsSource = Tabs;
             InitUsers();
-            SelectUser();
+            
             InitNodesTree();
         }
 
         void InitUsers()
         {
-            var users =  _notesService.GetUsers().Select(user => new UserViewModel(user.Uid, user.Name, user.Email));
-            Users.AddRange(users);                
+            try
+            {
+                var users = _notesService.GetUsers().Select(user => new UserViewModel(user.Uid, user.Name, user.Email));
+                Users.AddRange(users);                
+            }
+            catch (NoUsersNoteCoreException)
+            {
+                CreateNewUser();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                SelectUser();
+            }
         }
+
+        private void CreateNewUser()
+        {
+            if (DialogManager.ShowNewUserDialog(out var newUserName))
+            {
+                IUserDto newuser = new UserViewModel(0, newUserName, "");
+                newuser = _notesService.NewUser(new UserDto(0, newUserName, ""));
+                Users.Add(new UserViewModel(newuser.Uid, newuser.Name, newuser.Email));
+            }
+
+        }
+
         void SelectUser()
         {
             var activeUser = Users.FirstOrDefault() ?? throw new NullReferenceException("Users collection is empty");
@@ -96,10 +108,10 @@ namespace notes_by_nodes_wpfApp
         }
         void InitNodesTree()
         {
-            var boxes = _notesService.GetBoxes().Select(box => new BoxViewModel(box.Uid, box.Name, box.Description, box.Text, _user));
+            var boxes = _notesService.GetBoxes().Select(box => new BoxViewModel(box.Uid, box.Name, box.Description, box.Text));
             foreach (var box in boxes)
             {
-                box.LoadChildNodes();
+                box.LoadChildNodesAsync();                
                 NodesTree.Add(box);
             }
         }

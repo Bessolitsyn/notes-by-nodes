@@ -1,5 +1,5 @@
 ﻿using notes_by_nodes.Entities;
-using notes_by_nodes.Services;
+using notes_by_nodes.Service;
 using System;
 using System.Collections;
 using System.Collections.Generic;

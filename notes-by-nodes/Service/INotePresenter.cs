@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace notes_by_nodes.Services
+namespace notes_by_nodes.Service
 {
     [Obsolete]
     public interface INotePresenter

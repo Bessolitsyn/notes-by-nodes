@@ -20,7 +20,7 @@ namespace notes_by_nodes.Entities
 		
 		void AddIntoOwnerOf(Node item);
 		
-		void RemoveFromOwner(Node item);
+		void RemoveFromOwnedNodes(Node item);
 	
 	}
 }

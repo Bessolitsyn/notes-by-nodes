@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.UseCases
 {
-    internal class UseCaseException(string message) : Exception(message)
+    internal class NoteCoreException(string message) : Exception(message)
     {
     }
     internal class NullRefernceUseCaseException(string message) : NullReferenceException(message)
+    {
+    }
+    public class NoUsersNoteCoreException() : NullReferenceException()
     {
     }
 }

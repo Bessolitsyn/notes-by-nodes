@@ -10,7 +10,7 @@ using notes_by_nodes.AppRules;
 using System.Xml.Linq;
 using notes_by_nodes.Entities;
 
-namespace notes_by_nodes.Services
+namespace notes_by_nodes.Service
 {
     public class NoteServiceFacade : INoteService
     {
@@ -21,11 +21,8 @@ namespace notes_by_nodes.Services
 
         public NoteServiceFacade(INodeStorageFactory storageFactory)
         {
-
-
             this.storageFactory = storageFactory;
             this.userInteractor = new UserInteractor(storageFactory);
-
         }
 
         public void AddNewBox(string name)
@@ -44,61 +41,75 @@ namespace notes_by_nodes.Services
             var users = userInteractor.GetUsers();
             if (users != null && users.Length > 0)
                 return users;
-            else throw new NullRefernceUseCaseException("No users");
+            else throw new NoUsersNoteCoreException();
         }
-        public IEnumerable<INodeDto> GetChildNodesOfTheBox(int boxUid)
+        public async Task<IEnumerable<INodeDto>> GetChildNodesOfTheBox(int boxUid)
         {
-            var box = coreInteractor.GetBox(boxUid);
-            var childNodes = box.HasChildNodes.Cast<INodeDto>();
+            IEnumerable<INodeDto> childNodes = [];
+            await Task.Run(() =>
+            {
+                var box = coreInteractor.GetBox(boxUid);
+                childNodes = box.HasChildNodes.Cast<INodeDto>();
+               
+            });
+            //await Task.Delay(1000);
             return childNodes;
         }
 
-        public IEnumerable<INodeDto> GetChildNodes(int boxUid, int parentNodeUid)
+        public async Task<IEnumerable<INodeDto>> GetChildNodes(int boxUid, int parentNodeUid)
         {
-            var childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Cast<INodeDto>();
+            IEnumerable<INodeDto> childNodes = [];
+            await Task.Run(() => childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Cast<INodeDto>());
+            //await Task.Delay(1000);
             return childNodes;
         }
 
 
-        public void ModifyBox(INodeDto box)
+        public void ModifyBox(INodeDto boxDto)
         {
-            var _box = coreInteractor.GetBox(box.Uid);
-            _box.Name = box.Name;
-            _box.Description = box.Description;
-            _box.Text = box.Text;
-            coreInteractor.SaveBox(_box);
+            var box = coreInteractor.GetBox(boxDto.Uid);
+            box.Name = boxDto.Name;
+            box.Description = boxDto.Description;
+            box.Text = boxDto.Text;
+            coreInteractor.SaveBox(box);
         }
 
-        public void ModifyNote(int boxUid, INodeDto note)
+        public void ModifyNote(int boxUid, INodeDto noteDto)
         {
             //var box = coreInteractor.GetBox(boxUid);
-            var _note = coreInteractor.GetNote(boxUid, note.Uid);
-            _note.Description = note.Description;
-            _note.Name = note.Name;
-            _note.Text = note.Text;
-            coreInteractor.SaveNote(boxUid, _note);
+            var note = coreInteractor.GetNote(boxUid, noteDto.Uid);
+            note.Description = noteDto.Description;
+            note.Name = noteDto.Name;
+            note.Text = noteDto.Text;
+            coreInteractor.SaveNote(boxUid, note);
         }
 
-        public INodeDto NewNote(int boxUid, INodeDto note, INodeDto childNote)
+        public async Task<INodeDto> NewNote(int boxUid, int parenNoteUid)
         {
-            LocalNote _childNote;
-            if (boxUid != note.Uid)
+            string titleForNewNote = "Untitled";
+
+            return await Task.Run(() =>
             {
-                var _note = coreInteractor.GetNote(boxUid, note.Uid);
-                _childNote = new LocalNote(_note, childNote.Name, childNote.Text) { Description = childNote.Description };
-                coreInteractor.SaveNote(boxUid, _note);
-                coreInteractor.SaveNote(boxUid, _childNote);
+                LocalNote childNote;
+                if (boxUid != parenNoteUid)
+                {
+                    var note = coreInteractor.GetNote(boxUid, parenNoteUid);
+                    childNote = new LocalNote(note, titleForNewNote, "");
+                    coreInteractor.SaveNote(boxUid, note);
+                    coreInteractor.SaveNote(boxUid, childNote);
 
-            }
-            else {
-                var _box = coreInteractor.GetBox(boxUid);
-                _childNote = new LocalNote(_box, childNote.Name, childNote.Text) { Description = childNote.Description };
-                coreInteractor.SaveBox(_box);
-                coreInteractor.SaveNote(_box.Uid, _childNote);
-            }
-            return _childNote;
+                }
+                else
+                {
+                    var box = coreInteractor.GetBox(boxUid);
+                    childNote = new LocalNote(box, titleForNewNote, "");
+                    coreInteractor.SaveBox(box);
+                    coreInteractor.SaveNote(box.Uid, childNote);
+                }
+            return childNote;
+            });
         }
-
+                
         public void ModifyUser(IUserDto user)
         {
             activeUser.Name = user.Name;
@@ -114,10 +125,35 @@ namespace notes_by_nodes.Services
 
         }
 
-        public void Remove(int boxUid, INodeDto note)
+        public Task Remove(int boxUid, int noteUid)
         {
-            var _note = coreInteractor.GetNote(boxUid, note.Uid);
-            coreInteractor.Remove(boxUid, _note);
+            return Task.Run(() =>
+            {
+                var note = coreInteractor.GetNote(boxUid, noteUid);
+                var box = coreInteractor.GetBox(boxUid);
+                coreInteractor.RemoveNote(box, note);
+            });
+        }
+        public Task Remove(int boxUid)
+        {
+            return Task.Run(() =>
+            {
+                var box = coreInteractor.GetBox(boxUid);
+                coreInteractor.RemoveBox(box);
+            });
+        }
+
+        public IUserDto NewUser(IUserDto user)
+        {
+            user = userInteractor.MakeUser(user.Name, user.Email);
+            return user;
+
+        }
+
+        public INodeDto NewBox(INodeDto box)
+        {
+            box = coreInteractor.NewBox(box.Name, box.Description);
+            return box;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace notes_by_nodes.Entities
 
         }
 
-        public void RemoveFromOwner(Node item)
+        public void RemoveFromOwnedNodes(Node item)
         {            
                 isOwnerOf.Remove(item);
         }

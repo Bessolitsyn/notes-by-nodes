@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using notes_by_nodes.Entities;
-using notes_by_nodes.Services;
+using notes_by_nodes.Service;
 using notes_by_nodes.Storage;
 
 [assembly: InternalsVisibleTo("TestProject")]

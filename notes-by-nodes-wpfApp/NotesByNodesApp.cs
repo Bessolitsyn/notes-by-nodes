@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using notes_by_nodes_wpfApp.Settings;
 using notes_by_nodes_wpfApp.Services;
 using notes_by_nodes.Storage;
-using notes_by_nodes.Services;
+using notes_by_nodes.Service;
 using notes_by_nodes_wpfApp.ViewModel;
 using System.Reflection;
 
@@ -30,7 +30,6 @@ namespace notes_by_nodes_wpfApp
             // Сервисы
             //services.AddSingleton<INodeBuilder, NodeBuilder>();
             services.AddSingleton<INodeStorageFactory, StorageFactoryServiceAdapter>();
-            services.AddSingleton<INotePresenter, ModelsPresenter>();
             services.AddSingleton<INoteService, NoteServiceFacade>();
 
             // ViewModel

@@ -39,21 +39,6 @@ namespace notes_by_nodes.UseCases
             }
         }
 
-        //internal async Task<LocalNote> AddNoteToBox(LocalBox box, string title, string text)
-        //{
-        //    LocalNote note = new LocalNote(box, title, text);
-        //    await boxStorage.SaveBoxAsync(box);
-        //    await note.NoteStorage.SaveNoteAsync(note);
-        //    return note;
-        //}
-        //internal async Task<LocalNote> AddNoteToNote(LocalNote pnote, string title, string text)
-        //{
-        //    LocalNote note = new LocalNote(pnote, title, text);
-        //    await note.NoteStorage.SaveNoteAsync(pnote);
-        //    await note.NoteStorage.SaveNoteAsync(note);
-        //    return note;
-        //}
-
         internal void SaveNodes(Node[] nodes) 
         {
            
@@ -84,13 +69,14 @@ namespace notes_by_nodes.UseCases
             return node.HasChildNodes;
         }
 
-        internal void NewBox(string folderToBox, string desc)
+        internal LocalBox NewBox(string folderToBox, string desc)
         {
             LocalBox box = new(ActiveUser, folderToBox, desc);
             //box.SetNoteStorage(StorageFactory.GetNoteStorage(box));
             ActiveUser.AddIntoChildNodes(box);
             boxStorage.SaveBox(box);
             StorageFactory.GetUserStorage().SaveUser(ActiveUser);
+            return box;
 
         }
 
@@ -104,21 +90,36 @@ namespace notes_by_nodes.UseCases
             StorageFactory.GetNoteStorage(box).SaveNote(note);
         }
 
-        internal void Remove(int boxUid, Node note)
+        internal void RemoveNote(LocalBox box, Node note)
         {
 
-            foreach (var item in note.HasChildNodes)
+            foreach (var item in note.HasChildNodes.ToList())
             {
-                Remove(boxUid, item);
+                RemoveNote(box, item);
             }
             note.HasParentNode.RemoveFromChildNodes(note);
-            var storage = StorageFactory.GetNoteStorage(GetBox(boxUid));
+            note.HasOwner.RemoveFromOwnedNodes(note);
+            var storage = StorageFactory.GetNoteStorage(box);
             storage.RemoveNode(note);
-            if (boxUid != note.HasParentNode.Uid)
+            if (box.Uid != note.HasParentNode.Uid)
                 storage.SaveNote((LocalNote)note.HasParentNode);
             else
                 SaveBox((LocalBox)note.HasParentNode);
 
+        }
+        internal void RemoveBox(LocalBox box)
+        {
+
+            foreach (var item in box.HasChildNodes.ToList())
+            {
+                box.RemoveFromChildNodes(item);
+            }
+            box.HasParentNode?.RemoveFromChildNodes(box);
+            box.HasOwner.RemoveFromOwnedNodes(box);
+            var storage = StorageFactory.GetBoxStorage();
+            storage.RemoveNode(box);
+            var ownerUser = StorageFactory.GetUserStorage().GetUser(box.HasOwner.Uid);
+            StorageFactory.GetUserStorage().SaveUser(ownerUser);
         }
     }
 }

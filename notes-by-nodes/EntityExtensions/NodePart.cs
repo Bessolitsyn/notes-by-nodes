@@ -44,6 +44,7 @@ namespace notes_by_nodes.Entities
         public void RemoveFromChildNodes(Node item)
         {
             hasChildNodes.Remove(item);
+            //item.SetParentNode(HasOwner);
         }
 
         public void SetOwner(User item)
