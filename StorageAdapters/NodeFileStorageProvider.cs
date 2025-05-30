@@ -11,15 +11,15 @@ using notes_by_nodes.AppRules;
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.StorageAdapters
 {
-    public class NodeFileStorageFactory: INodeStorageFactory
+    public class NodeFileStorageProvider: INodeStorageProvider
     {
-        //public static INodeStorageFactory Instance { get => instance; }
-        //public static INodeStorageFactory instance;
+        //public static INodeStorageProvider Instance { get => instance; }
+        //public static INodeStorageProvider instance;
         private LocalUserStorageAdapter userstorageAdapter;
         private LocalBoxStorageAdapter boxStorageAdapter;
         private Dictionary<int, LocalNoteStorageAdapter> noteStorageAdapters = [];
         private readonly INodeBuilder nodeBuilder;
-        public NodeFileStorageFactory(INodeBuilder nodeBuilder, string profileFolder, string usersFolder="", string boxesFolder = "") {
+        public NodeFileStorageProvider(INodeBuilder nodeBuilder, string profileFolder, string usersFolder="", string boxesFolder = "") {
 
             this.nodeBuilder = nodeBuilder;
 

@@ -3,7 +3,7 @@ using notes_by_nodes.Entities;
 
 namespace notes_by_nodes.Storage
 {
-    public interface INodeStorageFactory
+    public interface INodeStorageProvider
     {
         IBoxStorage GetBoxStorage();
         IUserStorage GetUserStorage();

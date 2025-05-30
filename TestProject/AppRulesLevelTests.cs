@@ -66,7 +66,7 @@ namespace TestProject
         }
     }
 
-    class NodeStorageTestFactory : INodeStorageFactory
+    class NodeStorageTestFactory : INodeStorageProvider
     {
         public IBoxStorage GetBoxStorage()
         {

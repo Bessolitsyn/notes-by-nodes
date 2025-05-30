@@ -12,16 +12,16 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes_wpfApp.Services
 {
-    internal class StorageFactoryServiceAdapter: INodeStorageFactory
+    internal class StorageFactoryServiceAdapter: INodeStorageProvider
     {
-        private readonly INodeStorageFactory _storageFactory;
+        private readonly INodeStorageProvider _storageFactory;
         public StorageFactoryServiceAdapter(IOptions<NotesByNodesSettings> settings) 
         {
 #warning TODO наверно без ноде билдера надо обойтись
             INodeBuilder nodeBuilder = new NodeBuilder();
 
             string userProfile = settings.Value.UserProfile;
-            _storageFactory = new NodeFileStorageFactory(nodeBuilder, userProfile);
+            _storageFactory = new NodeFileStorageProvider(nodeBuilder, userProfile);
 
         }
 

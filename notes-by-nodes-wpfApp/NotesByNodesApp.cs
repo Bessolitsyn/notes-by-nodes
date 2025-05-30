@@ -29,7 +29,7 @@ namespace notes_by_nodes_wpfApp
             services.Configure<NotesByNodesSettings>(ConfigureServices);
             // Сервисы
             //services.AddSingleton<INodeBuilder, NodeBuilder>();
-            services.AddSingleton<INodeStorageFactory, StorageFactoryServiceAdapter>();
+            services.AddSingleton<INodeStorageProvider, StorageFactoryServiceAdapter>();
             services.AddSingleton<INoteService, NoteServiceFacade>();
 
             // ViewModel

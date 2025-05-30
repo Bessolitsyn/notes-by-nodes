@@ -15,11 +15,11 @@ namespace notes_by_nodes.Service
     public class NoteServiceFacade : INoteService
     {
         private readonly UserInteractor userInteractor;
-        private readonly INodeStorageFactory storageFactory;
+        private readonly INodeStorageProvider storageFactory;
         private LocalUser activeUser;
         private CoreInteractor coreInteractor;
 
-        public NoteServiceFacade(INodeStorageFactory storageFactory)
+        public NoteServiceFacade(INodeStorageProvider storageFactory)
         {
             this.storageFactory = storageFactory;
             this.userInteractor = new UserInteractor(storageFactory);

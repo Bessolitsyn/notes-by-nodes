@@ -20,7 +20,7 @@ namespace notes_by_nodes.StorageAdapters
         //protected static Node[] loadedNodes = [];
         protected static Dictionary<int,Node> loadedNodes = [];
         protected readonly INodeBuilder nodeBuilder;
-        protected INodeStorageFactory nodeStorageFactory;
+        protected INodeStorageProvider nodeStorageFactory;
         
 
         public NodeStorageAdapter(INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder, string fileExtension = "node") : base(pathToRootFolder, subfolder, fileExtension)
@@ -29,7 +29,7 @@ namespace notes_by_nodes.StorageAdapters
 #warning TODO Возможно загружать все заметки в боксе в память сразу неправильно - но этот метод вызывается и для узлов типа юзер и бокс
             //ReadNodes();
         }
-        internal void SetStorageFactory(INodeStorageFactory factory)
+        internal void SetStorageFactory(INodeStorageProvider factory)
         {
             nodeStorageFactory = factory;
         }

@@ -16,11 +16,11 @@ namespace notes_by_nodes.UseCases
 {
     internal class CoreInteractor
     {
-        protected INodeStorageFactory StorageFactory { get; init; }
+        protected INodeStorageProvider StorageFactory { get; init; }
         protected LocalUser ActiveUser { get; init; }
         private IBoxStorage boxStorage { get; init; }
 
-        internal CoreInteractor(INodeStorageFactory storageFactory, LocalUser activeUser)
+        internal CoreInteractor(INodeStorageProvider storageFactory, LocalUser activeUser)
         {
             ActiveUser = activeUser;
             StorageFactory = storageFactory;

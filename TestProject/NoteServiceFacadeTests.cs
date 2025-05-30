@@ -18,6 +18,16 @@ namespace TestProject
 {
     public class NoteServiceFacadeTests
     {
+        public static NoteServiceFacade TestFacade { get => _testFacade ?? setTestFasde(); }
+        static NoteServiceFacade? _testFacade;
+        public static NoteServiceFacade setTestFasde()
+        {
+
+            _testFacade = new NoteServiceFacade(new TestStorageFactory());
+            return _testFacade;
+
+        }
+
         [Fact]
         public static async Task StartAppWhenNoUserAsync()
         {
@@ -68,14 +78,14 @@ namespace TestProject
 
 
     }
-    internal class TestStorageFactory : INodeStorageFactory
+    internal class TestStorageFactory : INodeStorageProvider
     {
-        private readonly INodeStorageFactory _storageFactory;
+        private readonly INodeStorageProvider _storageFactory;
         public TestStorageFactory()
         {
             INodeBuilder nodeBuilder = new NodeBuilder();
             var current = Directory.GetCurrentDirectory() + "\\..\\..\\..\\FilesStorage2\\";
-            _storageFactory = new NodeFileStorageFactory(nodeBuilder, current);
+            _storageFactory = new NodeFileStorageProvider(nodeBuilder, current);
 
         }
 

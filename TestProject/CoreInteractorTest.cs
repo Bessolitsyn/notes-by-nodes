@@ -107,14 +107,14 @@ namespace TestProject
     {
         public static string profileFolder = System.IO.Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage";
         public LocalUser? currentUser;
-        public NodeFileStorageFactory storageFactory;
+        public NodeFileStorageProvider storageFactory;
         //Lazy
         CoreInteractor interactor;
         UserInteractor userInteractor;
         public TestAppCore()
         {
             INodeBuilder nodeBuilder = new NodeBuilder();
-            storageFactory = new NodeFileStorageFactory(nodeBuilder, profileFolder);
+            storageFactory = new NodeFileStorageProvider(nodeBuilder, profileFolder);
             userInteractor = new UserInteractor(storageFactory);
             currentUser = SelectUser();            
             interactor = new CoreInteractor(storageFactory, currentUser);

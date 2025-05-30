@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.UseCases
 {
-    internal class UserInteractor(INodeStorageFactory storageFactory)
+    internal class UserInteractor(INodeStorageProvider storageFactory)
     {
-        protected INodeStorageFactory StorageFactory { get; init; } = storageFactory ?? throw new ArgumentNullException();
+        protected INodeStorageProvider StorageFactory { get; init; } = storageFactory ?? throw new ArgumentNullException();
 
         internal LocalUser[] GetUsers()
         {
