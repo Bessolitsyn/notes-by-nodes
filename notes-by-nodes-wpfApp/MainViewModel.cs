@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using notes_by_nodes_wpfApp.Services;
+using notes_by_nodes_wpfApp.Service;
 using Microsoft.Extensions.Options;
 using notes_by_nodes_wpfApp.Settings;
 using notes_by_nodes.Service;

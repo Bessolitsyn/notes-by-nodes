@@ -4,7 +4,7 @@ using notes_by_nodes.Dto;
 using notes_by_nodes.Entities;
 using notes_by_nodes.Service;
 using notes_by_nodes_wpfApp.Helpers;
-using notes_by_nodes_wpfApp.Services;
+using notes_by_nodes_wpfApp.Service;
 using notes_by_nodes_wpfApp.ViewModel;
 using System;
 using System.Collections.Generic;

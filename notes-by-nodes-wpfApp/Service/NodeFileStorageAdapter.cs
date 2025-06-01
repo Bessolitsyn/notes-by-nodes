@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace notes_by_nodes_wpfApp.Services
+namespace notes_by_nodes_wpfApp.Service
 {
     internal class NodeFileStorageAdapter: INodeStorageProvider
     {

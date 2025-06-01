@@ -5,11 +5,9 @@ using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using notes_by_nodes_wpfApp.Settings;
-using notes_by_nodes_wpfApp.Services;
+using notes_by_nodes_wpfApp.Service;
 using notes_by_nodes.Storage;
 using notes_by_nodes.Service;
-using notes_by_nodes_wpfApp.ViewModel;
-using System.Reflection;
 
 namespace notes_by_nodes_wpfApp
 {
@@ -28,7 +26,6 @@ namespace notes_by_nodes_wpfApp
             // Конфигурация
             services.Configure<NotesByNodesSettings>(ConfigureServices);
             // Сервисы
-            //services.AddSingleton<INodeBuilder, NodeBuilder>();
             services.AddSingleton<INodeStorageProvider, NodeFileStorageAdapter>();
             services.AddSingleton<INoteService, NoteServiceFacade>();
 

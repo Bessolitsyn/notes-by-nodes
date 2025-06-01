@@ -12,7 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace notes_by_nodes_wpfApp.Services
+namespace notes_by_nodes_wpfApp.Service
 {
     public class NoteTabItemBuilder
     {
