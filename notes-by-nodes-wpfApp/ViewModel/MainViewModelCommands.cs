@@ -24,12 +24,12 @@ namespace notes_by_nodes_wpfApp
         #region COMMANDS
 
         [RelayCommand]
-        public void CloseTab(NodeTabItem tab)
+        public void CloseTab(TabItem tab)
         {
             if (tab != null)
                 Tabs.Remove(tab);
         }
-        
+
         [RelayCommand]
         public async Task RemoveNode()
         {
@@ -40,7 +40,7 @@ namespace notes_by_nodes_wpfApp
                 {
                     RemoveBoxFromNodesTree(boxViewModel);
                 }
-            }                
+            }
         }
 
 
@@ -54,7 +54,7 @@ namespace notes_by_nodes_wpfApp
         public async Task NewChildNode()
         {
             if (SelectedNode != null)
-                await TryExecuteUseCase(SelectedNode.NewNoteAsync);            
+                await TryExecuteUseCase(SelectedNode.NewNoteAsync);
         }
 
         [RelayCommand]
@@ -75,24 +75,28 @@ namespace notes_by_nodes_wpfApp
         {
 
             if (Tabs.Count == 0)
-            {                
+            {
                 var tabItem = NoteTabItemBuilder.GetNoteEditorTab(node, CloseTabCommand);
                 Tabs.Insert(0, tabItem);
                 tabItem.IsSelected = true;
             }
             else
             {
-                var tabItem = Tabs.Single(t => t.IsSelected);
-                tabItem.IsSelected = false;               
-
-                ////TO DO прочитать про эту штуку!
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                if (Tabs.Any(t => t.IsSelected))
                 {
-                    int currentTabIndex = Tabs.IndexOf(tabItem);
-                    Tabs[currentTabIndex] = NoteTabItemBuilder.GetNoteEditorTab(node, CloseTabCommand);
-                    Tabs[currentTabIndex].IsSelected = true;
 
-                }), DispatcherPriority.Loaded);
+                    var tabItem = Tabs.Single(t => t.IsSelected);
+                    tabItem.IsSelected = false;
+
+                    ////TO DO прочитать про эту штуку!
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        int currentTabIndex = Tabs.IndexOf(tabItem);
+                        Tabs[currentTabIndex] = NoteTabItemBuilder.GetNoteEditorTab(node, CloseTabCommand);
+                        Tabs[currentTabIndex].IsSelected = true;
+
+                    }), DispatcherPriority.Loaded);
+                }
 
             }
 
@@ -116,7 +120,7 @@ namespace notes_by_nodes_wpfApp
         {
             try
             {
-                if (action !=null)
+                if (action != null)
                     await action.Invoke();
             }
             catch (Exception ex)

@@ -53,7 +53,13 @@ namespace notes_by_nodes_wpfApp
             var Configuration = builder.Build();
 #if DEBUG
             var current = Directory.GetCurrentDirectory() + "\\..\\..\\..\\..\\TestProject\\FilesStorage\\";
-            Directory.SetCurrentDirectory(current);
+            if (Directory.Exists(current))
+            {
+                Directory.SetCurrentDirectory(current);
+            }
+            else { 
+                Directory.CreateDirectory(current);
+            }
             configure.UserProfile = Directory.GetCurrentDirectory();
             //configure.UserProfile = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\FilesStorage\\";
 #else
