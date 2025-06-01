@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using CommunityToolkit.Mvvm.Input;
 
 namespace notes_by_nodes_wpfApp.ViewModel
 {
@@ -31,6 +32,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
         Task RemoveAsync();
         void RemoveChild(INoteViewModel childNote);
         Task NewNoteAsync();
+
     }
 
     public abstract partial class NodeViewModel : ObservableObject, INoteViewModel, INodeDto
@@ -40,6 +42,8 @@ namespace notes_by_nodes_wpfApp.ViewModel
         public ObservableCollection<INoteViewModel> ChildNodes { get; set; } = [];
         public INoteViewModel ParentNode { get; init; }
         protected INoteService NoteService { get; init; }
+        protected MainViewModel MainViewModel { get; init; }        
+        protected SemaphoreSlim LoadChildNodesSemaphore { get; init; } =  new (1, 1);
         public int Uid { get; init; }
 
 
@@ -72,25 +76,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
             {
                 try
                 {
-                    void loadChilds(INoteViewModel note)
-                    {
-                        foreach (var child in note.ChildNodes)
-                        {
-                            if (!child.IsLoaded)
-                                child.LoadChildNodesAsync();
-                        };
-                    }
-
-                    if (!IsLoaded)
-                    {
-                        LoadChildNodesAsync().ContinueWith(task =>
-                        {
-                            loadChilds(this);
-                        });
-
-                    }
-                    else
-                        loadChilds(this);                   
+                   LoadChildNodesAsync();
                 }
                 catch (Exception ex)
                 {
@@ -107,16 +93,19 @@ namespace notes_by_nodes_wpfApp.ViewModel
             this.text = text;
             this.isExpanded = false;
             IsLoaded = false;
-            
             ParentNode = parent;
+
             NotesByNodesApp app = (NotesByNodesApp)NotesByNodesApp.Current;
-            NoteService = app.ServiceProvider.GetRequiredService<INoteService>();
+            if (app != null && app.ServiceProvider != null)
+            {
+                NoteService = app.ServiceProvider.GetRequiredService<INoteService>();
+                MainViewModel = app.ServiceProvider.GetRequiredService<MainViewModel>();
+            }
 
         }
         abstract public void TrySaveChanges();
         abstract public Task RemoveAsync();
 
-        protected readonly SemaphoreSlim loadChildNodesSemaphore = new SemaphoreSlim(1, 1);
         abstract public Task LoadChildNodesAsync();
         abstract public Task NewNoteAsync();
         protected async Task Load()
@@ -126,6 +115,33 @@ namespace notes_by_nodes_wpfApp.ViewModel
                 await LoadChildNodesAsync();
             }
         }
+        protected async Task LoadChildsRecursiveAsync(int boxUid, INoteViewModel parent, int levels)
+        {
+
+            if (!IsLoaded)
+            {
+                var notesDto = await NoteService.GetChildNodes(boxUid, parent.Uid);
+                if (notesDto != null)
+                {
+                    foreach (var noteDto in notesDto)
+                    {
+                        var note = new NoteViewModel(noteDto.Uid, Uid, noteDto.Name, noteDto.Description, noteDto.Text, this);
+
+                        if (levels-- > 0) await LoadChildsRecursiveAsync(boxUid, note, levels);
+                        parent.ChildNodes.Add(note);
+                    }
+                    parent.IsLoaded = true;
+                }
+            }
+            else
+            {
+                foreach (var item in parent.ChildNodes)
+                {
+                    await LoadChildsRecursiveAsync(boxUid, item, levels--);
+                }
+            }
+        }
+
         protected async Task NewChild(int boxUid, int parentNoteUid)
         {
             await Load();
@@ -138,37 +154,41 @@ namespace notes_by_nodes_wpfApp.ViewModel
         {
             ChildNodes.Remove(childNote);
         }
+        protected void Select()
+        {
+            //TO DO выделить node в TreeView
+        }
+
+        [RelayCommand]
+        void ShowNoteInNewTab()
+        {
+            MainViewModel.ShowNoteInNewTabCommand.Execute(this);
+        }
     }
 
     public partial class BoxViewModel : NodeViewModel
-    {       
+    {
         public BoxViewModel(int uid, string path, string desc, string text)
             : base(uid, path, desc, text, null)
         {
-            
+
         }
-        
+
         public override async Task LoadChildNodesAsync()
         {
-
-            if (!await loadChildNodesSemaphore.WaitAsync(TimeSpan.Zero))
+            if (!await LoadChildNodesSemaphore.WaitAsync(TimeSpan.Zero))
             {
                 return;
             }
-
             try
-            {                
-                var notes = await NoteService.GetChildNodesOfTheBox(Uid);
-                //notes.Select(note=> new NoteViewModel(note.Uid, Uid, note.Name, note.Description, note.Text, this));
-                foreach (var note in notes)
-                {
-                    ChildNodes.Add(new NoteViewModel(note.Uid, Uid, note.Name, note.Description, note.Text, this));
-                }
+            {
+                //to do setting deep of levels to loading childs 
+                await LoadChildsRecursiveAsync(Uid, this, 2);
             }
             finally
             {
                 IsLoaded = true;
-                loadChildNodesSemaphore.Release();
+                LoadChildNodesSemaphore.Release();
             }
         }
 
@@ -184,25 +204,30 @@ namespace notes_by_nodes_wpfApp.ViewModel
 #warning TO DO error message box
             }
         }
-
+        [RelayCommand]
         public override async Task RemoveAsync()
         {
-            throw new NotImplementedException();
+            await NoteService.Remove(Uid);
+            MainViewModel.RemoveBoxFromNodesTree(this);
         }
-
+        [RelayCommand]
         public override async Task NewNoteAsync()
         {
+            Select();
             await NewChild(Uid, Uid);
         }
+
+
+
     }
     public partial class NoteViewModel : NodeViewModel
     {
-        
+
         [ObservableProperty]
         private int boxUid;
 
         public NoteViewModel(int uid, int boxUid, string name, string desc, string text, INoteViewModel parent)
-            :base(uid, name, desc, text, parent)
+            : base(uid, name, desc, text, parent)
         {
             this.boxUid = boxUid;
         }
@@ -214,47 +239,50 @@ namespace notes_by_nodes_wpfApp.ViewModel
                 if (IsLoaded)
                     NoteService.ModifyNote(BoxUid, (INodeDto)this);
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
-#warning TO DO error message box
-                
-            }  
+                System.Windows.MessageBox.Show(ex.ToString());
+
+            }
         }
         public override async Task LoadChildNodesAsync()
         {
-            if (!await loadChildNodesSemaphore.WaitAsync(TimeSpan.Zero)) 
-                    return;
-
+            if (!await LoadChildNodesSemaphore.WaitAsync(TimeSpan.Zero))
+            {
+                return;
+            }
             try
             {
-                var notes = await NoteService.GetChildNodes(BoxUid, Uid);
-                foreach (var note in notes)
-                {
-                    ChildNodes.Add(new NoteViewModel(note.Uid, BoxUid, note.Name, note.Description, note.Text, this));
-                }
+                //to do setting deep of levels to loading childs 
+                await LoadChildsRecursiveAsync(BoxUid, this, 2);
             }
             finally
             {
                 IsLoaded = true;
-                loadChildNodesSemaphore.Release();
+                LoadChildNodesSemaphore.Release();
             }
         }
     
 
+        [RelayCommand]
         public override async Task RemoveAsync()
         {
+            Select();
             await NoteService.Remove(BoxUid, Uid);
+            ParentNode?.RemoveChild(this);
         }
-
+        [RelayCommand]
         public override async Task NewNoteAsync()
         {
+            Select();
             await NewChild(BoxUid, Uid);
         }
+
     }
 
-    
-    
-    
+
+
+
 
 
 }

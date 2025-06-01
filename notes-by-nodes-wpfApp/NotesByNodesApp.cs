@@ -16,8 +16,8 @@ namespace notes_by_nodes_wpfApp
     public partial class NotesByNodesApp : Application
     {
 
-        public IServiceProvider ServiceProvider { get; private set; }
-        public IConfiguration Configuration { get; private set; }
+        public IServiceProvider? ServiceProvider { get; private set; }
+        public IConfiguration? Configuration { get; private set; }
 
 
         protected override void OnStartup(StartupEventArgs e)
@@ -29,11 +29,12 @@ namespace notes_by_nodes_wpfApp
             services.Configure<NotesByNodesSettings>(ConfigureServices);
             // Сервисы
             //services.AddSingleton<INodeBuilder, NodeBuilder>();
-            services.AddSingleton<INodeStorageProvider, StorageFactoryServiceAdapter>();
+            services.AddSingleton<INodeStorageProvider, NodeFileStorageAdapter>();
             services.AddSingleton<INoteService, NoteServiceFacade>();
 
             // ViewModel
-            services.AddTransient<MainViewModel>();
+            //services.AddTransient<MainViewModel>();
+            services.AddSingleton<MainViewModel>();
 
             // Окно
             services.AddSingleton<MainWindow>();

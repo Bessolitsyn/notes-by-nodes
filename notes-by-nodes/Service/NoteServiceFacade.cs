@@ -59,7 +59,10 @@ namespace notes_by_nodes.Service
         public async Task<IEnumerable<INodeDto>> GetChildNodes(int boxUid, int parentNodeUid)
         {
             IEnumerable<INodeDto> childNodes = [];
-            await Task.Run(() => childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Cast<INodeDto>());
+            if (boxUid == parentNodeUid)
+                childNodes = await GetChildNodesOfTheBox(boxUid);
+            else
+                await Task.Run(() => childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Cast<INodeDto>());
             //await Task.Delay(1000);
             return childNodes;
         }

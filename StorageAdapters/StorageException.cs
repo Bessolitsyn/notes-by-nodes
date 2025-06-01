@@ -14,7 +14,8 @@ namespace notes_by_nodes.Storage
             "Пользователь не найден",
             "Ошибка при чтении или файл не существует",
             "Неизвестная ошибка",
-            "Ошибка при удалении"
+            "Ошибка при удалении",
+            "Папка хранилища не найдена"
             ];
         
 
@@ -26,6 +27,8 @@ namespace notes_by_nodes.Storage
         {
             if (Enumerable.Range(0, 2).Contains((int)errorCode))
                 return new NoNodeInStorageException(StorageException.ErrorMessage[(int)errorCode]);
+            if (Enumerable.Range(4, 1).Contains((int)errorCode))
+                return new NoFolderStorageException(StorageException.ErrorMessage[(int)errorCode]);
             else
                 return new UnknownStorageException();
         }
@@ -37,6 +40,9 @@ namespace notes_by_nodes.Storage
     {
     }
     internal class UnknownStorageException() : StorageException("Неизвестная ошибка")
+    {
+    }
+    internal class NoFolderStorageException(string message) : StorageException(message)
     {
     }
     public enum StorageErrorCode : int

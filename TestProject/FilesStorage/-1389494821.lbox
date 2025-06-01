@@ -1,14 +1,13 @@
 {
   "CreationDate": "2025-05-24T00:12:19.3306485+03:00",
-  "Description": "New Box",
+  "Description": "New Boxdsgdsgsdg",
   "Name": "C:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\FilesStorage\\Box",
-  "Text": null,
+  "Text": "fdsdsfdsfsdsvsdvdsfg\r\n",
   "Type": "LocalBox",
   "Uid": -1389494821,
   "HasChildNodes": [
-    "-1343037679",
-    "-1357715130",
-    "-1355728181"
+    "366207527",
+    "394636311"
   ],
   "HasOwner": "-1767646323",
   "HasParentNode": "-1767646323"

@@ -16,22 +16,15 @@ namespace notes_by_nodes_wpfApp.Services
 {
     public class NoteTabItemBuilder
     {
-        public static NodeTabItem GetNoteEditorTabItem(INoteViewModel note, ICommand closeTabCommand)
+        public static TabItem GetNoteEditorTab(INoteViewModel note, ICommand closeTabCommand)
         {
             var userControl = new NoteEditorControl(note);
-            return GetTabItemForMainTabControl(note, userControl, closeTabCommand);
+            return NewNoteEditorTab(note, userControl, closeTabCommand);
         }
-        public static NodeTabItem GetTabItemForMainTabControl(INoteViewModel note, UserControl userControl, ICommand closeTabCommand)
+        static TabItem NewNoteEditorTab(INoteViewModel note, UserControl userControl, ICommand closeTabCommand)
         {
-            var tabItem = new NodeTabItem();
-            tabItem.NodeUid = note.Uid;
+            var tabItem = new TabItem();
             tabItem.Content = userControl;
-
-
-            //var template = new ControlTemplate(typeof(TabItem));
-            //var style = new Style(typeof(TabItem));
-            //style.Setters.Add(new Setter(Control.TemplateProperty, template));
-
 
             var headerStack = new StackPanel { Orientation = Orientation.Horizontal };
             headerStack.Children.Add(new TextBlock { Text = note.Name });

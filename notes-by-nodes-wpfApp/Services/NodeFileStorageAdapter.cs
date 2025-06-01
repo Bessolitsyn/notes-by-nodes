@@ -12,32 +12,32 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes_wpfApp.Services
 {
-    internal class StorageFactoryServiceAdapter: INodeStorageProvider
+    internal class NodeFileStorageAdapter: INodeStorageProvider
     {
-        private readonly INodeStorageProvider _storageFactory;
-        public StorageFactoryServiceAdapter(IOptions<NotesByNodesSettings> settings) 
+        private readonly NodeFileStorageProvider _storage;
+        public NodeFileStorageAdapter(IOptions<NotesByNodesSettings> settings) 
         {
 #warning TODO наверно без ноде билдера надо обойтись
             INodeBuilder nodeBuilder = new NodeBuilder();
 
             string userProfile = settings.Value.UserProfile;
-            _storageFactory = new NodeFileStorageProvider(nodeBuilder, userProfile);
+            _storage = new NodeFileStorageProvider(nodeBuilder, userProfile);
 
         }
 
         public IBoxStorage GetBoxStorage()
         {
-            return _storageFactory.GetBoxStorage();
+            return _storage.GetBoxStorage();
         }
 
         public INoteStorage GetNoteStorage(LocalBox box)
         {
-            return _storageFactory.GetNoteStorage(box);
+            return _storage.GetNoteStorage(box);
         }
 
         public IUserStorage GetUserStorage()
         {
-            return _storageFactory.GetUserStorage();
+            return _storage.GetUserStorage();
         }
     }
 }

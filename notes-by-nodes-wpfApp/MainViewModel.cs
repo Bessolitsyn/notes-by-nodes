@@ -22,50 +22,44 @@ using notes_by_nodes.Dto;
 
 namespace notes_by_nodes_wpfApp
 {
-    public partial class MainViewModel : ObservableObject
+    public partial class MainViewModel(INoteService notesService, IOptions<NotesByNodesSettings> options) : ObservableObject
     {
         //private readonly ModelsPresenter _presenter;
-        private readonly INoteService _notesService;
+        private readonly INoteService _notesService = notesService;
+        private readonly IOptions<NotesByNodesSettings> _options = options;
 
         [ObservableProperty]
         private List<UserViewModel> _users = [];
 
         [ObservableProperty]
-        private UserViewModel _user; 
-        
+        private UserViewModel _user;
+
         public ObservableCollection<INoteViewModel> NodesTree { get; } = [];
-        public ObservableCollection<NodeTabItem> Tabs { get; } = [];
+        //public ObservableCollection<NodeTabItem> Tabs { get; } = [];
+        public ObservableCollection<TabItem> Tabs { get; } = [];
 
         [ObservableProperty]
         private INoteViewModel _selectedNode;
         partial void OnSelectedNodeChanging(INoteViewModel value)
         {
             ShowNoteInActiveTab(value);
+            //ShowNoteInActiveTabCommand.Execute(value);
+            //ShowNoteInNewTab(value);
+
         }
 
-        //#region EVENTS
-
-        //public void NodeTreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //{
-            
-        //}
-
-        //#endregion EVENTS
-
-        public MainViewModel(INoteService notesService, IOptions<NotesByNodesSettings> options)
+        public async Task InitAsync()
         {
-            //_presenter = (ModelsPresenter)presenter;
-            _notesService = notesService;               
-        }
-
-        public void Init()
-        {
-            //_presenter.Attach(this);
-            //_noteTabControl = noteTab;
-            //_noteTabControl.ItemsSource = Tabs;
-            InitUsers();
+            try
+            {
+                InitUsers();
+                await InitNodesTreeAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
             
-            InitNodesTree();
         }
 
         void InitUsers()
@@ -73,7 +67,7 @@ namespace notes_by_nodes_wpfApp
             try
             {
                 var users = _notesService.GetUsers().Select(user => new UserViewModel(user.Uid, user.Name, user.Email));
-                Users.AddRange(users);                
+                Users.AddRange(users);
             }
             catch (NoUsersNoteCoreException)
             {
@@ -106,29 +100,24 @@ namespace notes_by_nodes_wpfApp
             _notesService.SelectUser(activeUser.Uid);
             User = activeUser;
         }
-        void InitNodesTree()
+
+        private async Task InitNodesTreeAsync()
         {
+
             var boxes = _notesService.GetBoxes().Select(box => new BoxViewModel(box.Uid, box.Name, box.Description, box.Text));
             foreach (var box in boxes)
             {
-                box.LoadChildNodesAsync();                
+                await box.LoadChildNodesAsync();
                 NodesTree.Add(box);
             }
-        }
 
-        void ShowNoteInActiveTab(INoteViewModel node)
+        }
+        
+        public void RemoveBoxFromNodesTree(BoxViewModel boxViewModel)
         {
-            var tabItem = NoteTabItemBuilder.GetNoteEditorTabItem(node, CloseTabCommand);
-            //var nodeTabItem = NodeTabItem.CastToTabItem(tabItem, node.Uid);
-            //Tabs.Clear();
-            if (Tabs.Count>0)
-                Tabs.RemoveAt(0);
-            Tabs.Insert(0, tabItem);
-            tabItem.IsSelected = true;
+            NodesTree.Remove(boxViewModel);
         }
-
-
 
     }
-    
+
 }

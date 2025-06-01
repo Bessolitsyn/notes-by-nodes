@@ -12,8 +12,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace notes_by_nodes_wpfApp
 {
@@ -27,27 +29,21 @@ namespace notes_by_nodes_wpfApp
             if (tab != null)
                 Tabs.Remove(tab);
         }
-
-        //public ICommand CloseTabCommand2 => new RelayCommand<NodeTabItem>(tab =>
-        //{
-        //    if (tab != null)
-        //        Tabs.RemoveAsync(tab);
-        //});
-
-        //[RelayCommand]
-        //public ICommand TreeNodeDoubleClickCommand => new RelayCommand(() =>
-        //{
-
-        //});
+        
         [RelayCommand]
         public async Task RemoveNode()
         {
             if (SelectedNode != null)
             {
                 await TryExecuteUseCase(SelectedNode.RemoveAsync);
-                SelectedNode.ParentNode?.RemoveChild(SelectedNode);
+                if (SelectedNode is BoxViewModel boxViewModel)
+                {
+                    RemoveBoxFromNodesTree(boxViewModel);
+                }
             }                
         }
+
+
         //public ICommand RemoveNodeCommand => new RelayCommand<INoteViewModel>(node =>
         //{
         //    if (node != null)
@@ -58,8 +54,7 @@ namespace notes_by_nodes_wpfApp
         public async Task NewChildNode()
         {
             if (SelectedNode != null)
-                await TryExecuteUseCase(SelectedNode.NewNoteAsync);
-            
+                await TryExecuteUseCase(SelectedNode.NewNoteAsync);            
         }
 
         [RelayCommand]
@@ -74,12 +69,39 @@ namespace notes_by_nodes_wpfApp
                 NodesTree.Insert(0, newbox);
             }
 
-    }
+        }
+        [RelayCommand]
+        void ShowNoteInActiveTab(INoteViewModel node)
+        {
+
+            if (Tabs.Count == 0)
+            {                
+                var tabItem = NoteTabItemBuilder.GetNoteEditorTab(node, CloseTabCommand);
+                Tabs.Insert(0, tabItem);
+                tabItem.IsSelected = true;
+            }
+            else
+            {
+                var tabItem = Tabs.Single(t => t.IsSelected);
+                tabItem.IsSelected = false;               
+
+                ////TO DO прочитать про эту штуку!
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    int currentTabIndex = Tabs.IndexOf(tabItem);
+                    Tabs[currentTabIndex] = NoteTabItemBuilder.GetNoteEditorTab(node, CloseTabCommand);
+                    Tabs[currentTabIndex].IsSelected = true;
+
+                }), DispatcherPriority.Loaded);
+
+            }
+
+        }
 
         [RelayCommand]
-        void ShowNoteInNewTab()
+        void ShowNoteInNewTab(INoteViewModel node)
         {
-            var tabItem = NoteTabItemBuilder.GetNoteEditorTabItem(SelectedNode, CloseTabCommand);
+            var tabItem = NoteTabItemBuilder.GetNoteEditorTab(node, CloseTabCommand);
             Tabs.Add(tabItem);
             tabItem.IsSelected = true;
         }
@@ -94,13 +116,12 @@ namespace notes_by_nodes_wpfApp
         {
             try
             {
-                action?.Invoke();
+                if (action !=null)
+                    await action.Invoke();
             }
             catch (Exception ex)
             {
-
-#warning TO DO uniwersal error message box;
-                System.Windows.MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.ToString());
             }
         }
         #endregion

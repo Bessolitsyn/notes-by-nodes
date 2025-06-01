@@ -14,6 +14,7 @@ using System.Windows.Media;
 
 namespace notes_by_nodes_wpfApp.ViewModel
 {
+    [Obsolete]
     public class NodeTabItem : TabItem
     {
         public int NodeUid { get; set; }

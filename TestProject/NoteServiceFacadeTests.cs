@@ -18,15 +18,6 @@ namespace TestProject
 {
     public class NoteServiceFacadeTests
     {
-        public static NoteServiceFacade TestFacade { get => _testFacade ?? setTestFasde(); }
-        static NoteServiceFacade? _testFacade;
-        public static NoteServiceFacade setTestFasde()
-        {
-
-            _testFacade = new NoteServiceFacade(new TestStorageFactory());
-            return _testFacade;
-
-        }
 
         [Fact]
         public static async Task StartAppWhenNoUserAsync()
@@ -35,27 +26,26 @@ namespace TestProject
             {
 
 
-                IUserDto newuser = testApp.TestFacade.NewUser(new UserDto(0, "ayur", ""));
-                testApp.TestFacade.SelectUser(newuser.Uid);
+                IUserDto newuser = TestApp.TestFacade.NewUser(new UserDto(0, "TestUSer", ""));
+                TestApp.TestFacade.SelectUser(newuser.Uid);
                 var boxfolder = Directory.GetCurrentDirectory() + "\\..\\..\\..\\FilesStorage2\\Box\\";
 
-                var box = testApp.TestFacade.NewBox(new NodeDto(0, boxfolder, "", ""));
-                var childs = testApp.TestFacade.GetChildNodesOfTheBox(box.Uid);
-                var note1 = await testApp.TestFacade.NewNote(box.Uid, box.Uid);
-                //var childs2 = testApp.TestFacade.GetChildNodesOfTheBox(box.Uid);
-                var note2 = await testApp.TestFacade.NewNote(box.Uid, box.Uid);
-                var note3 = await testApp.TestFacade.NewNote(box.Uid, box.Uid);
-                var note31 = await testApp.TestFacade.NewNote(box.Uid, note3.Uid);
-                var note32 = await testApp.TestFacade.NewNote(box.Uid, note3.Uid);
-                await testApp.TestFacade.Remove(box.Uid, note1.Uid);
-                await testApp.TestFacade.Remove(box.Uid, note2.Uid);
-                await testApp.TestFacade.Remove(box.Uid, note3.Uid);
-                await testApp.TestFacade.Remove(box.Uid);
+                var box = TestApp.TestFacade.NewBox(new NodeDto(0, boxfolder, "", ""));
+                var childs = TestApp.TestFacade.GetChildNodesOfTheBox(box.Uid);
+                var note1 = await TestApp.TestFacade.NewNote(box.Uid, box.Uid);
+                //var childs2 = TestApp.TestFacade.GetChildNodesOfTheBox(box.Uid);
+                var note2 = await TestApp.TestFacade.NewNote(box.Uid, box.Uid);
+                var note3 = await TestApp.TestFacade.NewNote(box.Uid, box.Uid);
+                var note31 = await TestApp.TestFacade.NewNote(box.Uid, note3.Uid);
+                var note32 = await TestApp.TestFacade.NewNote(box.Uid, note3.Uid);
+                await TestApp.TestFacade.Remove(box.Uid, note1.Uid);
+                await TestApp.TestFacade.Remove(box.Uid, note2.Uid);
+                await TestApp.TestFacade.Remove(box.Uid, note3.Uid);
+                await TestApp.TestFacade.Remove(box.Uid);
 
             }
             catch (Exception)
             {
-
                 throw;
             }
             finally
@@ -65,11 +55,11 @@ namespace TestProject
         }
 
     }
-    class testApp
+    class TestApp
     {
-        public static NoteServiceFacade TestFacade { get => _testFacade ?? setTestFasde(); }
+        public static NoteServiceFacade TestFacade { get => _testFacade ?? SetTestFasade(); }
         static NoteServiceFacade? _testFacade;
-        public static NoteServiceFacade setTestFasde() {
+        public static NoteServiceFacade SetTestFasade() {
 
             _testFacade = new NoteServiceFacade( new TestStorageFactory());
             return _testFacade;
@@ -80,7 +70,7 @@ namespace TestProject
     }
     internal class TestStorageFactory : INodeStorageProvider
     {
-        private readonly INodeStorageProvider _storageFactory;
+        private readonly NodeFileStorageProvider _storageFactory;
         public TestStorageFactory()
         {
             INodeBuilder nodeBuilder = new NodeBuilder();

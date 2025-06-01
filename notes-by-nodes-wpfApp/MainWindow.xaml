@@ -11,18 +11,34 @@
         mc:Ignorable="d"
         Title="MainWindow" MinHeight="450" MinWidth="800">
     <Window.Resources>
-        <HierarchicalDataTemplate x:Key="NoteTemplate" DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
+        <HierarchicalDataTemplate x:Key="NoteTemplate" DataType="{x:Type vm:NoteViewModel}" ItemsSource="{Binding ChildNodes}">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding Name}"/>
                 <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
                 <TextBlock Text="{Binding Description}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" TextAlignment="Left"/>
-            </StackPanel>            
+                <StackPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding NewNoteCommand}" Header ="New note" />
+                            <MenuItem Command="{Binding RemoveCommand }" Header="Remove note" />
+                            <MenuItem Command="{Binding ShowNoteInNewTabCommand}" Header="Open note in new tab" />
+                        </ContextMenu>                    
+                </StackPanel.ContextMenu>
+            </StackPanel>    
+            
         </HierarchicalDataTemplate>
-        <HierarchicalDataTemplate x:Key="BoxTemplate" DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
+        <HierarchicalDataTemplate x:Key="BoxTemplate" DataType="{x:Type vm:BoxViewModel}" ItemsSource="{Binding ChildNodes}">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding Description}"/>
                 <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
                 <TextBlock Text="{Binding Name}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" />
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding NewNoteCommand }" Header ="New note" />
+                        <MenuItem Command="{Binding RemoveCommand }" Header="Remove box" />
+                        <MenuItem Command="{Binding ShowNoteInNewTabCommand}" Header="Open box in new tab" />
+                        <!--CommandParameter="{Binding SelectedItem,  RelativeSource={RelativeSource AncestorType=TreeView}}" />-->
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
             </StackPanel>
             <HierarchicalDataTemplate.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
@@ -62,9 +78,6 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Vertical" Grid.Row="0">
-                    <!--<TextBox Text="{Binding SelectedNode.Desc, UpdateSourceTrigger=LostFocus}"></TextBox>
-                    <TextBox Text="{Binding ElementName=NodeTreeView, Path=SelectedValue.Desc}"></TextBox>
-                    <TextBox Text="{Binding User, UpdateSourceTrigger=LostFocus}"></TextBox>-->
                     <Button Content="New Box" Command="{Binding NewBoxCommand}" />
                     <Button Content="New Note" Command="{Binding NewChildNodeCommand}" />
                     <Button Content="Remove Note" Command="{Binding RemoveNodeCommand}" />
@@ -73,20 +86,14 @@
 
                 <TreeView ItemsSource="{Binding NodesTree}" Grid.Row="1" Grid.Column="0"
                     Name="NodeTreeView" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"  
-                          HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch"                          
-                    ItemTemplateSelector="{StaticResource NodeTemplateSelector}">
+                          HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch"    
+                            ItemTemplateSelector="{StaticResource NodeTemplateSelector}">
                     
-                    <TreeView.ContextMenu>                        
-                       <ContextMenu>
-                            <MenuItem Command="{Binding NewChildNodeCommand}" Header ="New note" />
-                            <MenuItem Command="{Binding RemoveNodeCommand}" Header="Remove note" />
-                            <MenuItem Command="{Binding ShowNoteInNewTabCommand}" Header="Open note in new tab" />
-                        </ContextMenu>
-                    </TreeView.ContextMenu>
+                    
                     <i:Interaction.Triggers>                        
                         <i:EventTrigger EventName="SelectedItemChanged">
                             <i:InvokeCommandAction Command="{Binding SelectTreeNodeItemCommand}"
-                                  CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
+                                  CommandParameter="{Binding SelectedItem,  RelativeSource={RelativeSource AncestorType=TreeView}}" />
                         </i:EventTrigger>
                         
                         <!--<i:EventTrigger EventName="MouseDoubleClick">
@@ -122,7 +129,7 @@
                         </WrapPanel>
                     </DataTemplate>
                 </TabControl.ItemTemplate>-->
-                <TabControl.Resources>
+                <!--<TabControl.Resources>-->
                     <!--<Style TargetType="{x:Type TabItem}">
                         <Setter Property="Template">
                             <Setter.Value>
@@ -144,7 +151,7 @@
                             </Setter.Value>
                         </Setter>
                     </Style>-->
-                </TabControl.Resources>
+                <!--</TabControl.Resources>-->
                 <!--<TabItem Header="asasas">
                     sadsadsadsadsadsadsad
                 </TabItem>
