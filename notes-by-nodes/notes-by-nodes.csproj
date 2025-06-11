@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>notes_by_nodes</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Factories\**" />
+    <Compile Remove="Storage\Dataset\**" />
+    <EmbeddedResource Remove="Factories\**" />
+    <EmbeddedResource Remove="Storage\Dataset\**" />
+    <None Remove="Factories\**" />
+    <None Remove="Storage\Dataset\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Entities\Box.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Box.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\Content.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Content.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\File.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>File.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\Node.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Node.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\Note.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Note.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Entities\User.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>User.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Entities\Box.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Box.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\Content.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Content.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\File.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>File.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\Node.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Node.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\Note.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Note.cs</LastGenOutput>
+    </None>
+    <None Update="Entities\User.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>User.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\tocha\source\notes-by-nodes\notes-by-nodes\.editorconfig" />
+  </ItemGroup>
+
+</Project>

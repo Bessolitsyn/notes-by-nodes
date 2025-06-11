@@ -1,0 +1,4 @@
+void AddIntoChildNodes(Node item);
+void RemoveFromChildNodes(Node item);
+void SetOwner(User item);
+void SetParentNode(Node item);

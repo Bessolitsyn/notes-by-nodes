@@ -1,0 +1,2 @@
+void AddIntoOwner(Node item);
+void RemoveFromOwner(Node item);

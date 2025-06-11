@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Ontology\**" />
+    <Compile Remove="TestOntology\**" />
+    <Compile Remove="test\**" />
+    <EmbeddedResource Remove="Ontology\**" />
+    <EmbeddedResource Remove="TestOntology\**" />
+    <EmbeddedResource Remove="test\**" />
+    <None Remove="Ontology\**" />
+    <None Remove="TestOntology\**" />
+    <None Remove="test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Node.cs" />
+    <Compile Remove="NodeDataset.cs" />
+    <Compile Remove="Note.cs" />
+    <Compile Remove="NoteDataset.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Node.mth" />
+    <None Remove="Node.prp" />
+    <None Remove="Node.tt" />
+    <None Remove="NodeDataset.arg" />
+    <None Remove="NodeDataset.tt" />
+    <None Remove="Note.mth" />
+    <None Remove="Note.prp" />
+    <None Remove="Note.tt" />
+    <None Remove="NoteDataset.arg" />
+    <None Remove="NoteDataset.tt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyFileObjectStorage\EasyObjectFileStorage.csproj" />
+    <ProjectReference Include="..\notes-by-nodes\notes-by-nodes.csproj" />
+    <ProjectReference Include="..\OwlToT4templatesTool\OwlToT4templatesTool.csproj" />
+    <ProjectReference Include="..\StorageAdapters\StorageAdapters.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="FilesStorage\Box\" />
+    <Folder Include="FilesStorage\NewFolder\" />
+  </ItemGroup>
+
+</Project>

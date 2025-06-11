@@ -1,0 +1,16 @@
+{
+  "IsOwnerOf": [
+    "1650148848"
+  ],
+  "CreationDate": "2025-06-02T00:07:03.3960967+03:00",
+  "Description": "",
+  "Name": "adasd",
+  "Text": null,
+  "Type": "LocalUser",
+  "Uid": 1871037477,
+  "HasChildNodes": [
+    "1650148848"
+  ],
+  "HasOwner": "1871037477",
+  "HasParentNode": "1871037477"
+}

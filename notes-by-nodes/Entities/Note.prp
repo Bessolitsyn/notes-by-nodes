@@ -1,0 +1,6 @@
+public abstract IEnumerable<Content> HasContent { get; }
+protected List<Content> hasContent = [];
+public abstract IEnumerable<Note> HasReference { get; }
+protected List<Note> hasReference = [];
+public abstract IEnumerable<Note> IsRefernced { get; }
+protected List<Note> isRefernced = [];

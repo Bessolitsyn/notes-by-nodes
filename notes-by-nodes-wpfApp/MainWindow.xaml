@@ -1,0 +1,165 @@
+﻿<Window x:Class="notes_by_nodes_wpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:notes_by_nodes_wpfApp"      
+        xmlns:vm="clr-namespace:notes_by_nodes_wpfApp.ViewModel"
+        xmlns:vh="clr-namespace:notes_by_nodes_wpfApp.ViewHelpers"
+        d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow" MinHeight="450" MinWidth="800">
+    <Window.Resources>
+        <HierarchicalDataTemplate x:Key="NoteTemplate" DataType="{x:Type vm:NoteViewModel}" ItemsSource="{Binding ChildNodes}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Name}"/>
+                <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
+                <TextBlock Text="{Binding Description}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" TextAlignment="Left"/>
+                <StackPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding NewNoteCommand}" Header ="New note" />
+                            <MenuItem Command="{Binding RemoveCommand }" Header="Remove note" />
+                            <MenuItem Command="{Binding ShowNoteInNewTabCommand}" Header="Open note in new tab" />
+                        </ContextMenu>                    
+                </StackPanel.ContextMenu>
+            </StackPanel>    
+            
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate x:Key="BoxTemplate" DataType="{x:Type vm:BoxViewModel}" ItemsSource="{Binding ChildNodes}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Description}"/>
+                <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
+                <TextBlock Text="{Binding Name}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" />
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding NewNoteCommand }" Header ="New note" />
+                        <MenuItem Command="{Binding RemoveCommand }" Header="Remove box" />
+                        <MenuItem Command="{Binding ShowNoteInNewTabCommand}" Header="Open box in new tab" />
+                        <!--CommandParameter="{Binding SelectedItem,  RelativeSource={RelativeSource AncestorType=TreeView}}" />-->
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
+            </StackPanel>
+            <HierarchicalDataTemplate.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding  IsExpanded, Mode=TwoWay}"/>
+                </Style>
+            </HierarchicalDataTemplate.ItemContainerStyle>
+        </HierarchicalDataTemplate>
+        
+        <vh:CustomTemplateSelector x:Key="NodeTemplateSelector"
+            BoxTemplate="{StaticResource BoxTemplate}"
+            NoteTemplate="{StaticResource NoteTemplate}" />
+        
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="200"/>
+            <ColumnDefinition Width="2"/>
+            <!-- Для GridSplitter -->
+            <ColumnDefinition Width="3*" MinWidth="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10" />
+        </Grid.RowDefinitions>
+
+        <!-- Левая панель -->
+        <Border Grid.Column="0" Grid.Row="0" Background="White" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Для TextBox и кнопок -->
+                    <RowDefinition Height="*"/>
+                    <!-- Для TreeView (займет все оставшееся место) -->
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Vertical" Grid.Row="0">
+                    <Button Content="New Box" Command="{Binding NewBoxCommand}" />
+                    <Button Content="New Note" Command="{Binding NewChildNodeCommand}" />
+                    <Button Content="Remove Note" Command="{Binding RemoveNodeCommand}" />
+                    
+                </StackPanel>
+
+                <TreeView ItemsSource="{Binding NodesTree}" Grid.Row="1" Grid.Column="0"
+                    Name="NodeTreeView" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"  
+                          HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch"    
+                            ItemTemplateSelector="{StaticResource NodeTemplateSelector}">
+                    
+                    
+                    <i:Interaction.Triggers>                        
+                        <i:EventTrigger EventName="SelectedItemChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectTreeNodeItemCommand}"
+                                  CommandParameter="{Binding SelectedItem,  RelativeSource={RelativeSource AncestorType=TreeView}}" />
+                        </i:EventTrigger>
+                        
+                        <!--<i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding ShowNoteInNewTabCommand}"/>
+                        </i:EventTrigger>-->
+                    </i:Interaction.Triggers>
+                    <!--<TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:INoteViewModel}" ItemsSource="{Binding ChildNodes}">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding ChildNodes.Count, StringFormat=' (notes: {0})'}" Foreground="Gray" FontSize="8"/>
+                                <TextBlock Text="{Binding Desc}" Width="200" Foreground="Gray" FontSize="10" TextAlignment="Left"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>-->
+                </TreeView>
+
+            </Grid>
+        </Border>
+
+        <!-- Разделитель -->
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" 
+                  Background="DarkGray" ShowsPreview="False"/>
+
+        <!-- Правая панель -->
+        <Border Grid.Column="2" Background="LightBlue">
+            <TabControl Name="MainNoteTabViewer" Background="Transparent" ItemsSource="{Binding Tabs}">
+                <!--<TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel Orientation="Horizontal">                            
+                            <TextBlock Text="{Binding Header}"/>
+                            <Button Name="CloseButton" Content="X" Width="20" Height="20" Margin="3" Click="CloseButton_Click"/>                            
+                        </WrapPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>-->
+                <!--<TabControl.Resources>-->
+                    <!--<Style TargetType="{x:Type TabItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type TabItem}">
+                                    <Grid>
+                                        <Border Name="Border" Background="LightGray" BorderBrush="Gray" 
+                                                BorderThickness="1,1,1,0" CornerRadius="4,4,0,0" HorizontalAlignment="Left" Width="Auto">
+                                            <DockPanel>
+                                                <Button Name="CloseButton" DockPanel.Dock="Right" Content="X" Width="20" Height="20" Margin="3" 
+                                                Click="CloseButton_Click"/>
+                                                <ContentPresenter ContentSource="Header" 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Margin="10,2"/>
+                                            </DockPanel>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>-->
+                <!--</TabControl.Resources>-->
+                <!--<TabItem Header="asasas">
+                    sadsadsadsadsadsadsad
+                </TabItem>
+                <TabItem Header="fsdfccccccdsf">
+                    wawqewqeqwd
+                </TabItem>-->
+            </TabControl>
+        </Border>
+    </Grid>
+
+</Window>

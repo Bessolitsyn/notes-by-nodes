@@ -1,0 +1,35 @@
+﻿<Window x:Class="notes_by_nodes_wpfApp.UserControls.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:notes_by_nodes_wpfApp.ViewModel"
+        xmlns:local="clr-namespace:notes_by_nodes_wpfApp.UserControls"
+        d:DataContext="{d:DesignInstance Type=vm:DialogViewModel}"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Title="DialogWindow" Width="250" MaxHeight="150">
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Message }"></TextBlock>
+        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Answer, Mode=TwoWay}" />
+        <StackPanel Grid.Column="1" Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="OK" Width="80" Command="{Binding OkCommand}" />
+            <Rectangle Width="10" />
+            <Button Content="Cancel" Width="80" Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>
