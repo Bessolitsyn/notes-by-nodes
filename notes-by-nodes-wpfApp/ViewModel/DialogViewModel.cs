@@ -20,7 +20,8 @@ namespace notes_by_nodes_wpfApp.ViewModel
 
         }
         private DialogWindow _dialogWindow;
-
+        //REVIEW: А где public свойства?
+        //REVIEW: У private поля должно стоять [NotifyPropertyChangedFor(nameof(PropertyName))]
         [ObservableProperty]
         private string message;
         [ObservableProperty]

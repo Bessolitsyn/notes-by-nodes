@@ -24,7 +24,7 @@ namespace notes_by_nodes.Service
         IUserDto NewUser(IUserDto user);
         INodeDto NewBox(INodeDto box);
     }
-
+    //REVIEW: Непонятно что такое Dto
     public interface INodeDto
     {
         int Uid { get; }
@@ -32,6 +32,7 @@ namespace notes_by_nodes.Service
         string Description { get; set; }
         string Text { get; set; }
     }
+    //REVIEW: Непонятно что такое Dto
     public interface IUserDto
     {
         int Uid { get; }

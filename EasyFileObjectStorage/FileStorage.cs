@@ -19,14 +19,16 @@ namespace EasyObjectFileStorage
             }
             catch (Exception)
             {
+                //REVIEW: Можно текст исключения куда-нибудь писать, а то непонятно почему не записался файл
                 return false;
             }
             return true;
 
         }
-
+        //REVIEW: Зачем возвращать fileid, проще path+filename передать одним параметром
         protected void SaveFile(string path, string filename, string fileContent, out string fileid)
         {
+            TrySaveFile(path, filename, fileContent, out fileid);
             fileid = path + filename;
             System.IO.File.WriteAllText(@RootFolder + path + filename, fileContent);
         }
@@ -59,6 +61,7 @@ namespace EasyObjectFileStorage
             }
             catch (Exception)
             {
+                //REVIEW: Можно текст исключения куда-нибудь писать, а то непонятно почему не удалился файл
                 return false;
             }
         }

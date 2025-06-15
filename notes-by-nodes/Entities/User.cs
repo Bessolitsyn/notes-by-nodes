@@ -14,8 +14,8 @@ namespace notes_by_nodes.Entities
 		
 		protected List<Node> isOwnerOf = [];
 		}
-
-	public interface IUser
+    //REVIEW: Почему бы не добавить в поля IUserDto
+    public interface IUser
 	{
 		
 		void AddIntoOwnerOf(Node item);

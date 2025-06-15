@@ -27,6 +27,7 @@ namespace notes_by_nodes.Service
 
         public void AddNewBox(string name)
         {
+            //REVIEW: Лучше убрать такое исключение
             throw new NotImplementedException();
         }
 

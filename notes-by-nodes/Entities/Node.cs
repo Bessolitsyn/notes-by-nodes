@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Entities
 {
-	public abstract partial class Node : INode
+    //REVIEW: Все поля в INode можно указать. Смысла в абстрактном классе нет.
+    public abstract partial class Node : INode
 	{	
 		
 		public DateTime CreationDate { get; set; }
@@ -25,12 +26,12 @@ namespace notes_by_nodes.Entities
 		public abstract IEnumerable<Node> HasChildNodes { get; }
 		
 		protected List<Node> hasChildNodes = [];
-		
+		//REVIEW: Нелогичное название поля. Лучше просто Owner
 		public abstract User HasOwner { get; }
 		
 		protected User hasOwner;
-		
-		public abstract Node HasParentNode { get; }
+        //REVIEW: Нелогичное название поля. Лучше прсто ParentNode
+        public abstract Node HasParentNode { get; }
 		
 		protected Node hasParentNode;
 		}

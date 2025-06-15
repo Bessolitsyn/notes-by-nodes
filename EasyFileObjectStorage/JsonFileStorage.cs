@@ -24,7 +24,7 @@ namespace EasyObjectFileStorage
             FILE_EXTENSION = fileExtension;
             
         }
-        
+        //REVIEW: лишний, наверное метод, достаточно GetAllObjects<T>
         public object[] GetAllObjects()
         {
             try
@@ -44,8 +44,11 @@ namespace EasyObjectFileStorage
 
         public T[] GetAllObject<T>()
         {
+            //REVIEW: Можно добавить блок Finally чтобы вернуть new T[] { default } или default(T)
+            //REVIEW: Тогда можно будет не бросать исключение для последующей обработки - есть же Logging
             try
             {
+                //REVIEW: GetAllFiles можно свойством сделать. Проще читать будет.
                 string[] files = GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION);
                 var contents = GetAllDeserializeObject<T>(files);
                 return contents;
@@ -62,6 +65,7 @@ namespace EasyObjectFileStorage
         {
             try
             {
+                //REVIEW: GetAllFiles можно свойством сделать. Проще читать будет.
                 string[] files = [.. GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f=>f.Contains(filename))];
                 var contents = GetAllDeserializeObject<T>(files);
 
@@ -96,6 +100,7 @@ namespace EasyObjectFileStorage
             {
                 var fileContent = JsonConvert.SerializeObject(obj, Formatting.Indented);
                 filename = filename + "." + FILE_EXTENSION;
+                //REVIEW: Какой смысл в out var _ тут?
                 SaveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename, fileContent, out var _);
             }
             catch (Exception ex)
@@ -144,6 +149,7 @@ namespace EasyObjectFileStorage
             {
 
                 var content = JsonConvert.DeserializeObject<T>(System.IO.File.ReadAllText(files[i]));
+                //REVIEW: А если content == null
                 if (content != null)
                     contents[i] = content;
             }

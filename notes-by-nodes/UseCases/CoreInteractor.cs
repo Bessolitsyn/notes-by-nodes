@@ -30,6 +30,7 @@ namespace notes_by_nodes.UseCases
 
         internal IEnumerable<LocalBox> GetBoxes()
         {            
+            //REVIEW: Можно ещё так - return ActiveUser.HasChildNodes.Where(item => item is LocalBox).Cast<LocalBox>();
             foreach (var item in ActiveUser.HasChildNodes)
             {
                 if (item is LocalBox lbox)

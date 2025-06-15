@@ -21,12 +21,19 @@ namespace notes_by_nodes_wpfApp.ViewModel
     public interface INoteViewModel
     {
         ObservableCollection<INoteViewModel> ChildNodes { get; set; }
+        //REVIEW: Нужно private поле
         int Uid { get; init; }
+        //REVIEW: Нужно private поле
         string Name { get; set; }
+        //REVIEW: Нужно private поле
         string Description { get; set; }
+        //REVIEW: Нужно private поле
         string Text { get; set; }
+        //REVIEW: Нужно private поле
         bool IsLoaded { get; set; }
+        //REVIEW: Нужно private поле
         bool IsExpanded { get; set; }
+        //REVIEW: Нужно private поле
         INoteViewModel ParentNode { get; init; }
         Task LoadChildNodesAsync();
         Task RemoveAsync();
@@ -48,12 +55,16 @@ namespace notes_by_nodes_wpfApp.ViewModel
 
 
         [ObservableProperty]
+        //REVIEW: Наверное недоделано [NotifyPropertyChangedFor(nameof(PropName))]
         private string name;
         [ObservableProperty]
+        //REVIEW: Наверное недоделано [NotifyPropertyChangedFor(nameof(PropName))]
         private string description;
         [ObservableProperty]
+        //REVIEW: Наверное недоделано [NotifyPropertyChangedFor(nameof(PropName))]
         private string text;
         [ObservableProperty]
+        //REVIEW: Наверное недоделано [NotifyPropertyChangedFor(nameof(PropName))]
         private bool isExpanded;
         //private FlowDocument textDoc;
 

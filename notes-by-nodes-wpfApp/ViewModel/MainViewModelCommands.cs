@@ -89,6 +89,7 @@ namespace notes_by_nodes_wpfApp
                     tabItem.IsSelected = false;
 
                     ////TO DO прочитать про эту штуку!
+                    //REVIEW: Почему не простой Invoke?
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         int currentTabIndex = Tabs.IndexOf(tabItem);
