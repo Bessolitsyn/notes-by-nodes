@@ -36,7 +36,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
         [RelayCommand]
         void Ok()
         {
-            if (answer != string.Empty)
+            if (Answer != string.Empty)
             { 
                 _dialogWindow.DialogResult = true;
                 _dialogWindow.Close();

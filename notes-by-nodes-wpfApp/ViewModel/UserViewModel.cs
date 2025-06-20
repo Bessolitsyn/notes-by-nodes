@@ -15,7 +15,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
 
         public int Uid { get; init; }
         
-        private INoteService _noteService { get; init; }
+        private INoteService NoteService { get; init; }
 
         [ObservableProperty]
         private string email;
@@ -25,7 +25,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
         partial void OnEmailChanged(string? oldValue, string newValue)
         {
             if (oldValue != null && oldValue != String.Empty)
-                _noteService.ModifyUser((IUserDto)this);
+                NoteService.ModifyUser((IUserDto)this);
         }
 
         public void Remove()
@@ -45,13 +45,13 @@ namespace notes_by_nodes_wpfApp.ViewModel
             throw new NotImplementedException();
         }
 
-        public UserViewModel(int uid, string name, string email)
+        public UserViewModel(int uid, string name, string email, INoteService noteService)
         {
             Email = email;
             Uid = uid;
             Name = name;
-            NotesByNodesApp app = (NotesByNodesApp)NotesByNodesApp.Current;
-            _noteService = app.ServiceProvider.GetRequiredService<INoteService>();
+            // NotesByNodesApp app = (NotesByNodesApp)NotesByNodesApp.Current;
+            NoteService = noteService;
 
 
         }

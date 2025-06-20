@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace TestProject
 {
-    public class AppRulesLevelTests
+    // Test of business logic level
+    public class EntitiesTests
     {
         [Fact]
         public static void TestUserBoxNodes()
@@ -86,7 +87,12 @@ namespace TestProject
 
     class FakeStorage : IUserStorage, IBoxStorage, INoteStorage
     {
-        public LocalNote GetNote(int Uid)
+        public Task<LocalBox> GetBoxAsync(int Uid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<LocalNote> GetNoteAsync(int Uid)
         {
             throw new NotImplementedException();
         }
@@ -101,69 +107,17 @@ namespace TestProject
             throw new NotImplementedException();
         }
 
-        public string[] GetUsers()
+        public Task<LocalUser> GetUser(string name)
         {
             throw new NotImplementedException();
         }
 
-        public void SaveBox(LocalBox box)
+        public LocalUser GetUser(int Uid)
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveBoxAsync(LocalBox box)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SaveNote(LocalNote note)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SaveNoteAsync(LocalNote note)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SaveUser(LocalUser user)
-        {
-            throw new NotImplementedException();
-        }
-
-        LocalBox IBoxStorage.GetBox(int Uid)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Node> INodeStorage.LoadChildNodes(Node parentNode)
-        {
-            return [];
-        }
-
-        
-
-        LocalUser IUserStorage.GetUser(int Uid)
-        {
-            throw new NotImplementedException();
-        }
-
-        LocalUser[] IUserStorage.GetUsers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveUser(LocalUser user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveBox(LocalBox box)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveNote(LocalNote note)
+        public Task<IEnumerable<Node>> LoadChildNodesAsync(Node parentNode)
         {
             throw new NotImplementedException();
         }
@@ -173,7 +127,22 @@ namespace TestProject
             throw new NotImplementedException();
         }
 
-        public void RemoveNote(Node note)
+        public void RemoveNote(LocalNote note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveBoxAsync(LocalBox box)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveNoteAsync(LocalNote note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveUserAsync(LocalUser user)
         {
             throw new NotImplementedException();
         }

@@ -27,18 +27,14 @@ namespace notes_by_nodes.StorageAdapters
             { 
                 Directory.CreateDirectory(profileFolder + "\\" + usersFolder);
             }
-            userstorageAdapter = new LocalUserStorageAdapter(this.nodeBuilder, profileFolder, usersFolder);
-            userstorageAdapter.SetStorageFactory(this);
+            userstorageAdapter = new LocalUserStorageAdapter(this, this.nodeBuilder, profileFolder, usersFolder);
+            
 
             if (!Directory.Exists(profileFolder + "\\" + boxesFolder))
             {
                 Directory.CreateDirectory(profileFolder + "\\" + boxesFolder);
             }
-            boxStorageAdapter = new LocalBoxStorageAdapter(this.nodeBuilder, profileFolder, boxesFolder);
-            boxStorageAdapter.SetStorageFactory(this);
-
-            userstorageAdapter.ReadNodes();
-            boxStorageAdapter.ReadNodes();
+            boxStorageAdapter = new LocalBoxStorageAdapter(this, this.nodeBuilder, profileFolder, boxesFolder);            
 
 
         }
@@ -52,10 +48,9 @@ namespace notes_by_nodes.StorageAdapters
         {
             if (!noteStorageAdapters.TryGetValue(box.Uid, out var storage))
             {
-                storage = new LocalNoteStorageAdapter(nodeBuilder, box.Name, "");
+                storage = new LocalNoteStorageAdapter(this, nodeBuilder, box.Name, "");
                 noteStorageAdapters.Add(box.Uid, storage);
-                storage.SetStorageFactory(this);
-                storage.ReadNodes();
+                //storage.OnLoad();
             }
             return storage;
         }

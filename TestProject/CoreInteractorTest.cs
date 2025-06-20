@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using notes_by_nodes.AppRules;
 using notes_by_nodes.Entities;
 using notes_by_nodes.Service;
@@ -13,8 +14,10 @@ using VDS.RDF.Configuration;
 
 namespace TestProject
 {
+    //Test interactors(use cases) and storage
     public class CoreInteractorTest
     {
+        static LocalUser? _user;
         [Fact]
         public static void TestStartAppWhenNoUser()
         {
@@ -25,25 +28,24 @@ namespace TestProject
                     System.IO.File.Delete(item);
 
             }
-
-            using var testapp = new TestAppCore();
-            Assert.True(testapp != null);
+            
+            using (var testapp = new TestAppCore())
+            {
+                Assert.True(testapp != null);
+            }
         }
-
+        //Требует что бы выполнились предыдущие
         [Fact]
         public static void TestStartAppWhenThereIsUser()
         {
+            TestStartAppWhenNoUser();
             using (var testapp = new TestAppCore())
             {
-                foreach (string item in Directory.GetFiles(TestAppCore.profileFolder))
-                {
-                    if (item.Contains(testapp.currentUser.Uid.ToString()))
-                        Assert.True(true);
-                    return;
-                }
+                Assert.True(Directory.GetFiles(TestAppCore.profileFolder).Where(f => f.Contains(".luser")).Count() == 1 
+                    && testapp.currentUser.Name == "Anton");
             }
-            Assert.True(false);
         }
+        //Требует что бы выполнились предыдущие
         [Fact]
         public static void TestStartBoxaCreating()
         {
@@ -55,7 +57,7 @@ namespace TestProject
 
             using (var testapp = new TestAppCore())
             {
-                var box = testapp.NewBox();
+                var box = testapp.NewBoxIfUserHaveNoBox();
                 Assert.True(testapp?.currentUser?.HasChildNodes.Contains(box));
                 
             }
@@ -65,10 +67,11 @@ namespace TestProject
         //Требует что бы выполнились предыдущие
         public static void TestAddNewNotesToBox()
         {
+            TestStartBoxaCreating();
             using (var testapp = new TestAppCore())
             {
 
-                var box = testapp?.currentUser?.HasChildNodes.First() as LocalBox; ;
+                var box = testapp?.currentUser?.HasChildNodes.First() as LocalBox;
                 foreach (string item in Directory.GetFiles(box.Name))
                 {
                     if (item.Contains(".lnote"))
@@ -84,19 +87,16 @@ namespace TestProject
             {
 
                 var box = testapp.currentUser.HasChildNodes.First() as LocalBox;
-                testapp.storageFactory.GetNoteStorage(box).LoadChildNodes(box);
+                testapp.storageFactory.GetNoteStorage(box).LoadChildNodesAsync(box).Wait();
                 foreach (var note in box.HasChildNodes)
                 {
-                    testapp.storageFactory.GetNoteStorage(box).LoadChildNodes(note);
+                    testapp.storageFactory.GetNoteStorage(box).LoadChildNodesAsync(note).Wait();
 
                 }
-                //box.LoadChildNodes();
                 
                 Assert.True(
                     box.HasChildNodes.Count() == 2 &&
-                    box.HasChildNodes.FirstOrDefault(n => n.Name == "The Title2").HasChildNodes.Count() == 1
-                    //note2.HasChildNodes.Contains(note3) &&
-                    //note3.HasOwner == testapp.currentUser
+                    box.HasChildNodes.Single(n => n.Name == "The Title2").HasChildNodes.Count() == 1
                     );
             }
         }
@@ -106,7 +106,7 @@ namespace TestProject
     class TestAppCore : IDisposable
     {
         public static string profileFolder = System.IO.Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage";
-        public LocalUser? currentUser;
+        public LocalUser currentUser;
         public NodeFileStorageProvider storageFactory;
         //Lazy
         CoreInteractor interactor;
@@ -116,33 +116,28 @@ namespace TestProject
             INodeBuilder nodeBuilder = new NodeBuilder();
             storageFactory = new NodeFileStorageProvider(nodeBuilder, profileFolder);
             userInteractor = new UserInteractor(storageFactory);
-            currentUser = SelectUser();            
+            currentUser = SelectUser().Result; 
             interactor = new CoreInteractor(storageFactory, currentUser);
 
-
-
-            //UseCase user selecting  
-
-
         }
-        LocalUser SelectUser()
+
+
+        public async Task<LocalUser> SelectUser()
         {
-            var users = userInteractor.GetUsers();
-            if (users.Length == 0)
+            try
             {
-                var newUser = userInteractor.MakeUser("Anton", "Anton@mail");
-                newUser = userInteractor.GetUsers().SingleOrDefault(u => u.Uid == newUser.Uid) ?? throw new NullRefernceUseCaseException("user creating error");
-                return newUser;
+                currentUser = await userInteractor.GetUser("Anton");
+                //userInteractor.Chu
             }
-            else { 
-                var selectedUser = users.First();
-                storageFactory.GetBoxStorage().LoadChildNodes(selectedUser);
-                return selectedUser;           
-            
+            catch (Exception)
+            {
+                currentUser = await userInteractor.MakeUser("Anton", "Anton@mail");
             }
+            return currentUser;
+          
         }
 
-        public LocalBox NewBox()
+        public LocalBox NewBoxIfUserHaveNoBox()
         {
             var boxes = interactor.GetBoxes();
             var bxStorage = storageFactory.GetBoxStorage();
@@ -150,19 +145,20 @@ namespace TestProject
             {
                 return MakeBox();
             }
-            throw new Exception("Unknown error");
+            else
+                throw new Exception("User have more than one box");
 
             LocalBox MakeBox()
             {
                 string boxFolder = System.IO.Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage\\Box";
+                Directory.CreateDirectory(boxFolder);
                 LocalBox box = new(currentUser, boxFolder, "FirstTestBox");
                 //box.SetNoteStorage(storageFactory.GetNoteStorage(box));
-                bxStorage.SaveBox(box);
+                bxStorage.SaveBoxAsync(box).Wait();
                 currentUser.AddIntoChildNodes(box);
-                storageFactory.GetUserStorage().SaveUser(currentUser);
+                storageFactory.GetUserStorage().SaveUserAsync(currentUser).Wait();
                 boxes = interactor.GetBoxes();
                 return boxes.First();
-
             }
 
         }
@@ -172,9 +168,9 @@ namespace TestProject
             var note = new LocalNote(box, name, desc);
             note.Text = text;
             var noteStorage = storageFactory.GetNoteStorage(box);
-            noteStorage.SaveNote(note);
+            noteStorage.SaveNoteAsync(note).Wait();
             //box.AddIntoChildNodes(note);
-            storageFactory.GetBoxStorage().SaveBox(box);
+            storageFactory.GetBoxStorage().SaveBoxAsync(box).Wait();
             return note;
         }
         public LocalNote NewNoteToNote(LocalBox box, LocalNote pnote, string name, string text, string desc)
@@ -182,9 +178,9 @@ namespace TestProject
             var note = new LocalNote(pnote, name, desc);
             note.Text = text;
             //var noteStorage = pnote.NoteStorage;
-            storageFactory.GetNoteStorage(box).SaveNote(note);
-            storageFactory.GetNoteStorage(box).SaveNote(pnote);
-            return note;
+            storageFactory.GetNoteStorage(box).SaveNoteAsync(note).Wait();
+            storageFactory.GetNoteStorage(box).SaveNoteAsync(pnote).Wait();
+            return note;                               
         }
         public void Dispose()
         {

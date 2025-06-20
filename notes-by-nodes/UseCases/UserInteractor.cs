@@ -12,29 +12,29 @@ namespace notes_by_nodes.UseCases
     {
         protected INodeStorageProvider StorageFactory { get; init; } = storageFactory ?? throw new ArgumentNullException();
 
-        internal LocalUser[] GetUsers()
+        internal async Task<LocalUser> GetUser(string name)
         {
-            var userStorage = storageFactory.GetUserStorage();
-            var users = userStorage.GetUsers();            
-            return users;
+            var userStorage = storageFactory.GetUserStorage();            
+            var user = await userStorage.GetUser(name);            
+            return user;
         }
-        internal LocalUser MakeUser(string name, string email)
+        internal async Task<LocalUser> MakeUser(string name, string email)
         {
             LocalUser user = new(name, email, StorageFactory.GetBoxStorage());
             var userStorage = storageFactory.GetUserStorage();
-            userStorage.SaveUser(user);
+            await userStorage.SaveUserAsync(user);
             return user;
         }
-        internal LocalUser GetUser(int uid)
+        //internal async Task<LocalUser> GetUser(int uid)
+        //{
+        //    var storage = storageFactory.GetUserStorage();
+        //    var user = storage.GetUser(uid);
+        //    await StorageFactory.GetBoxStorage().LoadChildNodesAsync(user);
+        //    return user;
+        //}
+        internal Task SaveUser(LocalUser user)
         {
-            var storage = storageFactory.GetUserStorage();
-            var user = storage.GetUser(uid);
-            StorageFactory.GetBoxStorage().LoadChildNodes(user);
-            return user;
-        }
-        internal void SaveUser(LocalUser user)
-        {
-            StorageFactory.GetUserStorage().SaveUser(user);
+            return StorageFactory.GetUserStorage().SaveUserAsync(user);
         }
     }
 }

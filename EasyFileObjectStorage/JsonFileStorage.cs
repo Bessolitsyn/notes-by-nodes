@@ -1,6 +1,7 @@
 ﻿
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,8 +10,9 @@ using System.Threading.Tasks;
 
 namespace EasyObjectFileStorage
 {
-    public class JsonFileStorage : FileStorage 
+    public class JsonFileStorage : FileStorage
     {
+
         const string EX_MESSAGE_WHEN_SAVING = $"FileStorageMessage_ Error when saving;";
         const string EX_MESSAGE_WHEN_DELETING = $"FileStorageMessage_ Error when deleting;";
         const string EX_MESSAGE_WHEN_READING = $"FileStorageMessage_ Error when reading;";
@@ -22,33 +24,16 @@ namespace EasyObjectFileStorage
         {
             FOLDER_FOR_DATASET_STORAGE = subfolder;
             FILE_EXTENSION = fileExtension;
-            
-        }
-        
-        public object[] GetAllObjects()
-        {
-            try
-            {
-                string[] files = GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION);
-                var contents = GetAllDeserializeObject<object>(files);
-                return contents;
-            }
-            catch (Exception ex)
-            {
-                string logmessage = $"{EX_MESSAGE_WHEN_READING} ex.message; {ex.Message}";
-                Logging(logmessage);
-                //TO DO Logging must be done!:) 
-                throw;
-            }
+
         }
 
-        public T[] GetAllObject<T>()
+        public async Task<T[]> GetAllObjectAsync<T>()
         {
             try
             {
                 string[] files = GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION);
-                var contents = GetAllDeserializeObject<T>(files);
-                return contents;
+                var objects = await GetAllDeserializeObjectAsync<T>(files);
+                return objects;
             }
             catch (Exception ex)
             {
@@ -58,24 +43,18 @@ namespace EasyObjectFileStorage
                 throw;
             }
         }
-        public bool TryGetObject<T>(string filename, out T? obj)
+        public async Task<T?> GetObjectAsync<T>(string filename)
         {
             try
             {
-                string[] files = [.. GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f=>f.Contains(filename))];
-                var contents = GetAllDeserializeObject<T>(files);
+                string[] files = [.. GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f => f.Contains(filename))];
+                var contents = await GetAllDeserializeObjectAsync<T>(files);
 
                 if (contents.Length != 0)
-                { 
-                    obj = contents[0];
-                    return true;
+                {
+                    return contents[0];
                 }
-                obj = default;
-                return false;
-
-
-
-
+                return default;
             }
             catch (Exception ex)
             {
@@ -85,18 +64,18 @@ namespace EasyObjectFileStorage
                 throw;
             }
         }
-        public void SaveNewObject(object obj)
+        public async Task SaveNewObjectAsync(object obj)
         {
             var filename = obj.GetHashCode().ToString(CultureInfo.InvariantCulture);
-            SaveObject(obj, filename);
+            await SaveObjectAsync(obj, filename);
         }
-        public void SaveObject(object obj, string filename)
+        public async Task SaveObjectAsync(object obj, string filename)
         {
             try
             {
                 var fileContent = JsonConvert.SerializeObject(obj, Formatting.Indented);
                 filename = filename + "." + FILE_EXTENSION;
-                SaveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename, fileContent, out var _);
+                var _ = await SaveFileAsync($"\\{FOLDER_FOR_DATASET_STORAGE}", filename, fileContent);
             }
             catch (Exception ex)
             {
@@ -106,27 +85,28 @@ namespace EasyObjectFileStorage
                 throw;
             }
         }
-        public bool TryRemoveObject(string filename)
+        public void RemoveObject(string filename)
         {
             try
-            {              
+            {
                 filename = filename + "." + FILE_EXTENSION;
-                return TryRemoveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename);
+                RemoveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename);
             }
             catch (Exception ex)
             {
                 string logmessage = $"{EX_MESSAGE_WHEN_DELETING} ex.message; {ex.Message}";
                 Logging(logmessage);
-                return false;
+                throw;
             }
         }
 
-        public void SaveObjectStreamToFile(MemoryStream sourceStream, string filename, out string fileid)
+        public async Task<string> SaveObjectStreamToFileAsync(MemoryStream sourceStream, string filename)
         {
             try
             {
                 filename = filename + "." + FILE_EXTENSION;
-                SaveFile($"\\{FOLDER_FOR_DATASET_STORAGE}", filename, sourceStream.ToArray(), out fileid);
+                var fileid = await SaveFileAsync($"\\{FOLDER_FOR_DATASET_STORAGE}", filename, sourceStream.ToArray());
+                return fileid;
             }
             catch (Exception ex)
             {
@@ -137,17 +117,20 @@ namespace EasyObjectFileStorage
             }
         }
 
-        static T[] GetAllDeserializeObject<T>(string[] files)
+        static async Task<T[]> GetAllDeserializeObjectAsync<T>(string[] files)
         {
-            T[] contents = new T[files.Length];
+            T[] objects = new T[files.Length];
             for (int i = 0; i < files.Length; i++)
-            {
-
-                var content = JsonConvert.DeserializeObject<T>(System.IO.File.ReadAllText(files[i]));
-                if (content != null)
-                    contents[i] = content;
+            {                
+                await SafeFileActionAsync(files[i], async () =>
+                {
+                    var content = await System.IO.File.ReadAllTextAsync(files[i]);
+                    var obj = JsonConvert.DeserializeObject<T>(content  );
+                    if (obj != null)
+                        objects[i] = obj;
+                });
             }
-            return contents;
+            return objects;
         }
     }
 }

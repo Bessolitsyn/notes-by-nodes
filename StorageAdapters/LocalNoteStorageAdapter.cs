@@ -15,12 +15,13 @@ namespace notes_by_nodes.StorageAdapters
     {        
         //kind of cashing 
         //private Dictionary<int, LocalNote> createdLocalNotes = [];
-        private readonly ConcurrentDictionary<int, LocalNote> createdLocalNotes = [];
+        private readonly ConcurrentDictionary<int, LocalNote> _createdLocalNotes = [];
         
 
 
-        internal LocalNoteStorageAdapter(INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder) : base(nodeBuilder, pathToRootFolder, subfolder, "lnote")
+        internal LocalNoteStorageAdapter(INodeStorageProvider storageProvider, INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder) : base(storageProvider, nodeBuilder, pathToRootFolder, subfolder, "lnote")
         {
+            //Load+= async (s, e) => await ReadNodes();
         }
 
         public IEnumerable<Note> GetNotesHasReferenceToIt(Note note)
@@ -33,46 +34,46 @@ namespace notes_by_nodes.StorageAdapters
             throw new NotImplementedException();
         }
 
-        protected override Node GetLocalNodeFromDataset(NodeDataset dataset, in Dictionary<int, Node> createdLoadedNodes)
+        protected override Node GetNodeFromNodeDataset(NodeDataset dataset)
         {
-            LocalNote note = NewLocalNoteFromDataset((NoteDataset)dataset);
-            createdLoadedNodes[note.Uid] = note;
+            LocalNote note = NewLocalNoteFromDatasetAsync((NoteDataset)dataset);
+            loadedNodes[note.Uid] = note;
             return note;
         }
 
-        protected override void ReadNode(int uid)
+        protected override async Task ReadNodes()
         {
-            if (TryGetObject<NoteDataset>(uid.ToString(), out NoteDataset? node))
-                AddtoLoadedNodeDatasets(node);
-        }
-
-        internal override void ReadNodes()
-        {
-            foreach (var node in GetAllObject<NoteDataset>())
+            var nodes = await GetAllObjectAsync<NoteDataset>();
+            foreach (var node in nodes)
             {
                 AddtoLoadedNodeDatasets(node);
             }
         }
-        private LocalNote NewLocalNoteFromDataset(NoteDataset dataset)
+        protected override async Task ReadNode(int uid)
         {
-            var owner = nodeStorageFactory.GetUserStorage().GetUser(int.Parse(dataset.HasOwner));
+            NoteDataset? node = await GetObjectAsync<NoteDataset>(uid.ToString());
+            if (node is not null)
+                AddtoLoadedNodeDatasets(node);
+        }
+
+        private LocalNote NewLocalNoteFromDatasetAsync(NoteDataset dataset)
+        {
+            var owner =  nodeStorageProvider.GetUserStorage().GetUser(int.Parse(dataset.HasOwner));
             var parentNode = GetNode(int.Parse(dataset.HasParentNode));
             var note = nodeBuilder.NewLocalNote(parentNode, dataset.Name, dataset.Text);
             note.Uid = dataset.Uid;
             note.CreationDate = dataset.CreationDate;
             note.Description = dataset.Description;
-           
-
             AddLocalNoteToCreatedLocalNotes(note);
             return note;
         }
-        public void SaveNote(LocalNote note)
+        public async Task SaveNoteAsync(LocalNote note)
         {
             NoteDataset noteDS;
             noteDS = NewDatasetFromLocalNote(note);
             AddLocalNoteToCreatedLocalNotes(note);
 
-            SaveNode(noteDS, note);
+            await SaveNodeAsync(noteDS, note);
         }
         private static NoteDataset NewDatasetFromLocalNote(LocalNote note)
         {
@@ -93,26 +94,20 @@ namespace notes_by_nodes.StorageAdapters
         }
         internal void AddLocalNoteToCreatedLocalNotes(LocalNote note)
         {
-            createdLocalNotes[note.Uid] = note;
+            _createdLocalNotes[note.Uid] = note;
         }
 
-        public LocalNote GetNote(int Uid)
+        public async Task<LocalNote> GetNoteAsync(int Uid)
         {
-            if (!createdLocalNotes.TryGetValue(Uid, out LocalNote? note))
+            if (!_createdLocalNotes.TryGetValue(Uid, out LocalNote? note))
             {
-                note = (LocalNote)GetNode(Uid);
+                note = (LocalNote) await GetNodeAsync(Uid);
             }
             return note;
         }
-
-        public async Task SaveNoteAsync(LocalNote note)
-        {
-            await Task.Run(()=>SaveNote(note));
-        }
-
         public void RemoveNote(LocalNote note)
         {
-            createdLocalNotes.Remove(note.Uid, out _);
+            _createdLocalNotes.Remove(note.Uid, out _);
             RemoveNode(note);
         }
     }

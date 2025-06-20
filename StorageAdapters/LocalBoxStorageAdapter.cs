@@ -4,8 +4,10 @@ using notes_by_nodes.Entities;
 using notes_by_nodes.Storage;
 using System;
 using System.Buffers;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -17,16 +19,20 @@ namespace notes_by_nodes.StorageAdapters
         //private static Dictionary<int, string> matchingBoxesUidToTheirFoldersList = [];
 
         //private Dictionary<int, BoxDataset> loadedBoxDatasets = [];
-        private Dictionary<int, LocalBox> createdLocalBoxes = [];
+        private Dictionary<int, LocalBox> _createdLocalBoxes = [];
 
-        internal LocalBoxStorageAdapter(INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder) : base(nodeBuilder, pathToRootFolder, subfolder, "lbox")
+        internal LocalBoxStorageAdapter(INodeStorageProvider storageProvider, INodeBuilder nodeBuilder, string pathToRootFolder, string subfolder) : base(storageProvider, nodeBuilder, pathToRootFolder, subfolder, "lbox")
         {
+
         }
-        public LocalBox GetBox(int Uid)
+        public async Task<LocalBox> GetBoxAsync(int Uid)
         {
-            if (!createdLocalBoxes.TryGetValue(Uid, out LocalBox box))
+            //if (_createdLocalBoxes.Count == 0)
+            //    ReadNodes().Wait();
+
+            if (!_createdLocalBoxes.TryGetValue(Uid, out LocalBox box))
             {
-                box = (LocalBox)GetNode(Uid);
+                box = (LocalBox) await GetNodeAsync(Uid);
             }
             return box;
         }
@@ -41,50 +47,49 @@ namespace notes_by_nodes.StorageAdapters
             throw new NotImplementedException();
         }
 
-        protected override Node GetLocalNodeFromDataset(NodeDataset boxDataset, in Dictionary<int, Node> createdLoadedNodes)
+        protected override Node GetNodeFromNodeDataset(NodeDataset boxDataset)
         {
             LocalBox box = NewLocalBoxFromDataset(boxDataset);
-            createdLoadedNodes[box.Uid] = box;
+            loadedNodes[box.Uid] = box;
             return box;
         }
 
-        internal override void ReadNodes()
+        protected override async Task ReadNodes()
         {
-            foreach (var node in GetAllObject<BoxDataset>())
+            var nodes = await GetAllObjectAsync<BoxDataset>();
+            foreach (var node in nodes)
             {
                 AddtoLoadedNodeDatasets(node);
             }
-
         }
-        protected override void ReadNode(int uid)
+        protected override async Task ReadNode(int uid)
         {
-            if (TryGetObject<BoxDataset>(uid.ToString(), out BoxDataset? node))
+            BoxDataset? node = await GetObjectAsync<BoxDataset>(uid.ToString());
+            if (node is not null)
                 AddtoLoadedNodeDatasets(node);
         }
-
-
         private LocalBox NewLocalBoxFromDataset(NodeDataset dataset)
         {
-            var users = nodeStorageFactory.GetUserStorage();
+            var users = nodeStorageProvider.GetUserStorage();
             var owner = users.GetUser(int.Parse(dataset.HasOwner));
             var box = nodeBuilder.NewLocalBox(owner, dataset.Name, dataset.Description);
             box.Uid = dataset.Uid;
             box.CreationDate = dataset.CreationDate;
             box.Text = dataset.Text;
-            //box.SetNoteStorage(nodeStorageFactory.GetNoteStorage(box));           
+            //box.SetNoteStorage(nodeStorageProvider.GetNoteStorage(box));           
 
             AddLocalBoxToCreatedLocalBoxes(box);
             return box;
         }
 
 
-        public void SaveBox(LocalBox box)
+        public async Task SaveBoxAsync(LocalBox box)
         {
             BoxDataset boxDS;
             boxDS = NewDatasetFromLocalBox(box);
             AddLocalBoxToCreatedLocalBoxes(box);
 
-            SaveNode(boxDS, box);
+            await SaveNodeAsync(boxDS, box);
         }
         private static BoxDataset NewDatasetFromLocalBox(LocalBox box)
         {
@@ -104,13 +109,9 @@ namespace notes_by_nodes.StorageAdapters
         }
         internal void AddLocalBoxToCreatedLocalBoxes(LocalBox box)
         {
-            createdLocalBoxes[box.Uid] = box;
+            _createdLocalBoxes[box.Uid] = box;
         }
 
-        public async Task SaveBoxAsync(LocalBox box)
-        {
-            await Task.Run(()=>SaveBox(box));
-        }
     }
 
     //    this.UserStorage = userStorage;

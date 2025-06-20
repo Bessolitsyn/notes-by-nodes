@@ -9,20 +9,18 @@ namespace notes_by_nodes.Service
 {
     public interface INoteService
     {
-        void SelectUser(int userUid);
-        IEnumerable<IUserDto> GetUsers();
+        Task<IUserDto> SelectUser(string name);
         IEnumerable<INodeDto> GetBoxes();
-        void AddNewBox(string name);
         Task<IEnumerable<INodeDto>> GetChildNodes(int boxUid, int parentNodeUid);
         Task<IEnumerable<INodeDto>> GetChildNodesOfTheBox(int boxUid);
-        void ModifyUser(IUserDto user);
-        void ModifyBox(INodeDto box);
-        void ModifyNote(int boxUid, INodeDto note);
+        Task ModifyUser(IUserDto user);
+        Task ModifyBox(INodeDto box);
+        Task ModifyNote(int boxUid, INodeDto note);
         Task<INodeDto> NewNote(int boxUid, int parenNoteUid);      
         Task Remove(int boxUid, int noteUId);
         Task Remove(int boxUid);
-        IUserDto NewUser(IUserDto user);
-        INodeDto NewBox(INodeDto box);
+        Task<IUserDto> NewUser(IUserDto user);
+        Task<INodeDto> NewBox(INodeDto box);
     }
 
     public interface INodeDto

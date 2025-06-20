@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using CommunityToolkit.Mvvm.Input;
+using System.CodeDom;
 
 namespace notes_by_nodes_wpfApp.ViewModel
 {
@@ -96,11 +97,8 @@ namespace notes_by_nodes_wpfApp.ViewModel
             ParentNode = parent;
 
             NotesByNodesApp app = (NotesByNodesApp)NotesByNodesApp.Current;
-            if (app != null && app.ServiceProvider != null)
-            {
-                NoteService = app.ServiceProvider.GetRequiredService<INoteService>();
-                MainViewModel = app.ServiceProvider.GetRequiredService<MainViewModel>();
-            }
+            NoteService = app.GetNoteService() ?? throw new NullReferenceException();
+            MainViewModel = app.GetMainViewModel() ?? throw new NullReferenceException();
 
         }
         abstract public void TrySaveChanges();

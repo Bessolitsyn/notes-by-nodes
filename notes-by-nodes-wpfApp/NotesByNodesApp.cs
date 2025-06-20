@@ -14,8 +14,8 @@ namespace notes_by_nodes_wpfApp
     public partial class NotesByNodesApp : Application
     {
 
-        public IServiceProvider? ServiceProvider { get; private set; }
-        public IConfiguration? Configuration { get; private set; }
+        private IServiceProvider? ServiceProvider { get; set; }
+        private IConfiguration? Configuration { get; set; }
 
 
         protected override void OnStartup(StartupEventArgs e)
@@ -64,5 +64,14 @@ namespace notes_by_nodes_wpfApp
 #endif
         }
 
+        internal MainViewModel GetMainViewModel()
+        {
+            return ServiceProvider?.GetRequiredService<MainViewModel>() ?? throw new NullReferenceException();
+        }
+
+        internal INoteService GetNoteService()
+        {
+            return ServiceProvider?.GetRequiredService<INoteService>() ?? throw new NullReferenceException();
+        }
     }
 }

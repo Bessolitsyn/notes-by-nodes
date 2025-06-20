@@ -9,7 +9,7 @@ namespace notes_by_nodes.UseCases
     internal class NoteCoreException(string message) : Exception(message)
     {
     }
-    internal class NullRefernceUseCaseException(string message) : NullReferenceException(message)
+    internal class NullRefernceNoteCoreException(string message) : NullReferenceException(message)
     {
     }
     public class NoUsersNoteCoreException() : NullReferenceException()

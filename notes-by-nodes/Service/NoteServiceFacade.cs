@@ -9,50 +9,35 @@ using Microsoft.VisualBasic;
 using notes_by_nodes.AppRules;
 using System.Xml.Linq;
 using notes_by_nodes.Entities;
+using notes_by_nodes.Dto;
 
 namespace notes_by_nodes.Service
 {
     public class NoteServiceFacade : INoteService
     {
-        private readonly UserInteractor userInteractor;
-        private readonly INodeStorageProvider storageFactory;
-        private LocalUser activeUser;
-        private CoreInteractor coreInteractor;
+        private readonly UserInteractor _userInteractor;
+        private readonly INodeStorageProvider _storageProvider;
+        private LocalUser _activeUser;
+        private CoreInteractor _coreInteractor;
 
-        public NoteServiceFacade(INodeStorageProvider storageFactory)
+        public NoteServiceFacade(INodeStorageProvider storageProvider)
         {
-            this.storageFactory = storageFactory;
-            this.userInteractor = new UserInteractor(storageFactory);
+            _storageProvider = storageProvider;
+            _userInteractor = new UserInteractor(storageProvider);
         }
 
-        public void AddNewBox(string name)
-        {
-            throw new NotImplementedException();
-        }
 
         public IEnumerable<INodeDto> GetBoxes()
         {
-            var boxes = coreInteractor.GetBoxes();
+            var boxes = _coreInteractor.GetBoxes();
             return boxes.Cast<INodeDto>();
         }
-
-        public IEnumerable<IUserDto> GetUsers()
-        {
-            var users = userInteractor.GetUsers();
-            if (users != null && users.Length > 0)
-                return users;
-            else throw new NoUsersNoteCoreException();
-        }
+       
         public async Task<IEnumerable<INodeDto>> GetChildNodesOfTheBox(int boxUid)
         {
             IEnumerable<INodeDto> childNodes = [];
-            await Task.Run(() =>
-            {
-                var box = coreInteractor.GetBox(boxUid);
-                childNodes = box.HasChildNodes.Cast<INodeDto>();
-               
-            });
-            //await Task.Delay(1000);
+            var box = await _coreInteractor.GetBox(boxUid);
+            childNodes = box.HasChildNodes.Cast<INodeDto>();
             return childNodes;
         }
 
@@ -60,102 +45,101 @@ namespace notes_by_nodes.Service
         {
             IEnumerable<INodeDto> childNodes = [];
             if (boxUid == parentNodeUid)
+            {
                 childNodes = await GetChildNodesOfTheBox(boxUid);
+            }
             else
-                await Task.Run(() => childNodes = coreInteractor.LoadChildNodes(boxUid, parentNodeUid).Cast<INodeDto>());
-            //await Task.Delay(1000);
+            {
+                var result = await _coreInteractor.LoadChildNodes(boxUid, parentNodeUid);
+                if (result != null)
+                    childNodes = result.Cast<INodeDto>();
+            }
             return childNodes;
         }
 
 
-        public void ModifyBox(INodeDto boxDto)
+        public async Task ModifyBox(INodeDto boxDto)
         {
-            var box = coreInteractor.GetBox(boxDto.Uid);
+            var box = await _coreInteractor.GetBox(boxDto.Uid);
             box.Name = boxDto.Name;
             box.Description = boxDto.Description;
             box.Text = boxDto.Text;
-            coreInteractor.SaveBox(box);
+            await _coreInteractor.SaveBox(box);
         }
 
-        public void ModifyNote(int boxUid, INodeDto noteDto)
+        public async Task ModifyNote(int boxUid, INodeDto noteDto)
         {
             //var box = coreInteractor.GetBox(boxUid);
-            var note = coreInteractor.GetNote(boxUid, noteDto.Uid);
+            var note = await _coreInteractor.GetNote(boxUid, noteDto.Uid);
             note.Description = noteDto.Description;
             note.Name = noteDto.Name;
             note.Text = noteDto.Text;
-            coreInteractor.SaveNote(boxUid, note);
+            await _coreInteractor.SaveNote(boxUid, note);
         }
 
         public async Task<INodeDto> NewNote(int boxUid, int parenNoteUid)
         {
             string titleForNewNote = "Untitled";
 
-            return await Task.Run(() =>
+            LocalNote childNote;
+            if (boxUid != parenNoteUid)
             {
-                LocalNote childNote;
-                if (boxUid != parenNoteUid)
-                {
-                    var note = coreInteractor.GetNote(boxUid, parenNoteUid);
-                    childNote = new LocalNote(note, titleForNewNote, "");
-                    coreInteractor.SaveNote(boxUid, note);
-                    coreInteractor.SaveNote(boxUid, childNote);
+                var note = await _coreInteractor.GetNote(boxUid, parenNoteUid);
+                childNote = new LocalNote(note, titleForNewNote, "");
+                await _coreInteractor.SaveNote(boxUid, note);
+                await _coreInteractor.SaveNote(boxUid, childNote);
 
-                }
-                else
-                {
-                    var box = coreInteractor.GetBox(boxUid);
-                    childNote = new LocalNote(box, titleForNewNote, "");
-                    coreInteractor.SaveBox(box);
-                    coreInteractor.SaveNote(box.Uid, childNote);
-                }
+            }
+            else
+            {
+                var box = await _coreInteractor.GetBox(boxUid);
+                childNote = new LocalNote(box, titleForNewNote, "");
+                await _coreInteractor.SaveBox(box);
+                await _coreInteractor.SaveNote(box.Uid, childNote);
+            }
             return childNote;
-            });
-        }
-                
-        public void ModifyUser(IUserDto user)
-        {
-            activeUser.Name = user.Name;
-            activeUser.Email = user.Email;
-            userInteractor.SaveUser(activeUser);
         }
 
-
-        public void SelectUser(int userUid)
+        public async Task ModifyUser(IUserDto user)
         {
-            activeUser = userInteractor.GetUser(userUid);
-            coreInteractor = new CoreInteractor(storageFactory, activeUser);
+            _activeUser.Name = user.Name;
+            _activeUser.Email = user.Email;
+            await _userInteractor.SaveUser(_activeUser);
+        }
+
+
+        public async Task<IUserDto> SelectUser(string name)
+        {
+            _activeUser =await _userInteractor.GetUser(name);
+            _coreInteractor = new CoreInteractor(_storageProvider, _activeUser);
+            return new UserDto(_activeUser.Uid, _activeUser.Name, _activeUser.Email);
 
         }
 
-        public Task Remove(int boxUid, int noteUid)
+        public async Task Remove(int boxUid, int noteUid)
         {
-            return Task.Run(() =>
-            {
-                var note = coreInteractor.GetNote(boxUid, noteUid);
-                var box = coreInteractor.GetBox(boxUid);
-                coreInteractor.RemoveNote(box, note);
-            });
+
+            var note = await _coreInteractor.GetNote(boxUid, noteUid);
+            var box = await _coreInteractor.GetBox(boxUid);
+            await _coreInteractor.RemoveNote(box, note);
         }
-        public Task Remove(int boxUid)
+        public async Task Remove(int boxUid)
         {
-            return Task.Run(() =>
-            {
-                var box = coreInteractor.GetBox(boxUid);
-                coreInteractor.RemoveBox(box);
-            });
+            var box = await _coreInteractor.GetBox(boxUid);
+            await _coreInteractor.RemoveBox(box);
+
         }
 
-        public IUserDto NewUser(IUserDto user)
+        public async Task<IUserDto> NewUser(IUserDto user)
         {
-            user = userInteractor.MakeUser(user.Name, user.Email);
+            user = await _userInteractor.MakeUser(user.Name, user.Email);
             return user;
 
         }
 
-        public INodeDto NewBox(INodeDto box)
+        public async Task<INodeDto> NewBox(INodeDto box)
         {
-            box = coreInteractor.NewBox(box.Name, box.Description);
+            box = await _coreInteractor.NewBox(box.Name, box.Description);
             return box;
         }
     }

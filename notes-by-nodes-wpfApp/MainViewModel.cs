@@ -25,21 +25,21 @@ namespace notes_by_nodes_wpfApp
     public partial class MainViewModel(INoteService notesService, IOptions<NotesByNodesSettings> options) : ObservableObject
     {
         //private readonly ModelsPresenter _presenter;
-        private readonly INoteService _notesService = notesService;
+        private readonly INoteService _notesService = notesService ?? throw new ArgumentNullException(nameof(notesService));
         private readonly IOptions<NotesByNodesSettings> _options = options;
 
         [ObservableProperty]
         private List<UserViewModel> _users = [];
 
         [ObservableProperty]
-        private UserViewModel _user;
+        private UserViewModel? _user;
 
         public ObservableCollection<INoteViewModel> NodesTree { get; } = [];
         //public ObservableCollection<NodeTabItem> Tabs { get; } = [];
         public ObservableCollection<TabItem> Tabs { get; } = [];
 
         [ObservableProperty]
-        private INoteViewModel _selectedNode;
+        private INoteViewModel? _selectedNode;
         partial void OnSelectedNodeChanging(INoteViewModel value)
         {
             ShowNoteInActiveTab(value);
@@ -52,7 +52,8 @@ namespace notes_by_nodes_wpfApp
         {
             try
             {
-                InitUsers();
+                
+                await InitUsers();
                 await InitNodesTreeAsync();
             }
             catch (Exception ex)
@@ -61,17 +62,18 @@ namespace notes_by_nodes_wpfApp
             }
             
         }
-
-        void InitUsers()
+        //TO DO вынести из этого класса инициализацию юзера
+        async Task InitUsers()
         {
             try
             {
-                var users = _notesService.GetUsers().Select(user => new UserViewModel(user.Uid, user.Name, user.Email));
-                Users.AddRange(users);
+                IUserDto userDTO =  await _notesService.SelectUser("Username");
+                var user = new UserViewModel(userDTO.Uid, userDTO.Name, userDTO.Email, notesService);
+                Users.Add(user);
             }
             catch (NoUsersNoteCoreException)
             {
-                CreateNewUser();
+                await CreateNewUser();
             }
             catch (Exception)
             {
@@ -83,13 +85,13 @@ namespace notes_by_nodes_wpfApp
             }
         }
 
-        private void CreateNewUser()
+        private async Task CreateNewUser()
         {
             if (DialogManager.ShowNewUserDialog(out var newUserName))
             {
-                IUserDto newuser = new UserViewModel(0, newUserName, "");
-                newuser = _notesService.NewUser(new UserDto(0, newUserName, ""));
-                Users.Add(new UserViewModel(newuser.Uid, newuser.Name, newuser.Email));
+                IUserDto newuser = new UserViewModel(0, newUserName, "", notesService);
+                newuser = await _notesService.NewUser(new UserDto(0, newUserName, ""));
+                Users.Add(new UserViewModel(newuser.Uid, newuser.Name, newuser.Email, notesService));
             }
 
         }
@@ -97,7 +99,7 @@ namespace notes_by_nodes_wpfApp
         void SelectUser()
         {
             var activeUser = Users.FirstOrDefault() ?? throw new NullReferenceException("Users collection is empty");
-            _notesService.SelectUser(activeUser.Uid);
+            _notesService.SelectUser(activeUser.Name);
             User = activeUser;
         }
 

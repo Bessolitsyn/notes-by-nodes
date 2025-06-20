@@ -62,13 +62,12 @@ namespace notes_by_nodes_wpfApp
         {
             if (DialogManager.ShowNewBoxDialog(out var newFolder))
             {
-                INodeDto newboxDto = _notesService.NewBox(new NodeDto(0, newFolder, "New Box", ""));
+                INodeDto newboxDto = await _notesService.NewBox(new NodeDto(0, newFolder, "New Box", ""));
                 var newbox = new BoxViewModel(newboxDto.Uid, newboxDto.Name, newboxDto.Description, newboxDto.Text);
                 //await newbox.LoadChildNodesAsync();
                 //await Task.Delay(2000);
                 NodesTree.Insert(0, newbox);
             }
-
         }
         [RelayCommand]
         void ShowNoteInActiveTab(INoteViewModel node)

@@ -43,71 +43,71 @@ namespace notes_by_nodes.UseCases
         {
            
         }
-        internal void SaveNode(LocalBox box, LocalNote note)
+        internal Task SaveNode(LocalBox box, LocalNote note)
         {
-            StorageFactory.GetNoteStorage(box).SaveNote(note);
+            return StorageFactory.GetNoteStorage(box).SaveNoteAsync(note);
         }
-        internal LocalBox GetBox(int uid)
+        internal  async Task<LocalBox> GetBox(int uid)
         {  
-            var box = boxStorage.GetBox(uid);
-            StorageFactory.GetNoteStorage(box).LoadChildNodes(box);
+            var box = await boxStorage.GetBoxAsync(uid);
+            StorageFactory.GetNoteStorage(box).LoadChildNodesAsync(box);
             //box.LoadChildNodes();
             return box;
         }
-        internal LocalNote GetNote(int boxUid, int uid)
+        internal async Task<LocalNote> GetNote(int boxUid, int uid)
         {
-            var box = boxStorage.GetBox(boxUid);
-            var note = StorageFactory.GetNoteStorage(box).GetNote(uid);
+            var box = await boxStorage.GetBoxAsync(boxUid);
+            var note = await StorageFactory.GetNoteStorage(box).GetNoteAsync(uid);
             return note;
         }
-        internal IEnumerable<Node> LoadChildNodes(int boxUid, int nodeUid)
+        internal async Task<IEnumerable<Node>> LoadChildNodes(int boxUid, int nodeUid)
         {
-            var box = boxStorage.GetBox(boxUid);
+            var box = await boxStorage.GetBoxAsync(boxUid);
             var noteStorage = StorageFactory.GetNoteStorage(box);
-            var node = noteStorage.GetNote(nodeUid);
-            noteStorage.LoadChildNodes(node);
+            var node = await noteStorage.GetNoteAsync(nodeUid);
+            await noteStorage.LoadChildNodesAsync(node);
             return node.HasChildNodes;
         }
 
-        internal LocalBox NewBox(string folderToBox, string desc)
+        internal async Task<LocalBox> NewBox(string folderToBox, string desc)
         {
             LocalBox box = new(ActiveUser, folderToBox, desc);
             //box.SetNoteStorage(StorageFactory.GetNoteStorage(box));
             ActiveUser.AddIntoChildNodes(box);
-            boxStorage.SaveBox(box);
-            StorageFactory.GetUserStorage().SaveUser(ActiveUser);
+            await boxStorage.SaveBoxAsync(box);
+            await StorageFactory.GetUserStorage().SaveUserAsync(ActiveUser);
             return box;
 
         }
 
-        internal void SaveBox(LocalBox box)
+        internal Task SaveBox(LocalBox box)
         {
-            boxStorage.SaveBox(box);
+            return boxStorage.SaveBoxAsync(box);
         }
-        internal void SaveNote(int boxUid, LocalNote note)
+        internal async Task SaveNote(int boxUid, LocalNote note)
         {
-            var box = boxStorage.GetBox(boxUid);
-            StorageFactory.GetNoteStorage(box).SaveNote(note);
+            var box = await boxStorage.GetBoxAsync(boxUid);
+            await StorageFactory.GetNoteStorage(box).SaveNoteAsync(note);
         }
 
-        internal void RemoveNote(LocalBox box, Node note)
+        internal async Task RemoveNote(LocalBox box, Node note)
         {
 
             foreach (var item in note.HasChildNodes.ToList())
             {
-                RemoveNote(box, item);
+                await RemoveNote(box, item);
             }
             note.HasParentNode.RemoveFromChildNodes(note);
             note.HasOwner.RemoveFromOwnedNodes(note);
             var storage = StorageFactory.GetNoteStorage(box);
             storage.RemoveNode(note);
             if (box.Uid != note.HasParentNode.Uid)
-                storage.SaveNote((LocalNote)note.HasParentNode);
+                await storage.SaveNoteAsync((LocalNote)note.HasParentNode);
             else
-                SaveBox((LocalBox)note.HasParentNode);
+                await SaveBox((LocalBox)note.HasParentNode);
 
         }
-        internal void RemoveBox(LocalBox box)
+        internal async Task RemoveBox(LocalBox box)
         {
 
             foreach (var item in box.HasChildNodes.ToList())
@@ -118,8 +118,8 @@ namespace notes_by_nodes.UseCases
             box.HasOwner.RemoveFromOwnedNodes(box);
             var storage = StorageFactory.GetBoxStorage();
             storage.RemoveNode(box);
-            var ownerUser = StorageFactory.GetUserStorage().GetUser(box.HasOwner.Uid);
-            StorageFactory.GetUserStorage().SaveUser(ownerUser);
+            var ownerUser = await StorageFactory.GetUserStorage().GetUser(ActiveUser.Name);
+            await StorageFactory.GetUserStorage().SaveUserAsync(ownerUser);
         }
     }
 }

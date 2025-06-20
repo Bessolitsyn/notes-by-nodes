@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static notes_by_nodes.Storage.StorageException;
 
-namespace notes_by_nodes.Storage
+namespace notes_by_nodes.StorageAdapters
 {
     internal class StorageException : Exception
     {

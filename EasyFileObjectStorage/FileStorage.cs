@@ -1,66 +1,49 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Concurrent;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace EasyObjectFileStorage
 {
     public abstract class FileStorage(string pathToRootFolder)
     {
-        readonly string RootFolder = pathToRootFolder;
+        private static readonly ConcurrentDictionary<string, SemaphoreSlim> _fileLockers = [];
+        readonly string _rootFolder = pathToRootFolder;
 
         public event EventHandler<string>? LogEvent;
 
-        protected bool TrySaveFile(string path, string filename, string fileContent, out string fileid)
+        protected async Task<string> SaveFileAsync(string path, string filename, string fileContent)
         {
-            fileid = path + filename;
-            try
-            {
-                System.IO.File.WriteAllText(@RootFolder + path + filename, fileContent);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+            var fileid = path + filename;
+            var filePath = _rootFolder + path + filename;
+            await SafeFileActionAsync(filePath, async () => await System.IO.File.WriteAllTextAsync(filePath, fileContent));
+            return fileid;
 
         }
-
         protected void SaveFile(string path, string filename, string fileContent, out string fileid)
         {
             fileid = path + filename;
-            System.IO.File.WriteAllText(@RootFolder + path + filename, fileContent);
-        }
-        protected bool TrySaveFile(string path, string filename, byte[] fileContent, out string fileid)
-        {
-            fileid = path + filename;
-            try
-            {
-                System.IO.File.WriteAllBytes(@RootFolder + path + filename, fileContent);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-
-        }
+            System.IO.File.WriteAllText(_rootFolder + path + filename, fileContent);
+        }       
         protected void SaveFile(string path, string filename, byte[] fileContent, out string fileid)
         {
             fileid = path + filename;
-            System.IO.File.WriteAllBytes(@RootFolder + path + filename, fileContent);
+            System.IO.File.WriteAllBytes(_rootFolder + path + filename, fileContent);
         }
-
-        protected bool TryRemoveFile(string path, string filename)
+        protected async Task<string> SaveFileAsync(string path, string filename, byte[] fileContent)
         {
-            try
-            {
-                System.IO.File.Delete(@RootFolder + path + filename);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            var fileid = path + filename;
+            var filePath = _rootFolder + path + filename;
+            await SafeFileActionAsync(filePath, async () =>  await System.IO.File.WriteAllBytesAsync(filePath, fileContent));
+            return fileid;
+
+        }
+        protected void RemoveFile(string path, string filename)
+        {
+            var filePath = _rootFolder + path + filename;
+            var _ = SafeFileActionAsync(filePath, () => Task.Run(() => File.Delete(filePath)));
+           
         }
 
         protected void Logging(string message)
@@ -70,8 +53,31 @@ namespace EasyObjectFileStorage
 
         protected string[] GetAllFiles(string path, string fileExt)
         {
-            string[] files = Directory.GetFiles(@RootFolder + path, $"*.{fileExt}");
+            string[] files = Directory.GetFiles(_rootFolder + path, $"*.{fileExt}");
             return files;
+        }
+
+        protected static async Task SafeFileActionAsync(string filePath, Func<Task> operation)
+        {
+            SemaphoreSlim locker = _fileLockers.GetOrAdd(filePath, _ => new SemaphoreSlim(1, 1));
+            await locker.WaitAsync();
+            try
+            {
+                await operation();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                locker.Release();
+
+                if (locker.CurrentCount == 1)
+                {
+                    _fileLockers.TryRemove(filePath, out _);
+                }
+            }
         }
 
 

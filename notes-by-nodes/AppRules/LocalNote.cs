@@ -21,7 +21,7 @@ namespace notes_by_nodes.AppRules
 
             //NoteStorage = parentNode is LocalBox box ? box.NoteStorage : 
             //              parentNode is LocalNote note ? note.NoteStorage: 
-            //              throw new NullRefernceUseCaseException("NoteStorage is null in parentNode when LocalNote is constructing");
+            //              throw new NullRefernceNoteCoreException("NoteStorage is null in parentNode when LocalNote is constructing");
             Type = "LocalNote";
             Name = name;
             Text = text;
