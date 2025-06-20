@@ -42,7 +42,7 @@ namespace notes_by_nodes.StorageAdapters
             {
 
                 var user = GetUser(userDS.Uid);
-                var _ = BoxStorage.LoadChildNodesAsync(user).Result;
+                var _ = await BoxStorage.LoadChildNodesAsync(user);
                 return user;
             }
             else

@@ -14,11 +14,11 @@ namespace notes_by_nodes.AppRules
 {
     public class LocalUser : User, IUserDto
     {
-        public IBoxStorage NoteStorage { get; init; }
+        //public IBoxStorage NoteStorage { get; init; }
 
         internal LocalUser(string name, string email, IBoxStorage storage) : base(name, email)
         {
-            NoteStorage = storage;
+            //NoteStorage = storage;
             Type = "LocalUser";
             hasOwner = this;
             hasParentNode = this;

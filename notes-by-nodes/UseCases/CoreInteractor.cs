@@ -50,7 +50,7 @@ namespace notes_by_nodes.UseCases
         internal  async Task<LocalBox> GetBox(int uid)
         {  
             var box = await boxStorage.GetBoxAsync(uid);
-            StorageFactory.GetNoteStorage(box).LoadChildNodesAsync(box);
+            await StorageFactory.GetNoteStorage(box).LoadChildNodesAsync(box);
             //box.LoadChildNodes();
             return box;
         }

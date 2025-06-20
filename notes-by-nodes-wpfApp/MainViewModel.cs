@@ -67,7 +67,7 @@ namespace notes_by_nodes_wpfApp
         {
             try
             {
-                IUserDto userDTO =  await _notesService.SelectUser("Username");
+                IUserDto userDTO =  await _notesService.SelectUser("Anton");
                 var user = new UserViewModel(userDTO.Uid, userDTO.Name, userDTO.Email, notesService);
                 Users.Add(user);
             }

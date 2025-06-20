@@ -1,0 +1,16 @@
+{
+  "IsOwnerOf": [
+    "779073890"
+  ],
+  "CreationDate": "2025-06-20T15:28:44.7360606+03:00",
+  "Description": "",
+  "Name": "Anton",
+  "Text": null,
+  "Type": "LocalUser",
+  "Uid": 741278594,
+  "HasChildNodes": [
+    "779073890"
+  ],
+  "HasOwner": "741278594",
+  "HasParentNode": "741278594"
+}
