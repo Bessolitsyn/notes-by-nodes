@@ -3,7 +3,7 @@ Simple app  for notes managing
 It's my pet-project to learn and practice to be better. 
 
 ##The List of Task to implement
-##Задачи которые можно реализовать в NotesByNodes
+##Задачи которые хочу реализовать в NotesByNodes
 - Десктопное приложение (.Net MAUI или ReactNative)
 - Add comments in English and Rus
 - Реализовать поддержку плагинов (например плагины для просмотра заметок) 
