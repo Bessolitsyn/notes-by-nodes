@@ -33,6 +33,7 @@
                 <TextBlock Text="{Binding Name}" Width="200" Foreground="Gray" FontSize="10" TextWrapping="Wrap" />
                 <StackPanel.ContextMenu>
                     <ContextMenu>
+                        <!--Лист комманд и их хидеры можно брать из вьюмодели выбранной заметки-->
                         <MenuItem Command="{Binding NewNoteCommand }" Header ="New note" />
                         <MenuItem Command="{Binding RemoveCommand }" Header="Remove box" />
                         <MenuItem Command="{Binding ShowNoteInNewTabCommand}" Header="Open box in new tab" />
