@@ -34,11 +34,12 @@ namespace TestProject
                 Assert.True(testapp != null);
             }
         }
-        //Требует что бы выполнились предыдущие
+        
         [Fact]
         public static void TestStartAppWhenThereIsUser()
         {
-            TestStartAppWhenNoUser();
+            TestStartAppWhenNoUser(); // здесь создается пользователь
+
             using (var testapp = new TestAppCore())
             {
                 Assert.True(Directory.GetFiles(TestAppCore.profileFolder).Where(f => f.Contains(".luser")).Count() == 1 
