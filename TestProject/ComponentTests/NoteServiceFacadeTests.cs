@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xunit.Sdk;
 
-namespace TestProject
+namespace TestProject.ComponentTests
 {
     /// <summary>
     /// Компонентный тест фасада - сервиса заметок

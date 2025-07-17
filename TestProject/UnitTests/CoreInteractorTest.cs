@@ -12,9 +12,12 @@ using notes_by_nodes.StorageAdapters;
 using notes_by_nodes.UseCases;
 using VDS.RDF.Configuration;
 
-namespace TestProject
+namespace TestProject.UnitTests
 {
     //Test interactors(use cases) and storage
+    //TO DO переделать в модульные тесты, варианты использования нужно тестировать в тестах компонентов
+    //или приемочных тестах (тестах построенных по требованиям к ПО)
+
     public class CoreInteractorTest
     {
         static LocalUser? _user;
@@ -106,7 +109,7 @@ namespace TestProject
 
     class TestAppCore : IDisposable
     {
-        public static string profileFolder = System.IO.Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage";
+        public static string profileFolder = Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage";
         public LocalUser currentUser;
         public NodeFileStorageProvider storageFactory;
         //Lazy
@@ -151,7 +154,7 @@ namespace TestProject
 
             LocalBox MakeBox()
             {
-                string boxFolder = System.IO.Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage\\Box";
+                string boxFolder = Directory.GetCurrentDirectory().ToString() + $"\\..\\..\\..\\FilesStorage\\Box";
                 Directory.CreateDirectory(boxFolder);
                 LocalBox box = new(currentUser, boxFolder, "FirstTestBox");
                 //box.SetNoteStorage(storageFactory.GetNoteStorage(box));

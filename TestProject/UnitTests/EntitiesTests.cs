@@ -8,9 +8,10 @@ using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject
+namespace TestProject.UnitTests
 {
     // Test of business logic level
+    //TO DO эти тесты нужно переделать в модульные тесты классов бизнес-логики
     public class EntitiesTests
     {
         [Fact]
