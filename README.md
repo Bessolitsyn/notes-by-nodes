@@ -2,8 +2,8 @@
 Simple app  for notes managing
 It's my pet-project to learn and practice to be better. 
 
-##The List of Task to implement
-##Задачи которые хочу реализовать в NotesByNodes
+## The List of Task to implement
+## Задачи которые хочу реализовать в NotesByNodes
 - Десктопное приложение (.Net MAUI или ReactNative)
 - В приложении сделать поле ввода простых команд типа Новая Заметка, вот пример как в Visual Code ()
 - Диаграммы из заметок (PlantUML)
@@ -19,7 +19,7 @@ It's my pet-project to learn and practice to be better.
 - Реализовать Cloud версию(синхронизация заметок с облачным хранилищем в первую очередь)
 - Интегрировать(попытаться) нейросеть для формирования краткого содержания заметки
 
-
+Рекоммендации по улучшению от нейросетки (DeepSeek) [Recommendations_DeepSeek.md‎](https://github.com/Bessolitsyn/notes-by-nodes/blob/main/Recommendations_DeepSeek.md)
 
 # Обзор проекта notes-by-nodes
 
