@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GraphControl\GraphControl.csproj" />
     <ProjectReference Include="..\notes-by-nodes\notes-by-nodes.csproj" />
     <ProjectReference Include="..\StorageAdapters\StorageAdapters.csproj" />
   </ItemGroup>

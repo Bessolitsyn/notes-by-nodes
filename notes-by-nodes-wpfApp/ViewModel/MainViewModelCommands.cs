@@ -16,6 +16,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Xml.Linq;
 
 namespace notes_by_nodes_wpfApp
 {
@@ -113,6 +114,17 @@ namespace notes_by_nodes_wpfApp
         void SelectTreeNodeItem(INoteViewModel selectedNode)
         {
             SelectedNode = selectedNode;
+        }
+
+        [RelayCommand]
+        public void OpenGraphViewer()
+        {
+            // Создаем TabItem с NoteGraphControl
+            if (SelectedNode != null) {
+                var tabItem = NoteTabItemBuilder.GetGraphViewerTab(SelectedNode, CloseTabCommand);                
+                Tabs.Add(tabItem);
+                tabItem.IsSelected = true;
+            }
         }
 
         static async Task TryExecuteUseCase(Func<Task> action)

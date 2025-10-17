@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using GraphControl.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualBasic;
+using notes_by_nodes.Dto;
 using notes_by_nodes.Entities;
 using notes_by_nodes.Service;
-using notes_by_nodes.Dto;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -14,8 +17,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using CommunityToolkit.Mvvm.Input;
-using System.CodeDom;
+using System.Xml.Linq;
 
 namespace notes_by_nodes_wpfApp.ViewModel
 {
@@ -34,6 +36,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
         void RemoveChild(INoteViewModel childNote);
         Task NewNoteAsync();
 
+
     }
 
     public abstract partial class NodeViewModel : ObservableObject, INoteViewModel, INodeDto
@@ -43,11 +46,10 @@ namespace notes_by_nodes_wpfApp.ViewModel
         public ObservableCollection<INoteViewModel> ChildNodes { get; set; } = [];
         public INoteViewModel ParentNode { get; init; }
         protected INoteService NoteService { get; init; }
-        protected MainViewModel MainViewModel { get; init; }        
+        public MainViewModel MainViewModel { get; init; }        
         protected SemaphoreSlim LoadChildNodesSemaphore { get; init; } =  new (1, 1);
         public int Uid { get; init; }
-
-
+        
         [ObservableProperty]
         private string name;
         [ObservableProperty]
@@ -158,8 +160,9 @@ namespace notes_by_nodes_wpfApp.ViewModel
         }
 
         [RelayCommand]
-        void ShowNoteInNewTab()
+        public void ShowNoteInNewTab()
         {
+            // TO DO может перенести комманды из MainViewModel?
             MainViewModel.ShowNoteInNewTabCommand.Execute(this);
         }
     }
@@ -202,6 +205,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
 #warning TO DO error message box
             }
         }
+        
         [RelayCommand]
         public override async Task RemoveAsync()
         {

@@ -21,7 +21,9 @@
                             <MenuItem Command="{Binding NewNoteCommand}" Header ="New note" />
                             <MenuItem Command="{Binding RemoveCommand }" Header="Remove note" />
                             <MenuItem Command="{Binding ShowNoteInNewTabCommand}" Header="Open note in new tab" />
-                        </ContextMenu>                    
+                            <MenuItem Command="{Binding MainViewModel.OpenGraphViewerCommand}" Header="Open graph viewer" />
+                            <!--<MenuItem Command="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" Header="Open graph viewer" />-->
+                    </ContextMenu>
                 </StackPanel.ContextMenu>
             </StackPanel>    
             

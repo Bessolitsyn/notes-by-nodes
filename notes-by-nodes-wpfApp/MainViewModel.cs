@@ -120,6 +120,8 @@ namespace notes_by_nodes_wpfApp
             NodesTree.Remove(boxViewModel);
         }
 
+        
+
     }
 
 }

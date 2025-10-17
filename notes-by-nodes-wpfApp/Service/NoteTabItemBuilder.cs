@@ -9,8 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using notes_by_nodes.GraphControl;
 
 namespace notes_by_nodes_wpfApp.Service
 {
@@ -19,9 +21,17 @@ namespace notes_by_nodes_wpfApp.Service
         public static TabItem GetNoteEditorTab(INoteViewModel note, ICommand closeTabCommand)
         {
             var userControl = new NoteEditorControl(note);
-            return NewNoteEditorTab(note, userControl, closeTabCommand);
+            return NewTab(note, userControl, closeTabCommand);
         }
-        static TabItem NewNoteEditorTab(INoteViewModel note, UserControl userControl, ICommand closeTabCommand)
+        public static TabItem GetGraphViewerTab(INoteViewModel note, ICommand closeTabCommand)
+        {
+            var userControl = new notes_by_nodes.GraphControl.GraphControl();
+            userControl.LoadFrom(NoteViewModelConverter.ToIGraphControlNode(note));
+            return NewTab(note, userControl, closeTabCommand);
+           
+        }
+
+        static TabItem NewTab(INoteViewModel note, Control userControl, ICommand closeTabCommand)
         {
             var tabItem = new TabItem();
             tabItem.Content = userControl;
