@@ -113,7 +113,7 @@ namespace TestProject.UnitTests
         public LocalUser currentUser;
         public NodeFileStorageProvider storageFactory;
         //Lazy
-        CoreInteractor interactor;
+        SingleUserNotesInteractor interactor;
         UserInteractor userInteractor;
         public TestAppCore()
         {
@@ -121,7 +121,7 @@ namespace TestProject.UnitTests
             storageFactory = new NodeFileStorageProvider(nodeBuilder, profileFolder);
             userInteractor = new UserInteractor(storageFactory);
             currentUser = SelectUser().Result; 
-            interactor = new CoreInteractor(storageFactory, currentUser);
+            interactor = new SingleUserNotesInteractor(storageFactory, currentUser);
 
         }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace notes_by_nodes.Service
 {
-    public interface INoteService
+    public interface ISingleUserNoteService
     {
         Task<IUserDto> SelectUser(string name);
         IEnumerable<INodeDto> GetBoxes();

@@ -75,11 +75,11 @@ namespace TestProject.ComponentTests
     }
     class TestApp
     {
-        public static NoteServiceFacade TestFacade { get => _testFacade ?? SetTestFasade(); }
-        static NoteServiceFacade? _testFacade;
-        public static NoteServiceFacade SetTestFasade() {
+        public static SingleUserNoteServiceFacade TestFacade { get => _testFacade ?? SetTestFasade(); }
+        static SingleUserNoteServiceFacade? _testFacade;
+        public static SingleUserNoteServiceFacade SetTestFasade() {
 
-            _testFacade = new NoteServiceFacade( new TestStorageFactory());
+            _testFacade = new SingleUserNoteServiceFacade( new TestStorageFactory());
             return _testFacade;
 
         }

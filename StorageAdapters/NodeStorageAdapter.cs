@@ -41,9 +41,17 @@ namespace notes_by_nodes.StorageAdapters
             {
                 if (int.TryParse(strUid, out int uid))
                 {
-                    //parentNode.AddIntoChildNodes(GetNodeAsync(uid));
-                    var node = await GetNodeAsync(uid);
-                    childNodes.Add(node);
+                    try
+                    {
+                        var node = await GetNodeAsync(uid);
+                        childNodes.Add(node);
+                    }
+                    catch (NoNodeInStorageException)
+                    {
+                        //TODO нарушение целостности объектов - ссылки на объекты есть а их нет - что то с этим надо сделать
+                    }
+                    //parentNode.AddIntoChildNodes(GetNodeAsync(uid)); //
+                    
                 }
             }
             return childNodes;

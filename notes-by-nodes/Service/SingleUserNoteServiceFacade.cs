@@ -13,14 +13,18 @@ using notes_by_nodes.Dto;
 
 namespace notes_by_nodes.Service
 {
-    public class NoteServiceFacade : INoteService
+    public class SingleUserNoteServiceFacade : ISingleUserNoteService
     {
         private readonly UserInteractor _userInteractor;
         private readonly INodeStorageProvider _storageProvider;
         private LocalUser _activeUser;
-        private CoreInteractor _coreInteractor;
+        private SingleUserNotesInteractor? _coreInteractor;
 
-        public NoteServiceFacade(INodeStorageProvider storageProvider)
+        //TODO сделать проверки на нулл _coreInteractor и возврат адекватныйх исключений
+        /// <summary>
+        /// First of all, set active user with SelectUser(string username)
+        /// </summary>
+        public SingleUserNoteServiceFacade(INodeStorageProvider storageProvider)
         {
             _storageProvider = storageProvider;
             _userInteractor = new UserInteractor(storageProvider);
@@ -30,6 +34,7 @@ namespace notes_by_nodes.Service
         public IEnumerable<INodeDto> GetBoxes()
         {
             var boxes = _coreInteractor.GetBoxes();
+
             return boxes.Cast<INodeDto>();
         }
        
@@ -111,7 +116,7 @@ namespace notes_by_nodes.Service
         public async Task<IUserDto> SelectUser(string name)
         {
             _activeUser =await _userInteractor.GetUser(name);
-            _coreInteractor = new CoreInteractor(_storageProvider, _activeUser);
+            _coreInteractor = new SingleUserNotesInteractor(_storageProvider, _activeUser);
             return new UserDto(_activeUser.Uid, _activeUser.Name, _activeUser.Email);
 
         }

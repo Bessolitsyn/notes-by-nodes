@@ -51,9 +51,10 @@ namespace EasyObjectFileStorage
             LogEvent?.Invoke(this, message);
         }
 
-        protected string[] GetAllFiles(string path, string fileExt)
+        protected FileInfo[] GetAllFiles(string path, string fileExt)
         {
-            string[] files = Directory.GetFiles(_rootFolder + path, $"*.{fileExt}");
+            var dirInfo = new DirectoryInfo(Path.Join(_rootFolder.TrimEnd(), path.TrimEnd()));
+            var  files = dirInfo.GetFiles($"*.{fileExt}");//Directory.GetFiles(_rootFolder + path, $"*.{fileExt}");
             return files;
         }
 

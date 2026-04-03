@@ -1,20 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using notes_by_nodes.Service;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace notes_by_nodes_wpfApp.ViewModel
+namespace notes_by_nodes_winUI.ViewModel
 {
-    public partial class UserViewModel: ObservableObject, IUserDto
+    public partial class UserViewModel : ObservableObject, IUserDto
     {
-
         public int Uid { get; init; }
-        
+
         private ISingleUserNoteService NoteService { get; init; }
 
         [ObservableProperty]
@@ -24,7 +17,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
 
         partial void OnEmailChanged(string? oldValue, string newValue)
         {
-            if (oldValue != null && oldValue != String.Empty)
+            if (oldValue != null && oldValue != string.Empty)
                 NoteService.ModifyUser((IUserDto)this);
         }
 
@@ -35,13 +28,13 @@ namespace notes_by_nodes_wpfApp.ViewModel
 
         public void NewChild()
         {
-            //new Box
+            // new Box
             throw new NotImplementedException();
         }
 
         public void RemoveChild(INoteViewModel childNote)
         {
-            //remove Box
+            // remove Box
             throw new NotImplementedException();
         }
 
@@ -50,10 +43,7 @@ namespace notes_by_nodes_wpfApp.ViewModel
             Email = email;
             Uid = uid;
             Name = name;
-            // NotesByNodesApp app = (NotesByNodesApp)NotesByNodesApp.Current;
             NoteService = noteService;
-
-
         }
     }
 }

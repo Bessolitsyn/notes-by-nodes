@@ -14,13 +14,13 @@ using System.Xml.Linq;
 [assembly: InternalsVisibleTo("TestProject")]
 namespace notes_by_nodes.UseCases
 {
-    internal class CoreInteractor
+    internal class SingleUserNotesInteractor
     {
         protected INodeStorageProvider StorageFactory { get; init; }
         protected LocalUser ActiveUser { get; init; }
         private IBoxStorage boxStorage { get; init; }
 
-        internal CoreInteractor(INodeStorageProvider storageFactory, LocalUser activeUser)
+        internal SingleUserNotesInteractor(INodeStorageProvider storageFactory, LocalUser activeUser)
         {
             ActiveUser = activeUser;
             StorageFactory = storageFactory;

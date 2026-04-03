@@ -1,67 +1,77 @@
-﻿using System.Configuration;
-using System.Data;
-using System.IO;
-using System.Windows;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using notes_by_nodes_wpfApp.Settings;
-using notes_by_nodes_wpfApp.Service;
-using notes_by_nodes.Storage;
+using Microsoft.UI.Xaml;
 using notes_by_nodes.Service;
+using notes_by_nodes.Storage;
+using notes_by_nodes_winUI.Service;
+using notes_by_nodes_winUI.Settings;
+using System.IO;
+using System;
 
-namespace notes_by_nodes_wpfApp
+namespace notes_by_nodes_winUI
 {
-    public partial class NotesByNodesApp : Application
+    public partial class App : Application
     {
-
         private IServiceProvider? ServiceProvider { get; set; }
         private IConfiguration? Configuration { get; set; }
 
+        public static MainWindow? MainWindow { get; private set; }
 
-        protected override void OnStartup(StartupEventArgs e)
+        public App()
         {
-            base.OnStartup(e);
+            InitializeComponent();
+        }
 
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        {
             var services = new ServiceCollection();
+
             // Конфигурация
-            services.Configure<NotesByNodesSettings>(ConfigureServices);
+            ConfigureServices(services);
+
             // Сервисы
             services.AddSingleton<INodeStorageProvider, NodeFileStorageAdapter>();
             services.AddSingleton<ISingleUserNoteService, SingleUserNoteServiceFacade>();
 
             // ViewModel
-            //services.AddTransient<MainViewModel>();
             services.AddSingleton<MainViewModel>();
 
             // Окно
             services.AddSingleton<MainWindow>();
 
             ServiceProvider = services.BuildServiceProvider();
-            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            MainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+            MainWindow.Activate();
         }
 
-        static void ConfigureServices(NotesByNodesSettings configure)
+        static void ConfigureServices(IServiceCollection services)
         {
             string pathToIniFile = Directory.GetCurrentDirectory();
             var builder = new ConfigurationBuilder()
                  .SetBasePath(pathToIniFile)
                  .AddIniFile("appsettings.ini", optional: false, reloadOnChange: true);
-            var Configuration = builder.Build();
+            var configuration = builder.Build();
+
 #if DEBUG
-            var current = Directory.GetCurrentDirectory() + "\\..\\..\\..\\..\\TestProject\\FilesStorage\\";
+            var current = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\FilesStorage\\";
             if (Directory.Exists(current))
             {
                 Directory.SetCurrentDirectory(current);
             }
-            else { 
+            else
+            {
                 Directory.CreateDirectory(current);
+                Directory.SetCurrentDirectory(current);
             }
-            configure.UserProfile = Directory.GetCurrentDirectory();
-            //configure.UserProfile = "c:\\Users\\tocha\\source\\notes-by-nodes\\TestProject\\FilesStorage\\";
 #else
-            configure.UserProfile = Configuration.GetRequiredSection("Startup:userprofile").Value ?? throw new NullReferenceException();
+            string userProfile = configuration.GetRequiredSection("Startup:userprofile").Value ?? throw new NullReferenceException();
+            Directory.SetCurrentDirectory(userProfile);
 #endif
+
+            services.Configure<NotesByNodesSettings>(options =>
+            {
+                options.UserProfile = Directory.GetCurrentDirectory();
+            });
         }
 
         internal MainViewModel GetMainViewModel()

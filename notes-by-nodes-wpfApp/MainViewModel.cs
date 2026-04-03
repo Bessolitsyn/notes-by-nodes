@@ -22,10 +22,10 @@ using notes_by_nodes.Dto;
 
 namespace notes_by_nodes_wpfApp
 {
-    public partial class MainViewModel(INoteService notesService, IOptions<NotesByNodesSettings> options) : ObservableObject
+    public partial class MainViewModel(ISingleUserNoteService notesService, IOptions<NotesByNodesSettings> options) : ObservableObject
     {
         //private readonly ModelsPresenter _presenter;
-        private readonly INoteService _notesService = notesService ?? throw new ArgumentNullException(nameof(notesService));
+        private readonly ISingleUserNoteService _notesService = notesService ?? throw new ArgumentNullException(nameof(notesService));
         private readonly IOptions<NotesByNodesSettings> _options = options;
 
         [ObservableProperty]

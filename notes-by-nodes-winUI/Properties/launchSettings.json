@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "notes-by-nodes-winUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "notes-by-nodes-winUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

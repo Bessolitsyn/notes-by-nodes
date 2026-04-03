@@ -31,7 +31,7 @@ namespace EasyObjectFileStorage
         {
             try
             {
-                string[] files = GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION);
+                var files = GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION);
                 var objects = await GetAllDeserializeObjectAsync<T>(files);
                 return objects;
             }
@@ -47,7 +47,7 @@ namespace EasyObjectFileStorage
         {
             try
             {
-                string[] files = [.. GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f => f.Contains(filename))];
+                FileInfo[] files = [..GetAllFiles($"\\{FOLDER_FOR_DATASET_STORAGE}", FILE_EXTENSION).Where(f => f.FullName.Contains(filename))];
                 var contents = await GetAllDeserializeObjectAsync<T>(files);
 
                 if (contents.Length != 0)
@@ -116,15 +116,15 @@ namespace EasyObjectFileStorage
                 throw;
             }
         }
-
-        static async Task<T[]> GetAllDeserializeObjectAsync<T>(string[] files)
+        //TODO ОБНОВИТЬ ЭТУ БИБЛИОТЕКУ ВО ВСЕХ РЕШЕНИЯХ 
+        static async Task<T[]> GetAllDeserializeObjectAsync<T>(FileInfo[] files)
         {
             T[] objects = new T[files.Length];
             for (int i = 0; i < files.Length; i++)
-            {                
-                await SafeFileActionAsync(files[i], async () =>
+            {   if (files[i].Exists)             
+                await SafeFileActionAsync(files[i].FullName, async () =>
                 {
-                    var content = await System.IO.File.ReadAllTextAsync(files[i]);
+                    var content = await System.IO.File.ReadAllTextAsync(files[i].FullName);
                     var obj = JsonConvert.DeserializeObject<T>(content  );
                     if (obj != null)
                         objects[i] = obj;
